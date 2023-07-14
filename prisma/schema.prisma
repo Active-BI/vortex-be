@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("DATABASE_URL_SHADOW")
+}
+
+model Rls {
+  id    String @id @default(uuid())
+  name  String
+  value Int
+  User  User[]
+}
+
+model Tenant {
+  id          String    @id @default(uuid())
+  tenant_name String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  Client      Client[]
+  User        User[]
+  RH_data     RH_data[]
+}
+
+model User_Auth {
+  id             String   @id @default(uuid())
+  secret         String
+  reset_pass     String
+  password_hash  String
+  name           String
+  personal_email String
+  contact_email  String
+  last_access    DateTime @db.Timestamptz()
+}
+
+model User {
+  id             String   @id @default(uuid())
+  nome           String
+  born_date      DateTime @db.Date
+  personal_email String
+  contact_email  String
+  profession     String
+  description    String
+  tenant_id      String   @db.Uuid()
+  Tenant         Tenant   @relation(fields: [tenant_id], references: [id])
+  rls_id         String   @db.Uuid()
+  Rls            Rls      @relation(fields: [rls_id], references: [id])
+}
+
+model Client {
+  id            String   @id @default(uuid())
+  name          String
+  social_name   String
+  cnpj          String
+  contact_email String
+  Telefone      String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  tenant_id     String   @db.Uuid()
+  Tenant        Tenant   @relation(fields: [tenant_id], references: [id])
+}
+
+model RH_data {
+  id                  Int       @id @default(autoincrement())
+  nomeEmpresa         String
+  matricula           String
+  nome                String
+  cargos              String
+  dataAdmissao        DateTime
+  area                String
+  salario             Float
+  sexo                String
+  cutis               String
+  dataNascimento      DateTime
+  email               String
+  vinculoEmpregaticio String
+  situacaoEmpregado   String
+  grauInstrucao       String
+  pcd                 Boolean
+  desligado           Boolean
+  dataDesligamento    DateTime?
+  motivoDesligamento  String?
+
+  tenant_id String @db.Uuid()
+  Tenant    Tenant @relation(fields: [tenant_id], references: [id])
+}
