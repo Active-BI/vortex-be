@@ -7,22 +7,24 @@ import { Token } from 'src/helpers/token';
 import * as bcrypt from 'bcrypt';
 import { CreateLoginDto } from './login.controller';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
+import { UserAuthService } from '../user_auth/user_auth.service';
+import { User_Auth } from '@prisma/client';
 
 @Injectable()
 export class LoginService {
-  constructor(private jwtStrategy: JwtStrategy) {}
+  constructor(
+    private jwtStrategy: JwtStrategy,
+    private userAuthService: UserAuthService,
+  ) {}
 
   async getUser(login) {
-    // const user: any = await this.userService.findOneByEmail(login.email);
-    // if (!user) throw new BadRequestException('Usuário não existe');
-    // return {
-    //   ...user,
-    // };
-    return;
+    const user = await this.userAuthService.getUserAuth(login.email);
+    if (!user) throw new BadRequestException('Usuário não existe');
+    return user;
   }
 
   async checkPass(login: CreateLoginDto) {
-    const user: any = await this.getUser(login);
+    const user = await this.getUser(login);
 
     const isHashTrue = await bcrypt.compare(login.password, user.password_hash);
 
@@ -31,21 +33,20 @@ export class LoginService {
     const tokenObj = new Token(
       user.id,
       user.name,
-      user.email,
-      user.status,
-      user.Pre_register.Role.id,
-      user.Pre_register.Role.name,
-      user.Pre_register.tenant_id,
+      user.contact_email,
+      user.personal_email,
+      user.User.Rls,
+      user.User.tenant_id,
     );
 
     var token = await this.jwtStrategy.signToken(tokenObj);
 
-    delete user.Pre_register;
-    await this.setLastAccess(user as any);
+    delete user.User;
+    await this.setLastAccess(user as User_Auth);
 
     return { token };
   }
-  setLastAccess(user: any) {
-    // this.userService.update({ ...user, last_access: new Date() });
+  setLastAccess(user: User_Auth) {
+    this.userAuthService.update({ ...user, last_access: new Date() });
   }
 }

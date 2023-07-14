@@ -1,21 +1,30 @@
+import { Rls } from '@prisma/client';
+
 export class Token {
   userId: string;
   name: string;
   tenant_id: string;
-  email_active: string;
-  email: string;
-  status: string;
+  personal_email: string;
+  contact_email: string;
   role_id: string;
-  role: string;
-  constructor(userId, name, email, status, role_id, role, tenant_id) {
+  role_name: string;
+  role_value: number;
+  constructor(
+    userId,
+    name,
+    contact_email,
+    personal_email,
+    rls: Rls,
+    tenant_id,
+  ) {
     this.userId = userId;
     this.name = name;
-    this.email_active = email;
-    this.email = email;
-    this.status = status;
-    this.role_id = role_id;
+    this.personal_email = personal_email;
+    this.contact_email = contact_email;
+    this.role_id = rls.id;
+    this.role_name = rls.name;
+    this.role_value = rls.value;
     this.tenant_id = tenant_id;
-    this.role = role;
   }
 }
 export class TempToken {

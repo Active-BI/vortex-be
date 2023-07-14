@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
@@ -9,10 +9,15 @@ import { LoginService } from './auth/login/login.service';
 import { LoginController } from './auth/login/login.controller';
 import { RoleGuard } from './helpers/strategy/jwtCheckRole.service';
 import { ConfigModule } from '@nestjs/config';
+import { UserAuthController } from './auth/user_auth/user_auth.controller';
+import { UserAuthService } from './auth/user_auth/user_auth.service';
+import { PrismaService } from 'prisma/prisma.service';
+import { MiddlewareResolver } from './middlwareResolve';
 
 @Module({
-  controllers: [AppController, LoginController],
+  controllers: [AppController, LoginController, UserAuthController],
   providers: [
+    PrismaService,
     AppService,
     JwtStrategy,
     JwtService,
@@ -20,13 +25,17 @@ import { ConfigModule } from '@nestjs/config';
     RoleGuard,
     JwtGuard,
     LoginService,
+    UserAuthService,
   ],
   exports: [JwtStrategy],
-
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-    }), // process.env.xxx must be called after this line
+    }),
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    MiddlewareResolver(consumer);
+  }
+}
