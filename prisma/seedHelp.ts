@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-import { tabelas } from './tabelas';
+// import { tabelas } from './tabelas';
 
 export const EmployeeSeed = async (prisma: PrismaClient) => {
   await prisma.user_Tenant_DashBoard.deleteMany();

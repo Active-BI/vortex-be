@@ -20,11 +20,11 @@ export class ArquivosService {
     return await this.prisma.tenant.findMany({ where: { id: tenant_id } });
   }
 
-  async exportDataAnalysis(bearerToken, tipoRelatorio: string) {
-    const token = this.jwtService.decode(bearerToken);
-    const tenant_id = (token as Token).tenant_id;
-
-    const data = await this.prisma[tipoRelatorio].findMany({
+  async exportDataAnalysis(tenant_id, tipoRelatorio: string) {
+    console.log({ tenant_id, tipoRelatorio });
+    const data = await this.prisma[
+      tipoRelatorio.toLocaleLowerCase() + '_table'
+    ].findMany({
       where: {
         tenant_id,
       },

@@ -15,15 +15,15 @@ model Rls {
 }
 
 model Tenant {
-  id               String             @id @default(uuid()) @db.Uuid
-  tenant_name      String
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  Client           Client[]
-  User             User[]
+  id                String                  @id @default(uuid()) @db.Uuid
+  tenant_name       String
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+  Client            Client[]
+  User              User[]
   // RH_data     Rh_data[]
-  Tenant_DashBoard Tenant_DashBoard[]
-  RH_data          RH_data[]
+  Tenant_DashBoard  Tenant_DashBoard[]
+  funionarios_table rh_funcionarios_table[]
 }
 
 model User_Auth {
@@ -91,7 +91,7 @@ model User_Tenant_DashBoard {
   User                User             @relation(fields: [user_id], references: [id])
 }
 
-model RH_data {
+model rh_funcionarios_table {
   id                  String    @id @default(uuid()) @db.Uuid
   nomeEmpresa         String
   matricula           String
@@ -111,7 +111,7 @@ model RH_data {
   desligado           Boolean
   dataDesligamento    DateTime?
   motivoDesligamento  String?
-
-  tenant_id String @db.Uuid
-  Tenant    Tenant @relation(fields: [tenant_id], references: [id])
+  timestamp           DateTime  @default(now())
+  tenant_id           String    @db.Uuid
+  Tenant              Tenant    @relation(fields: [tenant_id], references: [id])
 }

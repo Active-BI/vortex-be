@@ -30,12 +30,13 @@ export class ArquivosController {
   @Get('/:tipoRelatorio')
   async ExportarDadosMockados(
     @Res() response,
+    @Req() req,
     @Headers('authorization') authorization: string,
     @Param('tipoRelatorio') tipoRelatorio,
   ) {
-    const bearerToken = authorization.split(' ')[1];
+    const { tenant_id } = req.tokenData;
     const tableData = await this.arquivosService.exportDataAnalysis(
-      bearerToken,
+      tenant_id,
       tipoRelatorio,
     );
     const worksheet = XLSX.utils.json_to_sheet(tableData);
