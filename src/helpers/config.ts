@@ -9,5 +9,6 @@ export const config = {
   pbiUsername: 'homolog@activebi.com.br',
   pbiPassword: 'Juc32727',
   clientSecret: '',
-  tenantId: '',
+  tenantId: '915fe7db-2988-4ee1-b20b-fd2e18641985',
+  GRAPH_ENDPOINT: 'https://graph.microsoft.com',
 };

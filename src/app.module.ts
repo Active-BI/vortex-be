@@ -18,6 +18,8 @@ import { UserController } from './app/user/user.controller';
 import { PbiReportController } from './app/pbi-report/pbi-report.controller';
 import { PbiReportService } from './app/pbi-report/pbi-report.service';
 import { MsalService } from './services/msal.service';
+import { ArquivosController } from './app/arquivos/arquivos.controller';
+import { ArquivosService } from './app/arquivos/arquivos.service';
 
 @Module({
   controllers: [
@@ -26,6 +28,7 @@ import { MsalService } from './services/msal.service';
     UserAuthController,
     UserController,
     PbiReportController,
+    ArquivosController,
   ],
   providers: [
     PrismaService,
@@ -40,6 +43,7 @@ import { MsalService } from './services/msal.service';
     UserService,
     PbiReportService,
     MsalService,
+    ArquivosService,
   ],
   exports: [JwtStrategy],
   imports: [

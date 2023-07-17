@@ -1,14 +1,15 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
+import { tabelas } from './tabelas';
 
 export const EmployeeSeed = async (prisma: PrismaClient) => {
+  await prisma.user_Tenant_DashBoard.deleteMany();
+  await prisma.tenant_DashBoard.deleteMany();
+  await prisma.dashBoard.deleteMany();
   await prisma.user_Auth.deleteMany();
   await prisma.client.deleteMany();
   await prisma.user.deleteMany();
   await prisma.tenant.deleteMany();
   await prisma.rls.deleteMany();
-  await prisma.dashBoard.deleteMany();
-  await prisma.user_Tenant_DashBoard.deleteMany();
-  await prisma.tenant_DashBoard.deleteMany();
 
   const setup = async () => {
     await prisma.rls.createMany({
@@ -67,21 +68,34 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
         },
       ],
     });
+    const arrayDeReports = [
+      {
+        type: 'GV',
+        report_id: '7b71c89f-1d23-4d57-a99c-369f0ae8b5d1',
+        group_id: 'c807ca26-3f93-463d-aa15-9a12e48174ba',
+        name: 'Gestão de Vulnerabilidades',
+      },
+      {
+        type: 'FUNCIONARIOS',
+        report_id: 'c7abe36b-80db-4a46-aba4-7fb9c950ce4f',
+        group_id: '5183bd8a-aa61-4c1d-82cb-0b4caec4f48d',
+        name: 'Funcionários',
+      },
+    ];
     await prisma.dashBoard.createMany({
-      data: [
-        {
-          type: 'GV',
-          report_id: '7b71c89f-1d23-4d57-a99c-369f0ae8b5d1',
-          group_id: 'c807ca26-3f93-463d-aa15-9a12e48174ba',
-          name: 'GV',
-        },
-      ],
+      data: arrayDeReports,
     });
+
     await prisma.tenant_DashBoard.createMany({
       data: [
         {
           id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
           dashboard_id: '7b71c89f-1d23-4d57-a99c-369f0ae8b5d1',
+          tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
+        },
+        {
+          id: 'e626971a-6773-4d83-bae5-ff7352667b7a',
+          dashboard_id: 'c7abe36b-80db-4a46-aba4-7fb9c950ce4f',
           tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
         },
       ],
@@ -90,6 +104,10 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
       data: [
         {
           tenant_DashBoard_id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
+          user_id: 'ffe81a3c-6d52-4cf3-bbc1-b655b7281a1b',
+        },
+        {
+          tenant_DashBoard_id: 'e626971a-6773-4d83-bae5-ff7352667b7a',
           user_id: 'ffe81a3c-6d52-4cf3-bbc1-b655b7281a1b',
         },
       ],
