@@ -23,7 +23,6 @@ export class Token {
     this.contact_email = contact_email;
     this.role_id = rls.id;
     this.role_name = rls.name;
-    this.role_value = rls.value;
     this.tenant_id = tenant_id;
   }
 }

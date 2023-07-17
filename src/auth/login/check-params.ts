@@ -21,7 +21,6 @@ export class ValidateLoginMiddleware implements NestMiddleware {
     if (req.method === 'POST') {
       try {
         const user = await this.userAuthService.getUserAuth(req.body.email);
-        console.log(user);
         if (user === null) throw Error('Usuário Inválido');
         if (user.User === null) throw Error('Usuário Inativo');
       } catch (e) {
@@ -46,5 +45,6 @@ export class ValidateLoginMiddleware implements NestMiddleware {
         });
       }
     }
+    next();
   }
 }

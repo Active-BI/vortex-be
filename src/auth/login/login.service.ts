@@ -17,32 +17,34 @@ export class LoginService {
     private userAuthService: UserAuthService,
   ) {}
 
-  async getUser(login) {
+  async getUserAuth(login) {
     const user = await this.userAuthService.getUserAuth(login.email);
     if (!user) throw new BadRequestException('Usuário não existe');
     return user;
   }
 
   async checkPass(login: CreateLoginDto) {
-    const user = await this.getUser(login);
-
-    const isHashTrue = await bcrypt.compare(login.password, user.password_hash);
+    const user_auth = await this.getUserAuth(login);
+    const isHashTrue = await bcrypt.compare(
+      login.password,
+      user_auth.password_hash,
+    );
 
     if (!isHashTrue) throw new ForbiddenException('Senha inválida');
 
     const tokenObj = new Token(
-      user.id,
-      user.name,
-      user.contact_email,
-      user.personal_email,
-      user.User.Rls,
-      user.User.tenant_id,
+      user_auth.id,
+      user_auth.User.name,
+      user_auth.User.contact_email,
+      user_auth.User.personal_email,
+      user_auth.User.Rls,
+      user_auth.User.tenant_id,
     );
 
     var token = await this.jwtStrategy.signToken(tokenObj);
 
-    delete user.User;
-    await this.setLastAccess(user as User_Auth);
+    delete user_auth.User;
+    await this.setLastAccess(user_auth as User_Auth);
 
     return { token };
   }

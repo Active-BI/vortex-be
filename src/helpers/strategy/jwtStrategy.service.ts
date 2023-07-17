@@ -20,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       { ...paylaod },
       {
         secret: process.env['JWT_SECRET'],
-        expiresIn: 3000,
+        expiresIn: '24h',
       },
     );
   }
@@ -29,7 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       { ...paylaod },
       {
         secret: process.env['JWT_TEMP_SECRET'],
-        expiresIn: 3000,
+        expiresIn: '24h',
       },
     );
   }

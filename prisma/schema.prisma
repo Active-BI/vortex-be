@@ -9,48 +9,47 @@ datasource db {
 }
 
 model Rls {
-  id    String @id @default(uuid()) @db.Uuid
-  name  String
-  value Int
-  User  User[]
+  id        String @id @default(uuid()) @db.Uuid
+  name      String
+  User_Auth User[]
 }
 
 model Tenant {
-  id          String    @id @default(uuid()) @db.Uuid
-  tenant_name String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  Client      Client[]
-  User        User[]
-  RH_data     RH_data[]
+  id               String             @id @default(uuid()) @db.Uuid
+  tenant_name      String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  Client           Client[]
+  User             User[]
+  // RH_data     Rh_data[]
+  Tenant_DashBoard Tenant_DashBoard[]
 }
 
 model User_Auth {
-  id             String   @id @default(uuid()) @db.Uuid
-  secret         String
-  reset_pass     String
-  password_hash  String
-  name           String
-  personal_email String?
-  contact_email  String
-  last_access    DateTime @db.Timestamptz()
-  user_id        String   @db.Uuid
-  User           User     @relation(fields: [user_id], references: [id])
+  id                        String    @id @default(uuid()) @db.Uuid
+  secret                    String?
+  reset_pass                String?
+  password_hash             String?
+  normalized_personal_email String
+  last_access               DateTime? @db.Timestamptz()
+  user_id                   String    @db.Uuid
+  User                      User      @relation(fields: [user_id], references: [id])
 }
 
 model User {
-  id             String      @id @default(uuid()) @db.Uuid
-  nome           String
-  born_date      DateTime    @db.Date
+  id             String           @id @default(uuid()) @db.Uuid
+  name           String
+  born_date      DateTime         @db.Date
   personal_email String
   contact_email  String
   profession     String
   description    String
-  tenant_id      String      @db.Uuid
-  Tenant         Tenant      @relation(fields: [tenant_id], references: [id])
-  rls_id         String      @db.Uuid
-  Rls            Rls         @relation(fields: [rls_id], references: [id])
+  tenant_id      String           @db.Uuid
+  Tenant         Tenant           @relation(fields: [tenant_id], references: [id])
+  rls_id         String           @db.Uuid
+  Rls            Rls              @relation(fields: [rls_id], references: [id])
   User_Auth      User_Auth[]
+  User_DashBoard User_DashBoard[]
 }
 
 model Client {
@@ -66,27 +65,25 @@ model Client {
   Tenant        Tenant   @relation(fields: [tenant_id], references: [id])
 }
 
-model RH_data {
-  id                  String    @id @default(uuid()) @db.Uuid
-  nomeEmpresa         String
-  matricula           String
-  nome                String
-  cargos              String
-  dataAdmissao        DateTime
-  area                String
-  salario             Float
-  sexo                String
-  cutis               String
-  dataNascimento      DateTime
-  email               String
-  vinculoEmpregaticio String
-  situacaoEmpregado   String
-  grauInstrucao       String
-  pcd                 Boolean
-  desligado           Boolean
-  dataDesligamento    DateTime?
-  motivoDesligamento  String?
+model DashBoard {
+  id               String             @id @default(uuid()) @db.Uuid
+  name             String
+  Tenant_DashBoard Tenant_DashBoard[]
+}
 
-  tenant_id String @db.Uuid
-  Tenant    Tenant @relation(fields: [tenant_id], references: [id])
+model Tenant_DashBoard {
+  id             String           @id @default(uuid()) @db.Uuid
+  tenant_id      String           @db.Uuid
+  Tenant         Tenant           @relation(fields: [tenant_id], references: [id])
+  dashboard_id   String           @db.Uuid
+  Dashboard      DashBoard        @relation(fields: [dashboard_id], references: [id])
+  User_DashBoard User_DashBoard[]
+}
+
+model User_DashBoard {
+  id                  String           @id @default(uuid()) @db.Uuid
+  tenant_DashBoard_id String           @db.Uuid
+  Tenant_DashBoard    Tenant_DashBoard @relation(fields: [tenant_DashBoard_id], references: [id])
+  user_id             String           @db.Uuid
+  User                User             @relation(fields: [user_id], references: [id])
 }

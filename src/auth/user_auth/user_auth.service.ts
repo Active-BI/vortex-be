@@ -27,10 +27,14 @@ export class UserAuthService {
   async getUserAuth(email: string) {
     return this.prisma.user_Auth.findFirst({
       where: {
-        contact_email: email,
+        normalized_personal_email: email.toUpperCase(),
       },
       include: {
-        User: { include: { Rls: true } },
+        User: {
+          include: {
+            Rls: true,
+          },
+        },
       },
     });
   }

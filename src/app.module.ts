@@ -13,9 +13,16 @@ import { UserAuthController } from './auth/user_auth/user_auth.controller';
 import { UserAuthService } from './auth/user_auth/user_auth.service';
 import { PrismaService } from 'prisma/prisma.service';
 import { MiddlewareResolver } from './middlwareResolve';
+import { UserService } from './app/user/user.service';
+import { UserController } from './app/user/user.controller';
 
 @Module({
-  controllers: [AppController, LoginController, UserAuthController],
+  controllers: [
+    AppController,
+    LoginController,
+    UserAuthController,
+    UserController,
+  ],
   providers: [
     PrismaService,
     AppService,
@@ -26,6 +33,7 @@ import { MiddlewareResolver } from './middlwareResolve';
     JwtGuard,
     LoginService,
     UserAuthService,
+    UserService,
   ],
   exports: [JwtStrategy],
   imports: [
