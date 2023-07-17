@@ -6,7 +6,7 @@ import { PrismaService } from 'prisma/prisma.service';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async getUser(email: string): Promise<User> {
+  async getUser(email: string) {
     return this.prisma.user.findFirst({
       where: {
         contact_email: email.toUpperCase(),

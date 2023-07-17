@@ -7,7 +7,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
   await prisma.tenant.deleteMany();
   await prisma.rls.deleteMany();
   await prisma.dashBoard.deleteMany();
-  await prisma.user_DashBoard.deleteMany();
+  await prisma.user_Tenant_DashBoard.deleteMany();
   await prisma.tenant_DashBoard.deleteMany();
 
   const setup = async () => {
@@ -63,6 +63,33 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           secret: null,
           password_hash:
             '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
+          user_id: 'ffe81a3c-6d52-4cf3-bbc1-b655b7281a1b',
+        },
+      ],
+    });
+    await prisma.dashBoard.createMany({
+      data: [
+        {
+          type: 'GV',
+          report_id: '7b71c89f-1d23-4d57-a99c-369f0ae8b5d1',
+          group_id: 'c807ca26-3f93-463d-aa15-9a12e48174ba',
+          name: 'GV',
+        },
+      ],
+    });
+    await prisma.tenant_DashBoard.createMany({
+      data: [
+        {
+          id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
+          dashboard_id: '7b71c89f-1d23-4d57-a99c-369f0ae8b5d1',
+          tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
+        },
+      ],
+    });
+    await prisma.user_Tenant_DashBoard.createMany({
+      data: [
+        {
+          tenant_DashBoard_id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
           user_id: 'ffe81a3c-6d52-4cf3-bbc1-b655b7281a1b',
         },
       ],

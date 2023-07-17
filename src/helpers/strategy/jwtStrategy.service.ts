@@ -34,8 +34,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     );
   }
   async validate(payload) {
-    return {
-      ...payload,
-    };
+    try {
+      const decoded = await this.jwtService.verifyAsync(payload, {
+        secret: process.env['JWT_SECRET'],
+      });
+
+      return decoded;
+    } catch (e) {
+      return false;
+    }
   }
 }

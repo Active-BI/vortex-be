@@ -15,6 +15,9 @@ import { PrismaService } from 'prisma/prisma.service';
 import { MiddlewareResolver } from './middlwareResolve';
 import { UserService } from './app/user/user.service';
 import { UserController } from './app/user/user.controller';
+import { PbiReportController } from './app/pbi-report/pbi-report.controller';
+import { PbiReportService } from './app/pbi-report/pbi-report.service';
+import { MsalService } from './services/msal.service';
 
 @Module({
   controllers: [
@@ -22,6 +25,7 @@ import { UserController } from './app/user/user.controller';
     LoginController,
     UserAuthController,
     UserController,
+    PbiReportController,
   ],
   providers: [
     PrismaService,
@@ -34,6 +38,8 @@ import { UserController } from './app/user/user.controller';
     LoginService,
     UserAuthService,
     UserService,
+    PbiReportService,
+    MsalService,
   ],
   exports: [JwtStrategy],
   imports: [

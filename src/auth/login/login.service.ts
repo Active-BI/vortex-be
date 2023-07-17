@@ -33,7 +33,7 @@ export class LoginService {
     if (!isHashTrue) throw new ForbiddenException('Senha inválida');
 
     const tokenObj = new Token(
-      user_auth.id,
+      user_auth.User.id,
       user_auth.User.name,
       user_auth.User.contact_email,
       user_auth.User.personal_email,

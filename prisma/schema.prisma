@@ -37,19 +37,19 @@ model User_Auth {
 }
 
 model User {
-  id             String           @id @default(uuid()) @db.Uuid
-  name           String
-  born_date      DateTime         @db.Date
-  personal_email String
-  contact_email  String
-  profession     String
-  description    String
-  tenant_id      String           @db.Uuid
-  Tenant         Tenant           @relation(fields: [tenant_id], references: [id])
-  rls_id         String           @db.Uuid
-  Rls            Rls              @relation(fields: [rls_id], references: [id])
-  User_Auth      User_Auth[]
-  User_DashBoard User_DashBoard[]
+  id                    String                  @id @default(uuid()) @db.Uuid
+  name                  String
+  born_date             DateTime                @db.Date
+  personal_email        String
+  contact_email         String
+  profession            String
+  description           String
+  tenant_id             String                  @db.Uuid
+  Tenant                Tenant                  @relation(fields: [tenant_id], references: [id])
+  rls_id                String                  @db.Uuid
+  Rls                   Rls                     @relation(fields: [rls_id], references: [id])
+  User_Auth             User_Auth[]
+  User_Tenant_DashBoard User_Tenant_DashBoard[]
 }
 
 model Client {
@@ -66,21 +66,23 @@ model Client {
 }
 
 model DashBoard {
-  id               String             @id @default(uuid()) @db.Uuid
+  report_id        String             @id @default(uuid()) @db.Uuid
   name             String
+  type             String
+  group_id         String
   Tenant_DashBoard Tenant_DashBoard[]
 }
 
 model Tenant_DashBoard {
-  id             String           @id @default(uuid()) @db.Uuid
-  tenant_id      String           @db.Uuid
-  Tenant         Tenant           @relation(fields: [tenant_id], references: [id])
-  dashboard_id   String           @db.Uuid
-  Dashboard      DashBoard        @relation(fields: [dashboard_id], references: [id])
-  User_DashBoard User_DashBoard[]
+  id                    String                  @id @default(uuid()) @db.Uuid
+  tenant_id             String                  @db.Uuid
+  Tenant                Tenant                  @relation(fields: [tenant_id], references: [id])
+  dashboard_id          String                  @db.Uuid
+  Dashboard             DashBoard               @relation(fields: [dashboard_id], references: [report_id])
+  user_Tenant_DashBoard User_Tenant_DashBoard[]
 }
 
-model User_DashBoard {
+model User_Tenant_DashBoard {
   id                  String           @id @default(uuid()) @db.Uuid
   tenant_DashBoard_id String           @db.Uuid
   Tenant_DashBoard    Tenant_DashBoard @relation(fields: [tenant_DashBoard_id], references: [id])
