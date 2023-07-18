@@ -41,7 +41,6 @@ export class UserAuthService {
   }
 
   async update(user: User_Auth) {
-    console.log(user.id, user.user_id);
     await this.prisma.user_Auth.update({
       where: { user_id: user.user_id },
       data: {

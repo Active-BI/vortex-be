@@ -20,6 +20,8 @@ import { PbiReportService } from './app/pbi-report/pbi-report.service';
 import { MsalService } from './services/msal.service';
 import { ArquivosController } from './app/arquivos/arquivos.controller';
 import { ArquivosService } from './app/arquivos/arquivos.service';
+import { DashboardController } from './app/dashboard/dashboard.controller';
+import { DashboardService } from './app/dashboard/dashboard.service';
 
 @Module({
   controllers: [
@@ -29,6 +31,7 @@ import { ArquivosService } from './app/arquivos/arquivos.service';
     UserController,
     PbiReportController,
     ArquivosController,
+    DashboardController,
   ],
   providers: [
     PrismaService,
@@ -44,6 +47,7 @@ import { ArquivosService } from './app/arquivos/arquivos.service';
     PbiReportService,
     MsalService,
     ArquivosService,
+    DashboardService,
   ],
   exports: [JwtStrategy],
   imports: [
