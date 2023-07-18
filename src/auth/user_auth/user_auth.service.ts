@@ -27,7 +27,7 @@ export class UserAuthService {
   async getUserAuth(email: string) {
     return this.prisma.user_Auth.findFirst({
       where: {
-        normalized_personal_email: email.toUpperCase(),
+        normalized_contact_email: email.toUpperCase(),
       },
       include: {
         User: {

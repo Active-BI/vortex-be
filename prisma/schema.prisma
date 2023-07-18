@@ -27,21 +27,21 @@ model Tenant {
 }
 
 model User_Auth {
-  id                        String    @id @default(uuid()) @db.Uuid
-  secret                    String?
-  reset_pass                String?
-  password_hash             String?
-  normalized_personal_email String
-  last_access               DateTime? @db.Timestamptz()
-  user_id                   String    @db.Uuid
-  User                      User      @relation(fields: [user_id], references: [id])
+  id                       String    @id @default(uuid()) @db.Uuid
+  secret                   String?
+  reset_pass               String?
+  password_hash            String?
+  normalized_contact_email String?
+  last_access              DateTime? @db.Timestamptz()
+  user_id                  String    @db.Uuid
+  User                     User      @relation(fields: [user_id], references: [id])
 }
 
 model User {
   id                    String                  @id @default(uuid()) @db.Uuid
   name                  String
-  born_date             DateTime                @db.Date
-  personal_email        String
+  born_date             DateTime?               @db.Date
+  personal_email        String?
   contact_email         String
   profession            String
   description           String
