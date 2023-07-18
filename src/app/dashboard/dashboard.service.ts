@@ -8,12 +8,16 @@ export class DashboardService {
     const tenantDash = await this.prisma.tenant_DashBoard.findMany({
       where: {
         tenant_id,
-        id: {
-          in: tenantDashBoard,
+        AND: {
+          id: {
+            in: tenantDashBoard,
+          },
         },
       },
     });
-
+    await this.prisma.user_Tenant_DashBoard.deleteMany({
+      where: { user_id },
+    });
     await this.prisma.user_Tenant_DashBoard.createMany({
       data: tenantDash.map((td) => ({
         tenant_DashBoard_id: td.id,
@@ -21,8 +25,8 @@ export class DashboardService {
       })),
     });
   }
-  getAllDashboards(tenant_id) {
-    this.prisma.tenant_DashBoard.findMany({
+  async getAllDashboards(tenant_id) {
+    return await this.prisma.tenant_DashBoard.findMany({
       where: {
         tenant_id,
       },

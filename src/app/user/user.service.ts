@@ -28,6 +28,7 @@ export class UserService {
         Rls: true,
         User_Auth: true,
         Tenant: true,
+        User_Tenant_DashBoard: true,
       },
     });
   }

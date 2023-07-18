@@ -5,18 +5,19 @@ import { DashboardService } from './dashboard.service';
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
   @Get()
-  getAllDashboards(@Req() req) {
+  async getAllDashboards(@Req() req) {
     const { tenant_id } = req.tokenData;
-    this.dashboardService.getAllDashboards(tenant_id);
+    return await this.dashboardService.getAllDashboards(tenant_id);
   }
 
   @Post()
   setDashboardUser(@Req() req, @Body() body) {
-    const { DashboardUserList, user_id } = body;
-    const { tenant_id } = req.tokenData;
+    const { DashboardUserList } = body;
+    console.log(DashboardUserList);
+    const { tenant_id, userId } = req.tokenData;
     this.dashboardService.setDashboardUser(
       DashboardUserList,
-      user_id,
+      userId,
       tenant_id,
     );
   }
