@@ -12,6 +12,8 @@ export class UserService {
       },
       include: {
         Rls: true,
+        User_Auth: true,
+        Tenant: true,
       },
     });
   }

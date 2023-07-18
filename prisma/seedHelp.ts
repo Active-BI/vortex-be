@@ -107,7 +107,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           secret: null,
           password_hash:
             '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
-          user_id: '16ea8f63-c5de-4c87-94bc-7140493eaab2',
+          user_id: 'a0d8b88b-97b5-40b8-a790-3d3dac9b13be',
         },
         {
           id: '95a98bee-77f8-492e-afc8-4dcd6d942eef',
