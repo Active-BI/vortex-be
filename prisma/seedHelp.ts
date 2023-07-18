@@ -71,14 +71,14 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
     const arrayDeReports = [
       {
         type: 'GV',
-        report_id: '7b71c89f-1d23-4d57-a99c-369f0ae8b5d1',
+        report_id: '45a13215-b9f6-47d8-9e87-123035001387',
         group_id: 'c807ca26-3f93-463d-aa15-9a12e48174ba',
         name: 'Gestão de Vulnerabilidades',
       },
       {
-        type: 'FUNCIONARIOS',
-        report_id: 'c7abe36b-80db-4a46-aba4-7fb9c950ce4f',
-        group_id: '5183bd8a-aa61-4c1d-82cb-0b4caec4f48d',
+        type: 'RH_FUNCIONARIOS',
+        report_id: '7b71c89f-1d23-4d57-a99c-369f0ae8b5d1',
+        group_id: 'c807ca26-3f93-463d-aa15-9a12e48174ba',
         name: 'Funcionários',
       },
     ];
@@ -95,7 +95,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
         },
         {
           id: 'e626971a-6773-4d83-bae5-ff7352667b7a',
-          dashboard_id: 'c7abe36b-80db-4a46-aba4-7fb9c950ce4f',
+          dashboard_id: '45a13215-b9f6-47d8-9e87-123035001387',
           tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
         },
       ],

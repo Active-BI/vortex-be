@@ -31,7 +31,6 @@ export class ArquivosController {
   async ExportarDadosMockados(
     @Res() response,
     @Req() req,
-    @Headers('authorization') authorization: string,
     @Param('tipoRelatorio') tipoRelatorio,
   ) {
     const { tenant_id } = req.tokenData;

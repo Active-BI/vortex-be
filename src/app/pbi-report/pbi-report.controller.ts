@@ -27,11 +27,7 @@ export class PbiReportController {
     private jwtService: JwtService,
   ) {}
   @Get('type/:type')
-  async ReportByTYpe(
-    @Param('type') type,
-    @Req() req,
-    @Headers('authorization') authorization: string,
-  ): Promise<any> {
+  async ReportByTYpe(@Param('type') type, @Req() req): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
     const userDashboard = await this.prisma.user_Tenant_DashBoard.findFirst({
       where: {
@@ -45,6 +41,7 @@ export class PbiReportController {
       },
       include: { Tenant_DashBoard: { include: { Dashboard: true } } },
     });
+    console.log(userDashboard);
     if (!userDashboard) throw new BadRequestException('Report não encontrado');
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/reports/${userDashboard.Tenant_DashBoard.Dashboard.report_id}`;
 
@@ -60,7 +57,6 @@ export class PbiReportController {
       if (!res.ok) throw res;
       return res.json();
     });
-    console.log(result);
     const reportDetails = new PowerBiReportDetails(
       result.id,
       result.name,
@@ -84,17 +80,16 @@ export class PbiReportController {
       );
     return reportEmbedConfig;
   }
-  @Get(':workspaceId/:reportId')
+  @Get(':reportId/:workspaceId')
   async Report(
     @Param('workspaceId') workspaceId,
     @Param('reportId') reportId,
     @Req() req,
   ): Promise<any> {
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${workspaceId}/reports/${reportId}`;
-
-    // header é o objeto onde está o accessToken
     const { userId, tenant_id, role_name } = req.tokenData;
 
+    // header é o objeto onde está o accessToken
     const headers = await this.msalService.getRequestHeader(
       tenant_id,
       role_name,
@@ -135,7 +130,7 @@ export class PbiReportController {
     datasetIds,
     targetWorkspaceId,
     user,
-    header: any,
+    header,
   ) {
     const formData = {
       accessLevel: 'View',
@@ -171,7 +166,7 @@ export class PbiReportController {
       });
     }
 
-    // // Generate Embed token for single report, workspace, and multiple datasets. Refer https://aka.ms/MultiResourceEmbedToken
+    // Generate Embed token for single report, workspace, and multiple datasets. Refer https://aka.ms/MultiResourceEmbedToken
     const embedTokenApi = `https://api.powerbi.com/v1.0/myorg/groups/${targetWorkspaceId}/reports/${reportId}/GenerateToken`;
     return await fetch(embedTokenApi, {
       method: 'POST',
