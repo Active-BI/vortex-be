@@ -25,6 +25,25 @@ export class DashboardService {
       })),
     });
   }
+  async getAllDashboardsByUser(user_id, tenant_id) {
+    return await this.prisma.user_Tenant_DashBoard.findMany({
+      where: {
+        user_id,
+        AND: {
+          Tenant_DashBoard: {
+            tenant_id,
+          },
+        },
+      },
+      include: {
+        Tenant_DashBoard: {
+          include: {
+            Dashboard: true,
+          },
+        },
+      },
+    });
+  }
   async getAllDashboards(tenant_id) {
     return await this.prisma.tenant_DashBoard.findMany({
       where: {

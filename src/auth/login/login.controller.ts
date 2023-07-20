@@ -22,4 +22,14 @@ export class LoginController {
       throw new UnauthorizedException(e.message);
     }
   }
+  @BypassAuth()
+  @Post('register')
+  async Register(@Body() body: CreateLoginDto) {
+    try {
+      const token = await this.loginService.register(body);
+      return token;
+    } catch (e) {
+      throw new UnauthorizedException(e.message);
+    }
+  }
 }

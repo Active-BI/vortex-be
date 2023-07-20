@@ -19,9 +19,7 @@ model Tenant {
   tenant_name       String
   createdAt         DateTime                @default(now())
   updatedAt         DateTime                @updatedAt
-  // Client            Client[]
   User              User[]
-  // RH_data     Rh_data[]
   Tenant_DashBoard  Tenant_DashBoard[]
   funionarios_table rh_funcionarios_table[]
 }
@@ -31,6 +29,7 @@ model User_Auth {
   secret                   String?
   reset_pass               String?
   password_hash            String?
+  anchor                   Boolean
   normalized_contact_email String?
   last_access              DateTime? @db.Timestamptz()
   user_id                  String    @unique @db.Uuid
@@ -41,30 +40,17 @@ model User {
   id                    String                  @id @default(uuid()) @db.Uuid
   name                  String
   born_date             DateTime?               @db.Date
-  personal_email        String?
+  personal_email        String?                 @unique
   contact_email         String
   profession            String
   description           String
-  tenant_id             String                  @db.Uuid
-  Tenant                Tenant                  @relation(fields: [tenant_id], references: [id])
+  tenant_id             String?                 @db.Uuid
+  Tenant                Tenant?                 @relation(fields: [tenant_id], references: [id])
   rls_id                String                  @db.Uuid
   Rls                   Rls                     @relation(fields: [rls_id], references: [id])
   User_Tenant_DashBoard User_Tenant_DashBoard[]
   User_Auth             User_Auth?
 }
-
-// model Client {
-//   id            String   @id @default(uuid()) @db.Uuid
-//   name          String
-//   social_name   String
-//   cnpj          String
-//   contact_email String
-//   Telefone      String
-//   createdAt     DateTime @default(now())
-//   updatedAt     DateTime @updatedAt
-//   tenant_id     String   @db.Uuid
-//   Tenant        Tenant   @relation(fields: [tenant_id], references: [id])
-// }
 
 model DashBoard {
   report_id        String             @id @default(uuid()) @db.Uuid

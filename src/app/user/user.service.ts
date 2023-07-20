@@ -22,7 +22,9 @@ export class UserService {
     return await this.prisma.user.findFirst({
       where: {
         id: userId,
-        tenant_id,
+        AND: {
+          tenant_id,
+        },
       },
       include: {
         Rls: true,
@@ -40,12 +42,12 @@ export class UserService {
   }
   async createUser(user, tenant_id: string) {
     let uuid = uuidv4();
-    console.log(user);
     await this.prisma.user.create({
       data: {
         id: uuid,
         name: user.name,
         contact_email: user.email,
+        personal_email: user.email,
         profession: user.profession,
         description: user.description,
         tenant_id,
@@ -58,6 +60,7 @@ export class UserService {
         user_id: uuid,
       },
     });
+    return { user_id: uuid };
   }
 
   async getUser(email: string) {
@@ -72,7 +75,12 @@ export class UserService {
   }
 
   async deleteUser(id: string) {
-    await this.prisma.user_Auth.delete({
+    await this.prisma.user_Tenant_DashBoard.deleteMany({
+      where: {
+        user_id: id,
+      },
+    });
+    await this.prisma.user_Auth.deleteMany({
       where: {
         user_id: id,
       },

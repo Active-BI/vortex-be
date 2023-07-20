@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Token } from 'src/helpers/token';
 import * as bcrypt from 'bcrypt';
@@ -9,12 +10,14 @@ import { CreateLoginDto } from './login.controller';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
 import { UserAuthService } from '../user_auth/user_auth.service';
 import { User_Auth } from '@prisma/client';
+import { DashboardService } from 'src/app/dashboard/dashboard.service';
 
 @Injectable()
 export class LoginService {
   constructor(
     private jwtStrategy: JwtStrategy,
     private userAuthService: UserAuthService,
+    private dashboardService: DashboardService,
   ) {}
 
   async getUserAuth(login) {
@@ -31,7 +34,10 @@ export class LoginService {
     );
 
     if (!isHashTrue) throw new ForbiddenException('Senha inválida');
-
+    const dashboardUser = await this.dashboardService.getAllDashboardsByUser(
+      user_auth.User.id,
+      user_auth.User.tenant_id,
+    );
     const tokenObj = new Token(
       user_auth.User.id,
       user_auth.User.name,
@@ -39,6 +45,7 @@ export class LoginService {
       user_auth.User.personal_email,
       user_auth.User.Rls,
       user_auth.User.tenant_id,
+      dashboardUser,
     );
 
     var token = await this.jwtStrategy.signToken(tokenObj);
@@ -50,5 +57,14 @@ export class LoginService {
   }
   setLastAccess(user: User_Auth) {
     this.userAuthService.update({ ...user, last_access: new Date() });
+  }
+
+  async register(login: CreateLoginDto) {
+    const user = await this.userAuthService.getUserAuth(login.email);
+    if (!user) {
+      throw new UnauthorizedException('Usuário não está pré-cadastrado');
+    }
+    const passwordHash = bcrypt.hashSync(login.password, 10);
+    this.userAuthService.update({ ...user, password_hash: passwordHash });
   }
 }

@@ -1,12 +1,10 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-// import { tabelas } from './tabelas';
 
 export const EmployeeSeed = async (prisma: PrismaClient) => {
   await prisma.user_Tenant_DashBoard.deleteMany();
   await prisma.tenant_DashBoard.deleteMany();
   await prisma.dashBoard.deleteMany();
   await prisma.user_Auth.deleteMany();
-  await prisma.client.deleteMany();
   await prisma.user.deleteMany();
   await prisma.tenant.deleteMany();
   await prisma.rls.deleteMany();
@@ -21,6 +19,10 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
         {
           name: 'Admin',
           id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
+        },
+        {
+          name: 'Master',
+          id: '41dd767c-45d6-437d-9ccb-9a4987e07505',
         },
       ],
     });
@@ -42,6 +44,16 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
     await prisma.user.createMany({
       data: [
         {
+          id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',
+          contact_email: 'teste@t1master.com.br',
+          name: 'teste master',
+          born_date: new Date(),
+          description: 'description master',
+          personal_email: 'teste@t1master.com.br',
+          profession: 'master',
+          rls_id: '41dd767c-45d6-437d-9ccb-9a4987e07505',
+        },
+        {
           id: 'ffe81a3c-6d52-4cf3-bbc1-b655b7281a1b',
           contact_email: 'teste@t1user.com.br',
           name: 'teste user',
@@ -58,7 +70,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           name: 'teste admin',
           born_date: new Date(),
           description: 'description admin',
-          personal_email: 'teste@testeuser.com.br',
+          personal_email: 'teste@t1admin.com.br',
           profession: 'profession admin',
           tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
           rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
@@ -66,7 +78,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
         {
           id: '93c408f1-b527-4098-937a-cade4de4ae5d',
           contact_email: 'teste@t2user.com.br',
-          name: 'teste user',
+          name: 'teste user 2',
           born_date: new Date(),
           description: 'description user',
           personal_email: 'teste@t2user.com.br',
@@ -77,7 +89,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
         {
           id: '16ea8f63-c5de-4c87-94bc-7140493eaab2',
           contact_email: 'admin@t2admin.com.br',
-          name: 'teste admin',
+          name: 'teste admin 2',
           born_date: new Date(),
           description: 'description admin',
           personal_email: 'teste@t2admin.com.br',
@@ -89,6 +101,16 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
     });
     await prisma.user_Auth.createMany({
       data: [
+        {
+          id: '5c0ab3de-2214-4f49-bbee-a9e8ad3ef6a3',
+          normalized_contact_email: 'TESTE@T1MASTER.COM.BR',
+          last_access: null,
+          reset_pass: null,
+          secret: null,
+          password_hash:
+            '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
+          user_id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',
+        },
         {
           id: '6ea9ee12-2651-415e-860b-032b5febaaeb',
           normalized_contact_email: 'TESTE@T1USER.COM.BR',
@@ -144,6 +166,12 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
         group_id: 'c807ca26-3f93-463d-aa15-9a12e48174ba',
         name: 'Funcionários',
       },
+      {
+        type: 'USUARIOS',
+        report_id: 'a4980e1a-6cf3-460f-9e25-a206bca62c79',
+        group_id: '',
+        name: 'Usuários',
+      },
     ];
     await prisma.dashBoard.createMany({
       data: arrayDeReports,
@@ -162,6 +190,11 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
         },
         {
+          id: '891e9633-6e1c-47ab-abdc-f736cce00347',
+          dashboard_id: 'a4980e1a-6cf3-460f-9e25-a206bca62c79',
+          tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
+        },
+        {
           id: '9a61a886-8126-4d7d-b433-eb7dd41a9939',
           dashboard_id: '45a13215-b9f6-47d8-9e87-123035001387',
           tenant_id: 'fe4cec7c-d476-4389-9c57-4be40ada2016',
@@ -170,17 +203,17 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
     });
     await prisma.user_Tenant_DashBoard.createMany({
       data: [
+        // {
+        //   tenant_DashBoard_id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
+        //   user_id: 'a0d8b88b-97b5-40b8-a790-3d3dac9b13be',
+        // },
+        // {
+        //   tenant_DashBoard_id: 'e626971a-6773-4d83-bae5-ff7352667b7a',
+        //   user_id: 'a0d8b88b-97b5-40b8-a790-3d3dac9b13be',
+        // },
         {
-          tenant_DashBoard_id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
-          user_id: 'ffe81a3c-6d52-4cf3-bbc1-b655b7281a1b',
-        },
-        {
-          tenant_DashBoard_id: 'e626971a-6773-4d83-bae5-ff7352667b7a',
-          user_id: 'ffe81a3c-6d52-4cf3-bbc1-b655b7281a1b',
-        },
-        {
-          tenant_DashBoard_id: 'e626971a-6773-4d83-bae5-ff7352667b7a',
-          user_id: '16ea8f63-c5de-4c87-94bc-7140493eaab2',
+          tenant_DashBoard_id: '891e9633-6e1c-47ab-abdc-f736cce00347',
+          user_id: 'a0d8b88b-97b5-40b8-a790-3d3dac9b13be',
         },
       ],
     });

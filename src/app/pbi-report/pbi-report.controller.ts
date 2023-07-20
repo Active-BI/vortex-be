@@ -41,7 +41,7 @@ export class PbiReportController {
       },
       include: { Tenant_DashBoard: { include: { Dashboard: true } } },
     });
-    console.log(userDashboard);
+
     if (!userDashboard) throw new BadRequestException('Report não encontrado');
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/reports/${userDashboard.Tenant_DashBoard.Dashboard.report_id}`;
 

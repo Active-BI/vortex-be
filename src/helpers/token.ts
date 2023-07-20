@@ -9,6 +9,7 @@ export class Token {
   role_id: string;
   role_name: string;
   role_value: number;
+  dashboardUser: any[];
   constructor(
     userId,
     name,
@@ -16,6 +17,7 @@ export class Token {
     personal_email,
     rls: Rls,
     tenant_id,
+    dashboardUser,
   ) {
     this.userId = userId;
     this.name = name;
@@ -24,6 +26,7 @@ export class Token {
     this.role_id = rls.id;
     this.role_name = rls.name;
     this.tenant_id = tenant_id;
+    this.dashboardUser = dashboardUser;
   }
 }
 export class TempToken {
