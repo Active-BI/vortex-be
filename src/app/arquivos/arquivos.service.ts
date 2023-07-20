@@ -19,43 +19,4 @@ export class ArquivosService {
     const tenant_id = (token as Token).tenant_id;
     return await this.prisma.tenant.findMany({ where: { id: tenant_id } });
   }
-
-  async exportDataAnalysis(tenant_id, tipoRelatorio: string) {
-    console.log({ tenant_id, tipoRelatorio });
-    const data = await this.prisma[
-      tipoRelatorio.toLocaleLowerCase() + '_table'
-    ].findMany({
-      where: {
-        tenant_id,
-      },
-      orderBy: {
-        timestamp: 'asc',
-      },
-    });
-
-    return data;
-  }
-  //   async importDataAnalysis(dados: string, bearerToken: string): Promise<void> {
-  //     const token = this.jwtService.decode(bearerToken);
-  //     const tenant_id = (token as Token).tenant_id;
-  //     const dashboardTanant = await this.prisma.dashBoard_Tenant.findFirst({
-  //       where: {
-  //         tenant_id: { equals: tenant_id },
-  //         AND: {
-  //           DashBoard: { tipo: (dados as any).tipo },
-  //         },
-  //       },
-  //     });
-  //     await this.prisma.dataAnalysis.deleteMany({
-  //       where: { dashBoard_Tenant: dashboardTanant.id },
-  //     });
-  //     const dadosFormatados = (dados as any).payload.map((dado) => ({
-  //       ...dado,
-  //       dashBoard_Tenant: dashboardTanant.id,
-  //     }));
-
-  //     await this.prisma.dataAnalysis.createMany({
-  //       data: dadosFormatados,
-  //     });
-  //   }
 }

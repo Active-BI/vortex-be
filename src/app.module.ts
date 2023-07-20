@@ -22,6 +22,7 @@ import { ArquivosController } from './app/arquivos/arquivos.controller';
 import { ArquivosService } from './app/arquivos/arquivos.service';
 import { DashboardController } from './app/dashboard/dashboard.controller';
 import { DashboardService } from './app/dashboard/dashboard.service';
+import { TemplateHandlerService } from './services/templateHandler.service';
 
 @Module({
   controllers: [
@@ -48,6 +49,7 @@ import { DashboardService } from './app/dashboard/dashboard.service';
     MsalService,
     ArquivosService,
     DashboardService,
+    TemplateHandlerService,
   ],
   exports: [JwtStrategy],
   imports: [

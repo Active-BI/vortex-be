@@ -32,31 +32,5 @@ export class ArquivosController {
     @Res() response,
     @Req() req,
     @Param('tipoRelatorio') tipoRelatorio,
-  ) {
-    const { tenant_id } = req.tokenData;
-    const tableData = await this.arquivosService.exportDataAnalysis(
-      tenant_id,
-      tipoRelatorio,
-    );
-    const worksheet = XLSX.utils.json_to_sheet(tableData);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet 1');
-    const excelBuffer = XLSX.write(workbook, {
-      type: 'buffer',
-      bookType: 'xlsx',
-    });
-
-    // Configure os cabeçalhos da resposta para download
-    response.setHeader(
-      'Content-Type',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    );
-    response.setHeader(
-      'Content-Disposition',
-      'attachment; filename=export.xlsx',
-    );
-
-    // Envie o arquivo XLSX como resposta
-    response.send(excelBuffer);
-  }
+  ) {}
 }

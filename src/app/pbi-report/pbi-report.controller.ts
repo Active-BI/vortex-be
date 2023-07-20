@@ -5,6 +5,7 @@ import {
   Req,
   Headers,
   BadRequestException,
+  Res,
 } from '@nestjs/common';
 import { PbiReportService } from './pbi-report.service';
 import { JwtService } from '@nestjs/jwt';
@@ -20,15 +21,7 @@ import { Client } from '@microsoft/microsoft-graph-client';
 export class PbiReportController {
   private client: Client;
 
-  constructor(
-    private readonly pbiReportService: PbiReportService,
-    private msalService: MsalService,
-    private prisma: PrismaService,
-    private jwtService: JwtService,
-  ) {}
-  @Get('type/:type')
-  async ReportByTYpe(@Param('type') type, @Req() req): Promise<any> {
-    const { userId, tenant_id, role_name } = req.tokenData;
+  async getDashboardType(type, tenant_id, userId) {
     const userDashboard = await this.prisma.user_Tenant_DashBoard.findFirst({
       where: {
         user_id: userId,
@@ -43,6 +36,47 @@ export class PbiReportController {
     });
 
     if (!userDashboard) throw new BadRequestException('Report não encontrado');
+    return userDashboard;
+  }
+  constructor(
+    private readonly pbiReportService: PbiReportService,
+    private msalService: MsalService,
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+  ) {}
+  @Get('get-file/:type')
+  async downloadTemplate(@Param('type') type, @Req() req, @Res() res) {
+    const { userId, tenant_id } = req.tokenData;
+    await this.getDashboardType(type, tenant_id, userId);
+
+    const buffer = await this.pbiReportService.getFile(type, tenant_id);
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.setHeader('Content-Disposition', 'attachment; filename=file.xlsx');
+
+    res.send(buffer);
+  }
+  @Get('get-template/:type')
+  async downloadFile(@Param('type') type, @Req() req, @Res() res) {
+    const { userId, tenant_id } = req.tokenData;
+    await this.getDashboardType(type, tenant_id, userId);
+
+    const buffer = this.pbiReportService.getTemplate(type);
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.setHeader('Content-Disposition', 'attachment; filename=file.xlsx');
+
+    res.send(buffer);
+  }
+
+  @Get('type/:type')
+  async ReportByTYpe(@Param('type') type, @Req() req): Promise<any> {
+    const { userId, tenant_id, role_name } = req.tokenData;
+    const userDashboard = await this.getDashboardType(type, tenant_id, userId);
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/reports/${userDashboard.Tenant_DashBoard.Dashboard.report_id}`;
 
     // header é o objeto onde está o accessToken
@@ -80,50 +114,7 @@ export class PbiReportController {
       );
     return reportEmbedConfig;
   }
-  @Get(':reportId/:workspaceId')
-  async Report(
-    @Param('workspaceId') workspaceId,
-    @Param('reportId') reportId,
-    @Req() req,
-  ): Promise<any> {
-    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${workspaceId}/reports/${reportId}`;
-    const { userId, tenant_id, role_name } = req.tokenData;
 
-    // header é o objeto onde está o accessToken
-    const headers = await this.msalService.getRequestHeader(
-      tenant_id,
-      role_name,
-    );
-    const result: any = await fetch(reportInGroupApi, {
-      method: 'GET',
-      headers,
-    }).then((res) => {
-      if (!res.ok) throw res;
-      return res.json();
-    });
-
-    const reportDetails = new PowerBiReportDetails(
-      result.id,
-      result.name,
-      result.embedUrl,
-    );
-    const reportEmbedConfig = new EmbedConfig();
-
-    reportEmbedConfig.reportsDetail = [reportDetails];
-    const datasetIds = [result.datasetId];
-    const user = this.jwtService.decode(
-      req.headers.authorization.split(' ')[1],
-    );
-    reportEmbedConfig.embedToken =
-      await this.getEmbedTokenForSingleReportSingleWorkspace(
-        reportId,
-        datasetIds,
-        workspaceId,
-        user,
-        headers,
-      );
-    return reportEmbedConfig;
-  }
   @BypassAuth()
   async getEmbedTokenForSingleReportSingleWorkspace(
     reportId,

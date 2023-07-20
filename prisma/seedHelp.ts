@@ -1,6 +1,44 @@
+import { faker } from '@faker-js/faker';
 import { Prisma, PrismaClient } from '@prisma/client';
+import { randomUUID } from 'crypto';
+const tenantIds = [
+  'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
+  'fe4cec7c-d476-4389-9c57-4be40ada2016',
+];
+const totalRows = 250;
+const data = [];
+// Gerar e inserir 100 registros com o tenant_id fornecido
+
+for (let i = 0; i < totalRows; i++) {
+  let desligado = faker.datatype.boolean();
+  data.push({
+    tenant_id: faker.helpers.arrayElement(tenantIds),
+    nomeEmpresa: faker.company.name(),
+    matricula: randomUUID(),
+    nome: faker.person.fullName(),
+    cargos: faker.person.jobTitle(),
+    dataAdmissao: faker.date.past(),
+    area: faker.commerce.department(),
+    salario: parseFloat(faker.finance.amount(2000, 10000, 2)),
+    sexo: faker.helpers.arrayElement(['Masculino', 'Feminino']),
+    cutis: faker.helpers.arrayElement(['Branco', 'Negro', 'Pardo', 'Amarelo']),
+    dataNascimento: faker.date.between({
+      from: '1950-01-01',
+      to: '2000-12-31',
+    }),
+    email: faker.internet.email(),
+    vinculoEmpregaticio: faker.helpers.arrayElement(['CLT', 'PJ']),
+    situacaoEmpregado: faker.helpers.arrayElement(['Ativo', 'Inativo']),
+    grauInstrucao: faker.helpers.arrayElement(['Ensino Médio', 'Superior']),
+    pcd: faker.datatype.boolean(),
+    desligado: desligado,
+    dataDesligamento: desligado ? faker.date.past() : null,
+    motivoDesligamento: desligado ? faker.lorem.paragraph(2) : null,
+  });
+}
 
 export const EmployeeSeed = async (prisma: PrismaClient) => {
+  await prisma.rh_funcionarios_table.deleteMany();
   await prisma.user_Tenant_DashBoard.deleteMany();
   await prisma.tenant_DashBoard.deleteMany();
   await prisma.dashBoard.deleteMany();
@@ -107,6 +145,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           last_access: null,
           reset_pass: null,
           secret: null,
+          anchor: false,
           password_hash:
             '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
           user_id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',
@@ -116,6 +155,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           normalized_contact_email: 'TESTE@T1USER.COM.BR',
           last_access: null,
           reset_pass: null,
+          anchor: false,
           secret: null,
           password_hash:
             '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
@@ -125,6 +165,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           id: 'c08f9907-9121-4e0e-8d1b-60761701b2ae',
           normalized_contact_email: 'TESTE@T1ADMIN.COM.BR',
           last_access: null,
+          anchor: true,
           reset_pass: null,
           secret: null,
           password_hash:
@@ -136,6 +177,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           normalized_contact_email: 'TESTE@T2USER.COM.BR',
           last_access: null,
           reset_pass: null,
+          anchor: false,
           secret: null,
           password_hash:
             '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
@@ -147,6 +189,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           last_access: null,
           reset_pass: null,
           secret: null,
+          anchor: true,
           password_hash:
             '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
           user_id: '16ea8f63-c5de-4c87-94bc-7140493eaab2',
@@ -154,12 +197,6 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
       ],
     });
     const arrayDeReports = [
-      {
-        type: 'GV',
-        report_id: '45a13215-b9f6-47d8-9e87-123035001387',
-        group_id: 'c807ca26-3f93-463d-aa15-9a12e48174ba',
-        name: 'Gestão de Vulnerabilidades',
-      },
       {
         type: 'RH_FUNCIONARIOS',
         report_id: '7b71c89f-1d23-4d57-a99c-369f0ae8b5d1',
@@ -184,38 +221,30 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           dashboard_id: '7b71c89f-1d23-4d57-a99c-369f0ae8b5d1',
           tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
         },
-        {
-          id: 'e626971a-6773-4d83-bae5-ff7352667b7a',
-          dashboard_id: '45a13215-b9f6-47d8-9e87-123035001387',
-          tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
-        },
+
         {
           id: '891e9633-6e1c-47ab-abdc-f736cce00347',
           dashboard_id: 'a4980e1a-6cf3-460f-9e25-a206bca62c79',
           tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
         },
-        {
-          id: '9a61a886-8126-4d7d-b433-eb7dd41a9939',
-          dashboard_id: '45a13215-b9f6-47d8-9e87-123035001387',
-          tenant_id: 'fe4cec7c-d476-4389-9c57-4be40ada2016',
-        },
       ],
     });
     await prisma.user_Tenant_DashBoard.createMany({
       data: [
-        // {
-        //   tenant_DashBoard_id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
-        //   user_id: 'a0d8b88b-97b5-40b8-a790-3d3dac9b13be',
-        // },
-        // {
-        //   tenant_DashBoard_id: 'e626971a-6773-4d83-bae5-ff7352667b7a',
-        //   user_id: 'a0d8b88b-97b5-40b8-a790-3d3dac9b13be',
-        // },
+        {
+          tenant_DashBoard_id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
+          user_id: 'a0d8b88b-97b5-40b8-a790-3d3dac9b13be',
+        },
+
         {
           tenant_DashBoard_id: '891e9633-6e1c-47ab-abdc-f736cce00347',
           user_id: 'a0d8b88b-97b5-40b8-a790-3d3dac9b13be',
         },
       ],
+    });
+
+    await prisma.rh_funcionarios_table.createMany({
+      data,
     });
   });
 };

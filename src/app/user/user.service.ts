@@ -58,6 +58,7 @@ export class UserService {
       data: {
         normalized_contact_email: (user.email as string).toUpperCase(),
         user_id: uuid,
+        anchor: false,
       },
     });
     return { user_id: uuid };
