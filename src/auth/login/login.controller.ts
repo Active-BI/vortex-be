@@ -16,12 +16,18 @@ export class LoginController {
   @Post()
   async Login(@Body() body: CreateLoginDto) {
     try {
+      const user_auth = await this.loginService.getUserAuth(body);
+      if (user_auth.User.Rls.name === 'Master') {
+        const token = await this.loginService.checkPassMaster(body);
+        return token;
+      }
       const token = await this.loginService.checkPass(body);
       return token;
     } catch (e) {
       throw new UnauthorizedException(e.message);
     }
   }
+
   @BypassAuth()
   @Post('register')
   async Register(@Body() body: CreateLoginDto) {

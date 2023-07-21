@@ -11,20 +11,15 @@ export class Token {
   role_value: number;
   dashboardUser: any[];
   constructor(
-    userId,
-    name,
-    contact_email,
-    personal_email,
-    rls: Rls,
-    tenant_id,
+    { id, name, contact_email, personal_email, Rls, tenant_id },
     dashboardUser,
   ) {
-    this.userId = userId;
+    this.userId = id;
     this.name = name;
     this.personal_email = personal_email;
     this.contact_email = contact_email;
-    this.role_id = rls.id;
-    this.role_name = rls.name;
+    this.role_id = Rls.id;
+    this.role_name = Rls.name;
     this.tenant_id = tenant_id;
     this.dashboardUser = dashboardUser;
   }

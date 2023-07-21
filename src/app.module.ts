@@ -23,6 +23,7 @@ import { ArquivosService } from './app/arquivos/arquivos.service';
 import { DashboardController } from './app/dashboard/dashboard.controller';
 import { DashboardService } from './app/dashboard/dashboard.service';
 import { TemplateHandlerService } from './services/templateHandler.service';
+import { DashboardsModule } from './master/dashboards/dashboards.module';
 
 @Module({
   controllers: [
@@ -56,6 +57,7 @@ import { TemplateHandlerService } from './services/templateHandler.service';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    DashboardsModule,
   ],
 })
 export class AppModule implements NestModule {

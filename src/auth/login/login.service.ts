@@ -28,25 +28,37 @@ export class LoginService {
 
   async checkPass(login: CreateLoginDto) {
     const user_auth = await this.getUserAuth(login);
+
     const isHashTrue = await bcrypt.compare(
       login.password,
       user_auth.password_hash,
     );
 
     if (!isHashTrue) throw new ForbiddenException('Senha inválida');
+
     const dashboardUser = await this.dashboardService.getAllDashboardsByUser(
       user_auth.User.id,
       user_auth.User.tenant_id,
     );
-    const tokenObj = new Token(
-      user_auth.User.id,
-      user_auth.User.name,
-      user_auth.User.contact_email,
-      user_auth.User.personal_email,
-      user_auth.User.Rls,
-      user_auth.User.tenant_id,
-      dashboardUser,
+    const tokenObj = new Token(user_auth.User, dashboardUser);
+
+    var token = await this.jwtStrategy.signToken(tokenObj);
+
+    delete user_auth.User;
+    await this.setLastAccess(user_auth as User_Auth);
+
+    return { token };
+  }
+  async checkPassMaster(login: CreateLoginDto) {
+    const user_auth = await this.getUserAuth(login);
+
+    const isHashTrue = await bcrypt.compare(
+      login.password,
+      user_auth.password_hash,
     );
+
+    if (!isHashTrue) throw new ForbiddenException('Senha inválida');
+    const tokenObj = new Token(user_auth.User, []);
 
     var token = await this.jwtStrategy.signToken(tokenObj);
 
@@ -61,6 +73,7 @@ export class LoginService {
 
   async register(login: CreateLoginDto) {
     const user = await this.userAuthService.getUserAuth(login.email);
+
     if (!user) {
       throw new UnauthorizedException('Usuário não está pré-cadastrado');
     }

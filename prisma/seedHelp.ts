@@ -227,6 +227,12 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           dashboard_id: 'a4980e1a-6cf3-460f-9e25-a206bca62c79',
           tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
         },
+
+        {
+          id: 'a9f3c05a-33c7-48b0-bd5a-1caff7b83d83',
+          dashboard_id: 'a4980e1a-6cf3-460f-9e25-a206bca62c79',
+          tenant_id: 'fe4cec7c-d476-4389-9c57-4be40ada2016',
+        },
       ],
     });
     await prisma.user_Tenant_DashBoard.createMany({
@@ -239,6 +245,15 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
         {
           tenant_DashBoard_id: '891e9633-6e1c-47ab-abdc-f736cce00347',
           user_id: 'a0d8b88b-97b5-40b8-a790-3d3dac9b13be',
+        },
+        {
+          tenant_DashBoard_id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
+          user_id: '16ea8f63-c5de-4c87-94bc-7140493eaab2',
+        },
+
+        {
+          tenant_DashBoard_id: 'a9f3c05a-33c7-48b0-bd5a-1caff7b83d83',
+          user_id: '16ea8f63-c5de-4c87-94bc-7140493eaab2',
         },
       ],
     });

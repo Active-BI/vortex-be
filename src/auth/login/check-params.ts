@@ -35,6 +35,7 @@ export class ValidateLoginMiddleware implements NestMiddleware {
         const isOnPreRegister = await this.userAuthService.getUserAuth(
           req.body.email,
         );
+
         if (!isOnPreRegister) throw new Error('Usuário sem pré-cadastro');
       } catch (e) {
         throw new BadRequestException({
