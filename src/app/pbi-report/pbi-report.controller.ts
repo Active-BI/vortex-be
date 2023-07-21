@@ -6,6 +6,8 @@ import {
   Headers,
   BadRequestException,
   Res,
+  Post,
+  Body,
 } from '@nestjs/common';
 import { PbiReportService } from './pbi-report.service';
 import { JwtService } from '@nestjs/jwt';
@@ -44,6 +46,14 @@ export class PbiReportController {
     private prisma: PrismaService,
     private jwtService: JwtService,
   ) {}
+  @Post('post-file/:type')
+  async importFile(@Param('type') type, @Req() req, @Body() dados) {
+    const { userId, tenant_id } = req.tokenData;
+    await this.getDashboardType(type, tenant_id, userId);
+
+    await this.pbiReportService.postFile(dados, tenant_id, type);
+  }
+
   @Get('get-file/:type')
   async downloadTemplate(@Param('type') type, @Req() req, @Res() res) {
     const { userId, tenant_id } = req.tokenData;

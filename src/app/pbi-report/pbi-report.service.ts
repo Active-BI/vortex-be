@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import * as msal from '@azure/msal-node';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { TemplateHandlerService } from 'src/services/templateHandler.service';
 import { PrismaService } from 'prisma/prisma.service';
-import { generateBuffer } from 'src/services/templates';
+import {
+  generateBuffer,
+  templates_xlsx,
+  toCamelCase,
+} from 'src/services/templates';
 
 @Injectable()
 export class PbiReportService {
@@ -14,12 +17,40 @@ export class PbiReportService {
     return this.templateHandler.getTemplate(type);
   }
 
+  objetoPossuiTodasChaves(objeto, type) {
+    return Object.values(templates_xlsx[type]).every((chave) => {
+      console.log(chave, objeto.hasOwnProperty(chave));
+      if (objeto.hasOwnProperty(chave)) console.log(objeto);
+
+      return objeto.hasOwnProperty(chave);
+    });
+  }
+  async postFile(dados, tenant_id, type) {
+    const todosObjetosPossuemTodasChaves = dados.every((d) => {
+      return Object.values(templates_xlsx[type]).every((e: string) => {
+        if (!Object.keys(d).includes(e)) console.log(Object.keys(d), e);
+        return Object.keys(d).includes(e);
+      });
+    });
+    if (!todosObjetosPossuemTodasChaves) {
+      throw new BadRequestException('Arquivo inválido, campos ausentes.');
+    }
+    const dadosFormatados = dados.map((dado) => {
+      if (dado['id']) delete dado.id;
+      return { ...dado, tenant_id: tenant_id };
+    });
+    await this.prisma[type.toLowerCase() + '_table'].deleteMany({
+      where: { tenant_id },
+    });
+    await this.prisma[type.toLowerCase() + '_table'].createMany({
+      data: dadosFormatados,
+    });
+  }
   async getFile(type: string, tenant_id) {
-    console.log(type.toLowerCase() + '_table');
     const data = await this.prisma[type.toLowerCase() + '_table'].findMany({
       where: { tenant_id },
     });
-    console.log(data);
+
     if (data.length < 1) {
       return this.templateHandler.getTemplate(type);
     }
