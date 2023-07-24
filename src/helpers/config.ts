@@ -9,7 +9,7 @@ export const config = {
   clientId: '469e6a26-482b-484d-a497-40aa2373a77c',
   pbiUsername: 'embedded@activebi.com.br',
   pbiPassword: 'Paq21687',
-  clientSecret: '',
   tenantId: '915fe7db-2988-4ee1-b20b-fd2e18641985',
+  clientSecret: '',
   GRAPH_ENDPOINT: 'https://graph.microsoft.com',
 };

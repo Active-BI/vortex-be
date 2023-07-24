@@ -24,6 +24,9 @@ import { DashboardController } from './app/dashboard/dashboard.controller';
 import { DashboardService } from './app/dashboard/dashboard.service';
 import { TemplateHandlerService } from './services/templateHandler.service';
 import { DashboardsModule } from './master/dashboards/dashboards.module';
+import { TenantsService } from './master/tenants/tenants.service';
+import { TenantsController } from './master/tenants/tenants.controller';
+import { RolesGuard } from './helpers/roleDecorator/roles.guard';
 
 @Module({
   controllers: [
@@ -34,6 +37,7 @@ import { DashboardsModule } from './master/dashboards/dashboards.module';
     PbiReportController,
     ArquivosController,
     DashboardController,
+    TenantsController,
   ],
   providers: [
     PrismaService,
@@ -41,6 +45,10 @@ import { DashboardsModule } from './master/dashboards/dashboards.module';
     JwtStrategy,
     JwtService,
     { provide: APP_GUARD, useClass: JwtGuard },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
     RoleGuard,
     JwtGuard,
     LoginService,
@@ -51,6 +59,7 @@ import { DashboardsModule } from './master/dashboards/dashboards.module';
     ArquivosService,
     DashboardService,
     TemplateHandlerService,
+    TenantsService,
   ],
   exports: [JwtStrategy],
   imports: [
