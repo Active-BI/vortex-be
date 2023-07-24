@@ -17,6 +17,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class TenantsController {
   constructor(private readonly tenantsService: TenantsService) {}
 
+  @Roles('Master')
   @Post()
   create(@Body() createTenant: Tenant) {
     return this.tenantsService.create(createTenant);
@@ -31,6 +32,7 @@ export class TenantsController {
   @Get(':id')
   @Roles('Master')
   findOne(@Param('id') id: string) {
+    console.log(id);
     return this.tenantsService.findOne(id);
   }
 
@@ -39,7 +41,7 @@ export class TenantsController {
   update(@Param('id') id: string, @Body() updateTenan: Tenant) {
     return this.tenantsService.update(id, updateTenan);
   }
-
+  @Roles('Master')
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.tenantsService.remove(id);

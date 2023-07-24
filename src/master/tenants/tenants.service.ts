@@ -3,14 +3,19 @@ import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { PrismaService } from 'prisma/prisma.service';
 import { Tenant } from '@prisma/client';
+import { UserService } from 'src/app/user/user.service';
 
 @Injectable()
 export class TenantsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private userService: UserService,
+  ) {}
   async create(createTenantDto: Tenant) {
     return await this.prisma.tenant.create({
       data: {
         ...createTenantDto,
+        active: true,
       },
     });
   }
@@ -20,7 +25,7 @@ export class TenantsService {
   }
 
   async findOne(id: string) {
-    return await this.prisma.tenant.findMany({ where: { id } });
+    return await this.prisma.tenant.findFirstOrThrow({ where: { id } });
   }
 
   async update(id: string, updateTenantDto: Tenant) {
@@ -32,7 +37,13 @@ export class TenantsService {
     });
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} tenant`;
+  async remove(id: string) {
+    // await this.userService.deleteUser(id);
+    return await this.prisma.tenant.update({
+      where: { id: id },
+      data: {
+        active: false,
+      },
+    });
   }
 }

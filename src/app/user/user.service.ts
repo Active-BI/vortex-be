@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
+import { UserAuthService } from 'src/auth/user_auth/user_auth.service';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private userAuthService: UserAuthService,
+  ) {}
   async findAll(tenant_id: string) {
     return await this.prisma.user.findMany({
       where: {
@@ -54,13 +58,8 @@ export class UserService {
         rls_id: user.rls_id,
       },
     });
-    await this.prisma.user_Auth.create({
-      data: {
-        normalized_contact_email: (user.email as string).toUpperCase(),
-        user_id: uuid,
-        anchor: false,
-      },
-    });
+    await this.userAuthService.createAuthUser(user.email, uuid);
+
     return { user_id: uuid };
   }
 

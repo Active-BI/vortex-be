@@ -71,10 +71,12 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
         {
           id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
           tenant_name: 'Tenant 1',
+          active: true,
         },
         {
           id: 'fe4cec7c-d476-4389-9c57-4be40ada2016',
           tenant_name: 'Tenant 2',
+          active: true,
         },
       ],
     });

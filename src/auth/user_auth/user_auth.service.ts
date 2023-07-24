@@ -39,7 +39,15 @@ export class UserAuthService {
       },
     });
   }
-
+  async createAuthUser(email, uuid) {
+    await this.prisma.user_Auth.create({
+      data: {
+        normalized_contact_email: (email as string).toUpperCase(),
+        user_id: uuid,
+        anchor: false,
+      },
+    });
+  }
   async update(user: User_Auth) {
     await this.prisma.user_Auth.update({
       where: { user_id: user.user_id },
