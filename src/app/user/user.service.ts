@@ -66,7 +66,14 @@ export class UserService {
   async getUser(email: string) {
     return this.prisma.user.findFirst({
       where: {
-        contact_email: email.toUpperCase(),
+        OR: [
+          {
+            contact_email: email,
+          },
+          {
+            personal_email: email,
+          },
+        ],
       },
       include: {
         Rls: true,

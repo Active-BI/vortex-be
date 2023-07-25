@@ -27,6 +27,8 @@ import { DashboardsModule } from './master/dashboards/dashboards.module';
 import { TenantsService } from './master/tenants/tenants.service';
 import { TenantsController } from './master/tenants/tenants.controller';
 import { RolesGuard } from './helpers/roleDecorator/roles.guard';
+import { AdminRequestService } from './auth/admin-request/admin-request.service';
+import { AdminRequestController } from './auth/admin-request/admin-request.controller';
 
 @Module({
   controllers: [
@@ -38,6 +40,7 @@ import { RolesGuard } from './helpers/roleDecorator/roles.guard';
     ArquivosController,
     DashboardController,
     TenantsController,
+    AdminRequestController,
   ],
   providers: [
     PrismaService,
@@ -60,6 +63,7 @@ import { RolesGuard } from './helpers/roleDecorator/roles.guard';
     DashboardService,
     TemplateHandlerService,
     TenantsService,
+    AdminRequestService,
   ],
   exports: [JwtStrategy],
   imports: [

@@ -26,9 +26,12 @@ export class AdminRequestController {
     return this.adminRequestService.createByMaster(createAdminRequestDto);
   }
   @Roles('Master')
-  @Get('/accept/:id')
-  async acceptUserRequest(@Param('id') id: string) {
-    return this.adminRequestService.acceptUserRequest(id);
+  @Get('/accept/:id/:tenantId')
+  async acceptUserRequest(
+    @Param('id') id: string,
+    @Param('tenantId') tenantId: string,
+  ) {
+    return this.adminRequestService.acceptUserRequest(id, tenantId);
   }
   @Roles('Master')
   @Get()

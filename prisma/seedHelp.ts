@@ -1,6 +1,22 @@
 import { faker } from '@faker-js/faker';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { randomUUID } from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
+
+export const roles = [
+  {
+    name: 'User',
+    id: 'ca21241b-a37d-4e6f-bbb6-26643d3cdd99',
+  },
+  {
+    name: 'Admin',
+    id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
+  },
+  {
+    name: 'Master',
+    id: '41dd767c-45d6-437d-9ccb-9a4987e07505',
+  },
+];
 const tenantIds = [
   'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
   'fe4cec7c-d476-4389-9c57-4be40ada2016',
@@ -8,6 +24,23 @@ const tenantIds = [
 const totalRows = 250;
 const data = [];
 // Gerar e inserir 100 registros com o tenant_id fornecido
+const userRequests = [];
+
+for (let i = 0; i < 5; i++) {
+  userRequests.push({
+    id: uuidv4(),
+    createdAt: faker.date.past(),
+    company_description: faker.company.name(),
+    company_name: faker.company.name(),
+    company_cnpj: '000000000000' + i,
+    email: faker.internet.email(),
+    name: faker.person.fullName(),
+    description: faker.lorem.paragraph(1),
+    profession: faker.person.jobTitle(),
+    blocked: false,
+    accept: false,
+  });
+}
 
 for (let i = 0; i < totalRows; i++) {
   let desligado = faker.datatype.boolean();
@@ -46,23 +79,11 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
   await prisma.user.deleteMany();
   await prisma.tenant.deleteMany();
   await prisma.rls.deleteMany();
+  await prisma.request_admin_access.deleteMany();
 
   const setup = async () => {
     await prisma.rls.createMany({
-      data: [
-        {
-          name: 'User',
-          id: 'ca21241b-a37d-4e6f-bbb6-26643d3cdd99',
-        },
-        {
-          name: 'Admin',
-          id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
-        },
-        {
-          name: 'Master',
-          id: '41dd767c-45d6-437d-9ccb-9a4987e07505',
-        },
-      ],
+      data: roles,
     });
   };
   await setup().then(async () => {
@@ -259,7 +280,9 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
         },
       ],
     });
-
+    await prisma.request_admin_access.createMany({
+      data: userRequests,
+    });
     await prisma.rh_funcionarios_table.createMany({
       data,
     });

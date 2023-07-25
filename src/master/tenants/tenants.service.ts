@@ -38,7 +38,6 @@ export class TenantsService {
   }
 
   async remove(id: string) {
-    // await this.userService.deleteUser(id);
     return await this.prisma.tenant.update({
       where: { id: id },
       data: {
