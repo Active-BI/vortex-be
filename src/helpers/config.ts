@@ -5,7 +5,7 @@ export const config = {
   powerBiApiUrl: 'https://api.powerbi.com/',
   workspaceId: '',
   reportId: '',
-  scopeBase: 'https://analysis.windows.net/powerbi/api/.default',
+  scopeBase: 'https://analysis.windows.net/powerbi/api/Dataset.ReadWrite.All',
   clientId: '469e6a26-482b-484d-a497-40aa2373a77c',
   pbiUsername: 'embedded@activebi.com.br',
   pbiPassword: 'Paq21687',

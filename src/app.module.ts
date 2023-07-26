@@ -23,12 +23,13 @@ import { ArquivosService } from './app/arquivos/arquivos.service';
 import { DashboardController } from './app/dashboard/dashboard.controller';
 import { DashboardService } from './app/dashboard/dashboard.service';
 import { TemplateHandlerService } from './services/templateHandler.service';
-import { DashboardsModule } from './master/dashboards/dashboards.module';
 import { TenantsService } from './master/tenants/tenants.service';
 import { TenantsController } from './master/tenants/tenants.controller';
 import { RolesGuard } from './helpers/roleDecorator/roles.guard';
 import { AdminRequestService } from './auth/admin-request/admin-request.service';
 import { AdminRequestController } from './auth/admin-request/admin-request.controller';
+import { DashboardsMasterService } from './master/dashboards/dashboards.service';
+import { DashboardsMasterController } from './master/dashboards/dashboards.controller';
 
 @Module({
   controllers: [
@@ -41,6 +42,8 @@ import { AdminRequestController } from './auth/admin-request/admin-request.contr
     DashboardController,
     TenantsController,
     AdminRequestController,
+    DashboardController,
+    DashboardsMasterController,
   ],
   providers: [
     PrismaService,
@@ -64,13 +67,13 @@ import { AdminRequestController } from './auth/admin-request/admin-request.contr
     TemplateHandlerService,
     TenantsService,
     AdminRequestService,
+    DashboardsMasterService,
   ],
   exports: [JwtStrategy],
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    DashboardsModule,
   ],
 })
 export class AppModule implements NestModule {

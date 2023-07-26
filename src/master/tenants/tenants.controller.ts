@@ -32,7 +32,6 @@ export class TenantsController {
   @Get(':id')
   @Roles('Master')
   findOne(@Param('id') id: string) {
-    console.log(id);
     return this.tenantsService.findOne(id);
   }
 

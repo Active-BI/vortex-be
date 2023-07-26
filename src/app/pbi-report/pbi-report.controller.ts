@@ -83,6 +83,29 @@ export class PbiReportController {
     res.send(buffer);
   }
 
+  @Get('refresh/:type')
+  async refreshReport(@Param('type') type, @Req() req): Promise<any> {
+    const { role_name } = req.tokenData;
+
+    const headers = await this.msalService.getRequestHeader(role_name);
+    const refresh =
+      'https://api.powerbi.com/v1.0/myorg/groups/c807ca26-3f93-463d-aa15-9a12e48174ba/datasets/abad2a22-1c68-4713-9e65-2adc2fa20422/refreshes';
+
+    await fetch(refresh, {
+      method: 'POST',
+      headers,
+    }).then((res: any) => {
+      if (!res.ok) {
+        console.log(res);
+        throw new BadRequestException('Falha ao atualizar relatório');
+        return;
+      }
+      console.log(JSON.stringify(res), res);
+
+      return res;
+    });
+  }
+
   @Get('type/:type')
   async ReportByTYpe(@Param('type') type, @Req() req): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
@@ -90,10 +113,8 @@ export class PbiReportController {
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/reports/${userDashboard.Tenant_DashBoard.Dashboard.report_id}`;
 
     // header é o objeto onde está o accessToken
-    const headers = await this.msalService.getRequestHeader(
-      tenant_id,
-      role_name,
-    );
+    const headers = await this.msalService.getRequestHeader(role_name);
+
     const result: any = await fetch(reportInGroupApi, {
       method: 'GET',
       headers,
@@ -153,6 +174,7 @@ export class PbiReportController {
 
     formData['datasets'] = [];
     for (const datasetId of datasetIds) {
+      console.log(datasetId);
       formData['datasets'].push({
         id: datasetId,
       });

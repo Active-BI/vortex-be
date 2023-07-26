@@ -19,16 +19,12 @@ export class PbiReportService {
 
   objetoPossuiTodasChaves(objeto, type) {
     return Object.values(templates_xlsx[type]).every((chave) => {
-      console.log(chave, objeto.hasOwnProperty(chave));
-      if (objeto.hasOwnProperty(chave)) console.log(objeto);
-
       return objeto.hasOwnProperty(chave);
     });
   }
   async postFile(dados, tenant_id, type) {
     const todosObjetosPossuemTodasChaves = dados.every((d) => {
       return Object.values(templates_xlsx[type]).every((e: string) => {
-        if (!Object.keys(d).includes(e)) console.log(Object.keys(d), e);
         return Object.keys(d).includes(e);
       });
     });

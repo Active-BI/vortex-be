@@ -5,7 +5,7 @@ import { User } from '@prisma/client';
 
 @Injectable()
 export class MsalService {
-  async getAccessToken(userTenant: string, userRls: string) {
+  async getAccessToken(userRls: string) {
     const msalConfig = {
       auth: {
         clientId: config.clientId,
@@ -29,8 +29,8 @@ export class MsalService {
       );
     }
   }
-  async getRequestHeader(userTenant: string, userRls: string) {
-    const tokenResponse = await this.getAccessToken(userTenant, userRls);
+  async getRequestHeader(userRls: string) {
+    const tokenResponse = await this.getAccessToken(userRls);
 
     const token = tokenResponse.accessToken;
     return {
