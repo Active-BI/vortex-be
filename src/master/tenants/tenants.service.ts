@@ -1,48 +1,70 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTenantDto } from './dto/create-tenant.dto';
-import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { PrismaService } from 'prisma/prisma.service';
 import { Tenant } from '@prisma/client';
-import { UserService } from 'src/app/user/user.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class TenantsService {
-  constructor(
-    private prisma: PrismaService,
-    private userService: UserService,
-  ) {}
-  async create(createTenantDto: Tenant) {
-    return await this.prisma.tenant.create({
+  constructor(private prisma: PrismaService) {}
+  async create(createTenantDto: any) {
+    const id = uuidv4();
+    await this.prisma.tenant.create({
       data: {
-        ...createTenantDto,
-        active: true,
+        id,
+        active: createTenantDto.active,
+        tenant_name: createTenantDto.tenant_name,
       },
     });
+    await this.prisma.tenant_DashBoard.createMany({
+      data: createTenantDto.dashboard.map((d) => ({
+        dashboard_id: d,
+        tenant_id: id,
+      })),
+    });
+    return createTenantDto;
   }
 
   async findAll() {
-    return await this.prisma.tenant.findMany();
+    return await this.prisma.tenant.findMany({
+      orderBy: {
+        tenant_name: 'asc',
+      },
+    });
   }
 
   async findOne(id: string) {
     return await this.prisma.tenant.findFirstOrThrow({ where: { id } });
   }
 
-  async update(id: string, updateTenantDto: Tenant) {
+  async update(id: string, updateTenantDto: any) {
+    await this.prisma.user_Tenant_DashBoard.deleteMany({
+      where: {
+        Tenant_DashBoard: {
+          tenant_id: id,
+        },
+      },
+    });
+    await this.prisma.tenant_DashBoard.deleteMany({
+      where: { tenant_id: id },
+    });
+    await this.prisma.tenant_DashBoard.createMany({
+      data: updateTenantDto.dashboard.map((d) => ({
+        dashboard_id: d,
+        tenant_id: id,
+      })),
+    });
     return await this.prisma.tenant.update({
       where: { id: id },
       data: {
-        ...updateTenantDto,
+        active: updateTenantDto.active,
+        tenant_name: updateTenantDto.tenant_name,
       },
     });
   }
 
   async remove(id: string) {
-    return await this.prisma.tenant.update({
+    return await this.prisma.tenant.delete({
       where: { id: id },
-      data: {
-        active: false,
-      },
     });
   }
 }

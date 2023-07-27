@@ -50,6 +50,9 @@ export class AdminRequestService {
   async findAll() {
     return await this.prisma.request_admin_access.findMany({
       where: { OR: [{ accept: false }] },
+      orderBy: {
+        name: 'asc',
+      },
     });
   }
   async acceptUserRequest(id, tenant_id) {
@@ -74,6 +77,9 @@ export class AdminRequestService {
   async findAllBlocked() {
     return await this.prisma.request_admin_access.findMany({
       where: { blocked: true },
+      orderBy: {
+        name: 'asc',
+      },
     });
   }
 

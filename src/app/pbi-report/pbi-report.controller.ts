@@ -8,6 +8,8 @@ import {
   Res,
   Post,
   Body,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { PbiReportService } from './pbi-report.service';
 import { JwtService } from '@nestjs/jwt';
@@ -85,23 +87,34 @@ export class PbiReportController {
 
   @Get('refresh/:type')
   async refreshReport(@Param('type') type, @Req() req): Promise<any> {
-    const { role_name } = req.tokenData;
-
+    const { userId, tenant_id, role_name } = req.tokenData;
+    const userDashboard = await this.getDashboardType(type, tenant_id, userId);
     const headers = await this.msalService.getRequestHeader(role_name);
-    const refresh =
-      'https://api.powerbi.com/v1.0/myorg/groups/c807ca26-3f93-463d-aa15-9a12e48174ba/datasets/abad2a22-1c68-4713-9e65-2adc2fa20422/refreshes';
+
+    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/reports/${userDashboard.Tenant_DashBoard.Dashboard.report_id}`;
+    const result: any = await fetch(reportInGroupApi, {
+      method: 'GET',
+      headers,
+    }).then((res) => {
+      if (!res.ok) throw res;
+      return res.json();
+    });
+
+    console.log(result.datasetId);
+    const refresh = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/datasets/${result.datasetId}/refreshes`;
 
     await fetch(refresh, {
       method: 'POST',
       headers,
     }).then((res: any) => {
       if (!res.ok) {
-        console.log(res);
+        if (res.status === 429)
+          throw new HttpException(
+            'Limite de atualizações atingido',
+            HttpStatus.TOO_MANY_REQUESTS,
+          );
         throw new BadRequestException('Falha ao atualizar relatório');
-        return;
       }
-      console.log(JSON.stringify(res), res);
-
       return res;
     });
   }

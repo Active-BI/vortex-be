@@ -7,7 +7,11 @@ export class DashboardsMasterService {
    *
    */
   constructor(private prisma: PrismaService) {}
-  async findAll(tenant_id) {
+  async findAll() {
+    return await this.prisma.dashBoard.findMany();
+  }
+
+  async findAllByTenant(tenant_id) {
     const dashboads = await this.prisma.dashBoard.findMany({
       include: {
         Tenant_DashBoard: true,

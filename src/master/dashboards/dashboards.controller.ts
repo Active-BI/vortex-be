@@ -8,7 +8,13 @@ export class DashboardsMasterController {
 
   @Get('/:tenant_id')
   @Roles('Master')
-  async findAll(@Param('tenant_id') tenant_id) {
-    return await this.dashboardsService.findAll(tenant_id);
+  async findAllByTenant(@Param('tenant_id') tenant_id) {
+    return await this.dashboardsService.findAllByTenant(tenant_id);
+  }
+
+  @Get('')
+  @Roles('Master')
+  async findAll() {
+    return await this.dashboardsService.findAll();
   }
 }
