@@ -15,7 +15,7 @@
   },
   "scripts": {
     "build": "rimraf ./wwwroot && npm run build:angular && npm run generate && nest build",
-    "build:angular": " cd .. && cd ./Active-BI-PortalEmbedded-FrontEnd && npm run build",
+    "build:angular": " cd .. && cd ./'embedded-pme (FrontEnd)' && npm run build",
     "generate": "npx prisma generate",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
