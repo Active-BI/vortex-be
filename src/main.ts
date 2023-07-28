@@ -5,10 +5,8 @@ import { json as expressJson } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors({
-    origin: '*',
-    allowedHeaders: '*',
-  });
+  app.enableCors();
+
   app.use(expressJson({ limit: '50mb' }));
   ConfigSwagger(app);
 
