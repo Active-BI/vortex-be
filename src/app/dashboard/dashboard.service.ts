@@ -18,6 +18,7 @@ export class DashboardService {
     await this.prisma.user_Tenant_DashBoard.deleteMany({
       where: { user_id },
     });
+
     await this.prisma.user_Tenant_DashBoard.createMany({
       data: tenantDash.map((td) => ({
         tenant_DashBoard_id: td.id,
