@@ -14,7 +14,6 @@
     "migrate-prod": "dotenv -e .env.production npx prisma migrate dev"
   },
   "scripts": {
-    "heroku-postbuild": "npm install && npx prisma generate",
     "prepare": "npx prisma generate",
     "build": "npm i @prisma/client && npm run generate && nest build",
     "generate": "npx prisma generate",
