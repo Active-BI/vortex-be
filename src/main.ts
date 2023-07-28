@@ -4,7 +4,10 @@ import { ConfigSwagger } from './helpers/configSwagger/configSwagger';
 import { json as expressJson } from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+    cors: false,
+  });
   app.enableCors();
 
   app.use(expressJson({ limit: '50mb' }));
