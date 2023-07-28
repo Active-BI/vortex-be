@@ -15,7 +15,7 @@
   },
   "scripts": {
     "prepare": "npx prisma generate",
-    "build": "npm i @prisma/client && npm run generate && nest build",
+    "build": " nest build",
     "generate": "npx prisma generate",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
