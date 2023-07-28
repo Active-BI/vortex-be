@@ -60,6 +60,7 @@ export class TenantsService {
         },
       },
     });
+
     (updateTenantDto.dashboard as string[]).forEach(async (e) => {
       if (
         (
