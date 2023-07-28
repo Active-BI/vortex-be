@@ -14,9 +14,8 @@
     "migrate-prod": "dotenv -e .env.production npx prisma migrate dev"
   },
   "scripts": {
-    "prepare": "npx prisma generate",
     "build": " nest build",
-    "generate": "npx prisma generate",
+    "postinstall": "prisma generate && npm run build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
