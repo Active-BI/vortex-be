@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
 import { PrismaService } from 'prisma/prisma.service';
 import { UserAuthService } from 'src/auth/user_auth/user_auth.service';
 import { v4 as uuidv4 } from 'uuid';
