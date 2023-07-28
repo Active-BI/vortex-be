@@ -41,17 +41,46 @@ export class TenantsService {
       where: {
         Tenant_DashBoard: {
           tenant_id: id,
+          AND: {
+            dashboard_id: {
+              notIn: updateTenantDto.dashboard,
+            },
+          },
         },
       },
     });
+
     await this.prisma.tenant_DashBoard.deleteMany({
-      where: { tenant_id: id },
-    });
-    await this.prisma.tenant_DashBoard.createMany({
-      data: updateTenantDto.dashboard.map((d) => ({
-        dashboard_id: d,
+      where: {
         tenant_id: id,
-      })),
+        AND: {
+          dashboard_id: {
+            notIn: updateTenantDto.dashboard,
+          },
+        },
+      },
+    });
+    (updateTenantDto.dashboard as string[]).forEach(async (e) => {
+      if (
+        (
+          await this.prisma.tenant_DashBoard.findMany({
+            where: {
+              tenant_id: id,
+            },
+          })
+        )
+          .map((d) => d.dashboard_id)
+          .includes(e)
+      ) {
+        return;
+      } else {
+        await this.prisma.tenant_DashBoard.createMany({
+          data: {
+            dashboard_id: e,
+            tenant_id: id,
+          },
+        });
+      }
     });
     return await this.prisma.tenant.update({
       where: { id: id },

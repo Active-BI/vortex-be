@@ -38,6 +38,7 @@ export class TenantsController {
   @Patch(':id')
   @Roles('Master')
   update(@Param('id') id: string, @Body() updateTenan: Tenant) {
+    console.log({ updateTenan });
     return this.tenantsService.update(id, updateTenan);
   }
   @Roles('Master')
