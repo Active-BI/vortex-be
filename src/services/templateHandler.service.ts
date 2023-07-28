@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from 'src/services/prisma.service';
 import { RHTemplate, templates_xlsx } from './templates';
 
 @Injectable()

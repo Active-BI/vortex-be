@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { TemplateHandlerService } from 'src/services/templateHandler.service';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from 'src/services/prisma.service';
 import {
   generateBuffer,
   templates_xlsx,

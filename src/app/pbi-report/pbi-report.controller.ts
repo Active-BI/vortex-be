@@ -17,7 +17,7 @@ import { EmbedConfig, PowerBiReportDetails } from './powerbi-dashboard.model';
 import { BypassAuth } from 'src/helpers/strategy/jwtGuard.service';
 import { MsalService } from 'src/services/msal.service';
 import { Token } from 'src/helpers/token';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from 'src/services/prisma.service';
 import { Client } from '@microsoft/microsoft-graph-client';
 // import { tabelas } from 'prisma/tabelas';
 

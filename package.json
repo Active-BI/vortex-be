@@ -10,7 +10,9 @@
     "migrate-prod": "dotenv -e .env.production npx prisma migrate dev"
   },
   "scripts": {
-    "build": "npm run generate && nest build",
+        "heroku-postbuild": "npm install && npx prisma generate",
+
+    "build": "npm i @prisma/client && npm run generate && nest build",
     "generate": "npx prisma generate",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",

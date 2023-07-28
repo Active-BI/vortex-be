@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as msal from '@azure/msal-node';
 import { config } from 'src/helpers/config';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class MsalService {

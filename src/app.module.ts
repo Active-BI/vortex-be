@@ -11,7 +11,7 @@ import { RoleGuard } from './helpers/strategy/jwtCheckRole.service';
 import { ConfigModule } from '@nestjs/config';
 import { UserAuthController } from './auth/user_auth/user_auth.controller';
 import { UserAuthService } from './auth/user_auth/user_auth.service';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from 'src/services/prisma.service';
 import { MiddlewareResolver } from './middlwareResolve';
 import { UserService } from './app/user/user.service';
 import { UserController } from './app/user/user.controller';

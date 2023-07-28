@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { User, User_Auth } from '@prisma/client';
 import { DefaultArgs, GetResult } from '@prisma/client/runtime/library';
 import moment from 'moment';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from 'src/services/prisma.service';
 
 interface getUserAuth {
   User: GetResult<
