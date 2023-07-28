@@ -9,6 +9,7 @@ async function bootstrap() {
     cors: false,
   });
   app.enableCors();
+  app.setGlobalPrefix('api');
 
   app.use(expressJson({ limit: '50mb' }));
   ConfigSwagger(app);
