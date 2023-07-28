@@ -10,7 +10,7 @@
     "migrate-prod": "dotenv -e .env.production npx prisma migrate dev"
   },
   "scripts": {
-    "build": " npx prisma generate && nest build",
+    "build": "nest build",
     "generate": "npx prisma generate",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
