@@ -1,42 +1,33 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
-import { PrismaClient, Request_admin_access } from '@prisma/client';
-import { UserAuthService } from '../user_auth/user_auth.service';
+import { Request_admin_access } from '@prisma/client';
 import { UserService } from 'src/app/user/user.service';
 import { roles } from 'prisma/seedHelp';
+import { TempToken } from 'src/helpers/token';
+import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
+const nodemailer = require('nodemailer');
+
+export const transporter = nodemailer.createTransport({
+  host: 'smtp.office365.com',
+  port: 587,
+  secure: false,
+  tls: {
+    ciphers: 'SSLv3',
+    rejectUnauthorized: false,
+  },
+  requireTLS: true,
+  auth: {
+    user: 'homolog@activebi.com.br',
+    pass: 'Juc32727',
+  },
+});
 
 @Injectable()
-export class AdminRequestService {
+export class MasterRequestService {
   constructor(
     private prisma: PrismaService,
-    private userAuthService: UserAuthService,
     private userService: UserService,
   ) {}
-  // Requisição feita por usuário sem login
-  async create(createAdminRequestDto: Request_admin_access) {
-    const findByEmail = await this.prisma.request_admin_access.findFirst({
-      where: { email: createAdminRequestDto.email.toLocaleLowerCase() },
-    });
-    const findByCnpj = await this.prisma.request_admin_access.findFirst({
-      where: {
-        company_cnpj: createAdminRequestDto.company_cnpj,
-      },
-    });
-    const findByTenant = await this.prisma.tenant.findFirst({
-      where: {
-        tenant_cnpj: createAdminRequestDto.company_cnpj,
-      },
-    });
-    if (findByEmail || findByCnpj || findByTenant)
-      throw new BadRequestException('Solicitação já foi enviada');
-
-    return this.prisma.request_admin_access.create({
-      data: {
-        ...createAdminRequestDto,
-        email: createAdminRequestDto.email.toLocaleLowerCase(),
-      },
-    });
-  }
 
   async createByMaster(createAdminRequestDto: Request_admin_access) {
     const findByEmail = await this.prisma.request_admin_access.findMany({

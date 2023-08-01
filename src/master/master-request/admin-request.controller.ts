@@ -7,7 +7,7 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { AdminRequestService } from './admin-request.service';
+import { MasterRequestService } from './admin-request.service';
 import { Request_admin_access } from '@prisma/client';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
 import { ApiTags } from '@nestjs/swagger';
@@ -15,18 +15,13 @@ import { BypassAuth } from 'src/helpers/strategy/jwtGuard.service';
 
 @ApiTags('Master/admin-request')
 @Controller('admin-request')
-export class AdminRequestController {
-  constructor(private readonly adminRequestService: AdminRequestService) {}
+export class MasterRequestController {
+  constructor(private readonly masterRequestService: MasterRequestService) {}
 
-  @BypassAuth()
-  @Post()
-  async create(@Body() createAdminRequestDto: Request_admin_access) {
-    return this.adminRequestService.create(createAdminRequestDto);
-  }
   @Roles('Master')
   @Post()
   async createByMaster(@Body() createAdminRequestDto: Request_admin_access) {
-    return this.adminRequestService.createByMaster(createAdminRequestDto);
+    return this.masterRequestService.createByMaster(createAdminRequestDto);
   }
   @Roles('Master')
   @Get('/accept/:id/:tenantId')
@@ -34,22 +29,22 @@ export class AdminRequestController {
     @Param('id') id: string,
     @Param('tenantId') tenantId: string,
   ) {
-    return this.adminRequestService.acceptUserRequest(id, tenantId);
+    return this.masterRequestService.acceptUserRequest(id, tenantId);
   }
   @Roles('Master')
   @Get()
   async findAll() {
-    return this.adminRequestService.findAll();
+    return this.masterRequestService.findAll();
   }
   @Roles('Master')
   @Get('/blocked')
   async findAllBlocked() {
-    return this.adminRequestService.findAllBlocked();
+    return this.masterRequestService.findAllBlocked();
   }
   @Roles('Master')
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.adminRequestService.findOne(id);
+    return this.masterRequestService.findOne(id);
   }
 
   @Roles('Master')
@@ -58,12 +53,12 @@ export class AdminRequestController {
     @Param('id') id: string,
     @Body() updateAdminRequestDto: Request_admin_access,
   ) {
-    return this.adminRequestService.update(id, updateAdminRequestDto);
+    return this.masterRequestService.update(id, updateAdminRequestDto);
   }
 
   @Roles('Master')
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    return this.adminRequestService.remove(id);
+    return this.masterRequestService.remove(id);
   }
 }

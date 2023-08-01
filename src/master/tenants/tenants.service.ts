@@ -12,6 +12,7 @@ export class TenantsService {
         id,
         active: createTenantDto.active,
         tenant_name: createTenantDto.tenant_name,
+        tenant_cnpj: createTenantDto.tenant_cnpj,
       },
     });
     await this.prisma.tenant_DashBoard.createMany({

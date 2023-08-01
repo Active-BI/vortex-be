@@ -45,6 +45,7 @@
     "faker": "^6.6.6",
     "joi": "^17.9.2",
     "moment": "^2.29.4",
+    "nodemailer": "^6.9.4",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",

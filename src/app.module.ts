@@ -26,10 +26,12 @@ import { TemplateHandlerService } from './services/templateHandler.service';
 import { TenantsService } from './master/tenants/tenants.service';
 import { TenantsController } from './master/tenants/tenants.controller';
 import { RolesGuard } from './helpers/roleDecorator/roles.guard';
-import { AdminRequestService } from './auth/admin-request/admin-request.service';
-import { AdminRequestController } from './auth/admin-request/admin-request.controller';
 import { DashboardsMasterService } from './master/dashboards/dashboards.service';
 import { DashboardsMasterController } from './master/dashboards/dashboards.controller';
+import { RequestAccessController } from './auth/request-access/request-access.controller';
+import { RequestAccessService } from './auth/request-access/request-access.service';
+import { MasterRequestService } from './master/master-request/admin-request.service';
+import { MasterRequestController } from './master/master-request/admin-request.controller';
 
 @Module({
   controllers: [
@@ -41,9 +43,10 @@ import { DashboardsMasterController } from './master/dashboards/dashboards.contr
     ArquivosController,
     DashboardController,
     TenantsController,
-    AdminRequestController,
+    MasterRequestController,
     DashboardController,
     DashboardsMasterController,
+    RequestAccessController,
   ],
   providers: [
     PrismaService,
@@ -66,8 +69,9 @@ import { DashboardsMasterController } from './master/dashboards/dashboards.contr
     DashboardService,
     TemplateHandlerService,
     TenantsService,
-    AdminRequestService,
+    MasterRequestService,
     DashboardsMasterService,
+    RequestAccessService,
   ],
   exports: [JwtStrategy],
   imports: [
