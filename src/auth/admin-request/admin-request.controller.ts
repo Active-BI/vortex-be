@@ -11,11 +11,14 @@ import { AdminRequestService } from './admin-request.service';
 import { Request_admin_access } from '@prisma/client';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
 import { ApiTags } from '@nestjs/swagger';
+import { BypassAuth } from 'src/helpers/strategy/jwtGuard.service';
+
 @ApiTags('Master/admin-request')
 @Controller('admin-request')
 export class AdminRequestController {
   constructor(private readonly adminRequestService: AdminRequestService) {}
 
+  @BypassAuth()
   @Post()
   async create(@Body() createAdminRequestDto: Request_admin_access) {
     return this.adminRequestService.create(createAdminRequestDto);

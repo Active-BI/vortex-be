@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
-import { Request_admin_access } from '@prisma/client';
+import { PrismaClient, Request_admin_access } from '@prisma/client';
 import { UserAuthService } from '../user_auth/user_auth.service';
 import { UserService } from 'src/app/user/user.service';
 import { roles } from 'prisma/seedHelp';
@@ -14,13 +14,20 @@ export class AdminRequestService {
   ) {}
   // Requisição feita por usuário sem login
   async create(createAdminRequestDto: Request_admin_access) {
-    const findByEmail = await this.prisma.request_admin_access.findMany({
+    const findByEmail = await this.prisma.request_admin_access.findFirst({
       where: { email: createAdminRequestDto.email.toLocaleLowerCase() },
     });
-    const findByCnpj = await this.prisma.request_admin_access.findMany({
-      where: { email: createAdminRequestDto.company_cnpj.toLocaleLowerCase() },
+    const findByCnpj = await this.prisma.request_admin_access.findFirst({
+      where: {
+        company_cnpj: createAdminRequestDto.company_cnpj,
+      },
     });
-    if (findByEmail || findByCnpj)
+    const findByTenant = await this.prisma.tenant.findFirst({
+      where: {
+        tenant_cnpj: createAdminRequestDto.company_cnpj,
+      },
+    });
+    if (findByEmail || findByCnpj || findByTenant)
       throw new BadRequestException('Solicitação já foi enviada');
 
     return this.prisma.request_admin_access.create({

@@ -99,8 +99,6 @@ export class PbiReportController {
       if (!res.ok) throw res;
       return res.json();
     });
-
-    console.log(result.datasetId);
     const refresh = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/datasets/${result.datasetId}/refreshes`;
 
     await fetch(refresh, {
@@ -113,6 +111,7 @@ export class PbiReportController {
             'Limite de atualizações atingido',
             HttpStatus.TOO_MANY_REQUESTS,
           );
+        console.log(res.ok);
         throw new BadRequestException('Falha ao atualizar relatório');
       }
       return res;

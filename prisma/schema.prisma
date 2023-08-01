@@ -17,6 +17,7 @@ model Rls {
 model Tenant {
   id                   String                  @id @default(uuid()) @db.Uuid
   tenant_name          String
+  tenant_cnpj          String
   createdAt            DateTime                @default(now())
   updatedAt            DateTime                @updatedAt
   active               Boolean

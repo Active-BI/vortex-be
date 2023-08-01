@@ -43,6 +43,7 @@
     "dotenv": "^16.3.1",
     "express-session": "^1.17.3",
     "faker": "^6.6.6",
+    "joi": "^17.9.2",
     "moment": "^2.29.4",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",

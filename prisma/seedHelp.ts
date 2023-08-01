@@ -46,7 +46,7 @@ for (let i = 0; i < totalRows; i++) {
   let desligado = faker.datatype.boolean();
   data.push({
     tenant_id: faker.helpers.arrayElement(tenantIds),
-    nomeEmpresa: faker.company.name(),
+    nomeEmpresa: faker.helpers.arrayElement(['Active BI', 'Outra Empresa']),
     matricula: randomUUID(),
     nome: faker.person.fullName(),
     cargos: faker.person.jobTitle(),
@@ -92,11 +92,14 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
         {
           id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
           tenant_name: 'Tenant 1',
+          tenant_cnpj: '000000000000-11',
           active: true,
         },
         {
           id: 'fe4cec7c-d476-4389-9c57-4be40ada2016',
           tenant_name: 'Tenant 2',
+          tenant_cnpj: '11111111111-22',
+
           active: true,
         },
       ],
@@ -222,7 +225,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
     const arrayDeReports = [
       {
         type: 'RH_FUNCIONARIOS',
-        report_id: '7b71c89f-1d23-4d57-a99c-369f0ae8b5d1',
+        report_id: '8dd5b75b-03f5-41ab-8d6c-6a69c8934d88',
         group_id: 'c807ca26-3f93-463d-aa15-9a12e48174ba',
         name: 'Funcionários',
       },
@@ -241,7 +244,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
       data: [
         {
           id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
-          dashboard_id: '7b71c89f-1d23-4d57-a99c-369f0ae8b5d1',
+          dashboard_id: '8dd5b75b-03f5-41ab-8d6c-6a69c8934d88',
           tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
         },
 
