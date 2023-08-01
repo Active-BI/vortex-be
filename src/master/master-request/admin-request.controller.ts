@@ -31,6 +31,16 @@ export class MasterRequestController {
   ) {
     return this.masterRequestService.acceptUserRequest(id, tenantId);
   }
+
+  @Roles('Master')
+  @Post('/accept-and-create-tenant/:userId')
+  async acceptUserAnCreateTenantRequest(
+    @Param('userId') id: string,
+    @Body() body: any,
+  ) {
+    return this.masterRequestService.acceptUserAndCreateTenant(id, body);
+  }
+
   @Roles('Master')
   @Get()
   async findAll() {

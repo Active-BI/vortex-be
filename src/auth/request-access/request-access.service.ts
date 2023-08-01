@@ -4,7 +4,22 @@ import { UserService } from 'src/app/user/user.service';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
 import { TempToken } from 'src/helpers/token';
 import { PrismaService } from 'src/services/prisma.service';
+import { emailToRequestAccess } from './helper';
+const nodemailer = require('nodemailer');
 
+export const transporter = nodemailer.createTransport({
+  host: 'smtp-mail.outlook.com',
+  port: 587,
+  secure: false,
+  tls: {
+    ciphers: 'SSLv3',
+    rejectUnauthorized: false,
+  },
+  auth: {
+    user: 'lucas.franca@activebi.com.br',
+    pass: '27991190Ll.',
+  },
+});
 @Injectable()
 export class RequestAccessService {
   constructor(
@@ -24,7 +39,14 @@ export class RequestAccessService {
 
     const token = new TempToken(email);
     const signedToken = await this.jwtStrategy.signTempToken(token);
-
+    const link = `${process.env['FRONT_BASE_URL']}auth/request-access/${signedToken}`;
+    await transporter.sendMail({
+      from: 'homolog@activebi.com.br', // sender address
+      to: email, // list of receivers
+      subject: 'Código de Acesso', // Subject line
+      text: 'secretToReset', // plain text body
+      html: emailToRequestAccess(link),
+    });
     console.log(signedToken);
   }
   // Requisição feita por usuário sem login
@@ -41,6 +63,14 @@ export class RequestAccessService {
     });
     if (findByCnpj || findByTenant)
       throw new BadRequestException('Solicitação já foi enviada');
+    const findByEmail = await this.prisma.request_admin_access.findFirst({
+      where: { email: createAdminRequestDto.email.toLocaleLowerCase() },
+    });
+    const findByEmailAuth = await this.prisma.user.findFirst({
+      where: { contact_email: createAdminRequestDto.email.toLocaleLowerCase() },
+    });
+    if (findByEmail || findByEmailAuth)
+      throw new BadRequestException('Email já em uso');
 
     return this.prisma.request_admin_access.create({
       data: {

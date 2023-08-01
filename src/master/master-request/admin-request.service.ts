@@ -3,30 +3,18 @@ import { PrismaService } from 'src/services/prisma.service';
 import { Request_admin_access } from '@prisma/client';
 import { UserService } from 'src/app/user/user.service';
 import { roles } from 'prisma/seedHelp';
-import { TempToken } from 'src/helpers/token';
-import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
-const nodemailer = require('nodemailer');
-
-export const transporter = nodemailer.createTransport({
-  host: 'smtp.office365.com',
-  port: 587,
-  secure: false,
-  tls: {
-    ciphers: 'SSLv3',
-    rejectUnauthorized: false,
-  },
-  requireTLS: true,
-  auth: {
-    user: 'homolog@activebi.com.br',
-    pass: 'Juc32727',
-  },
-});
+import { TenantsService } from '../tenants/tenants.service';
+import { DashboardsMasterService } from '../dashboards/dashboards.service';
+import { DashboardService } from 'src/app/dashboard/dashboard.service';
 
 @Injectable()
 export class MasterRequestService {
   constructor(
     private prisma: PrismaService,
     private userService: UserService,
+    private tenantService: TenantsService,
+    private dashboardsService: DashboardsMasterService,
+    private dashboardAdminService: DashboardService,
   ) {}
 
   async createByMaster(createAdminRequestDto: Request_admin_access) {
@@ -53,17 +41,30 @@ export class MasterRequestService {
       },
     });
   }
+  async acceptUserAndCreateTenant(userId, body) {
+    const tenant = await this.tenantService.create(body);
+
+    await this.acceptUserRequest(userId, tenant.tenant_id);
+  }
   async acceptUserRequest(id, tenant_id) {
     const userAuth = await this.findOne(id);
-
     const alreadyExists = await this.userService.getUser(userAuth.email);
     if (alreadyExists) {
       throw new BadRequestException('Email já está em uso');
     }
-    await this.userService.createUser(
+    const { user_id } = await this.userService.createUser(
       { ...userAuth, rls_id: roles[1].id },
       tenant_id,
     );
+    const tenantsDisponiveis = await this.prisma.tenant_DashBoard.findMany({
+      where: { tenant_id },
+    });
+    await this.prisma.user_Tenant_DashBoard.createMany({
+      data: tenantsDisponiveis.map((td) => ({
+        tenant_DashBoard_id: td.id,
+        user_id,
+      })),
+    });
     await this.prisma.request_admin_access.update({
       where: { id },
       data: {

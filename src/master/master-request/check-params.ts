@@ -3,11 +3,11 @@ import {
   NestMiddleware,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserAuthService } from '../user_auth/user_auth.service';
-import { NextFunction } from 'express';
+import { NextFunction, Request } from 'express';
+import { UserAuthService } from 'src/auth/user_auth/user_auth.service';
 const Joi = require('joi');
 
-interface Request {
+interface Requestb extends Request {
   method: 'POST' | 'GET' | 'PUT' | 'DELETE';
   body: {
     description: string;
@@ -22,8 +22,12 @@ interface Request {
 @Injectable()
 export class ValidateAdminRequestMiddleware implements NestMiddleware {
   constructor(private userAuthService: UserAuthService) {}
-  async use(req: Request, res: Response, next: NextFunction) {
-    if (req.method === 'POST') {
+  async use(req: Requestb, res: Response, next: NextFunction) {
+    console.log(req.path);
+    if (
+      req.method === 'POST' &&
+      !req.path.includes('accept-and-create-tenant')
+    ) {
       try {
         const schema = Joi.object({
           name: Joi.string().alphanum().min(3).required(),

@@ -10,7 +10,7 @@ export class TenantsService {
     await this.prisma.tenant.create({
       data: {
         id,
-        active: createTenantDto.active,
+        active: createTenantDto?.active ? true : false,
         tenant_name: createTenantDto.tenant_name,
         tenant_cnpj: createTenantDto.tenant_cnpj,
       },
@@ -21,7 +21,7 @@ export class TenantsService {
         tenant_id: id,
       })),
     });
-    return createTenantDto;
+    return { tenant_id: id, ...createTenantDto };
   }
 
   async findAll() {

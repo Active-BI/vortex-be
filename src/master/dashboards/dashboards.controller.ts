@@ -37,7 +37,6 @@ export class DashboardsMasterController {
         tenant_id,
         DashboardUserList,
       );
-    console.log({ getTenantDashBoards });
     await this.dashboardAdminService.setDashboardUser(
       getTenantDashBoards,
       userid,
