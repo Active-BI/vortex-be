@@ -6,11 +6,12 @@ import { json as expressJson } from 'express';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
-    cors: false,
+    cors: true,
   });
   app.enableCors({
-    origin: '*',
+    origin: ['https://active-pme-api-e669a9769a4e.herokuapp.com', '*'],
     allowedHeaders: '*',
+    methods: ['POST', 'PUT', 'DELETE', 'GET', 'PATCH'],
   });
   app.setGlobalPrefix('api');
 
