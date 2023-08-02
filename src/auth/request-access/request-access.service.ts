@@ -62,7 +62,7 @@ export class RequestAccessService {
       },
     });
     if (findByCnpj || findByTenant)
-      throw new BadRequestException('Solicitação já foi enviada');
+      throw new BadRequestException('Essa empresa já fez uma solicitação');
     const findByEmail = await this.prisma.request_admin_access.findFirst({
       where: { email: createAdminRequestDto.email.toLocaleLowerCase() },
     });
@@ -70,7 +70,7 @@ export class RequestAccessService {
       where: { contact_email: createAdminRequestDto.email.toLocaleLowerCase() },
     });
     if (findByEmail || findByEmailAuth)
-      throw new BadRequestException('Email já em uso');
+      throw new BadRequestException('Esse email já está em uso');
 
     return this.prisma.request_admin_access.create({
       data: {

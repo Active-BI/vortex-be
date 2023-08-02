@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Token } from 'src/helpers/token';
 import * as bcrypt from 'bcrypt';
-import { CreateLoginDto } from './login.controller';
+import { CreateLoginDto } from './Swagger';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
 import { UserAuthService } from '../user_auth/user_auth.service';
 import { User_Auth } from '@prisma/client';

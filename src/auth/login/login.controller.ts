@@ -2,23 +2,8 @@ import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
 import { LoginService } from './login.service';
 import { ApiBody, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BypassAuth } from 'src/helpers/strategy/jwtGuard.service';
+import { CreateLoginDto, Token } from './Swagger';
 
-export class CreateLoginDto {
-  @ApiProperty({
-    required: true,
-  })
-  email: string;
-  @ApiProperty({
-    required: true,
-  })
-  password: string;
-}
-export class Token {
-  @ApiProperty({
-    required: true,
-  })
-  token: string;
-}
 @ApiTags('Login')
 @Controller('login')
 export class LoginController {
