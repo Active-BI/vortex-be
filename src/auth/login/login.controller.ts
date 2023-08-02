@@ -1,19 +1,32 @@
 import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
 import { LoginService } from './login.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BypassAuth } from 'src/helpers/strategy/jwtGuard.service';
 
 export class CreateLoginDto {
+  @ApiProperty({
+    required: true,
+  })
   email: string;
+  @ApiProperty({
+    required: true,
+  })
   password: string;
 }
-
+export class Token {
+  @ApiProperty({
+    required: true,
+  })
+  token: string;
+}
 @ApiTags('Login')
 @Controller('login')
 export class LoginController {
   constructor(private readonly loginService: LoginService) {}
   @BypassAuth()
   @Post()
+  @ApiResponse({ type: Token })
+  @ApiBody({ type: CreateLoginDto })
   async Login(@Body() body: CreateLoginDto) {
     try {
       const user_auth = await this.loginService.getUserAuth(body);
@@ -30,6 +43,7 @@ export class LoginController {
 
   @BypassAuth()
   @Post('register')
+  @ApiBody({ type: CreateLoginDto })
   async Register(@Body() body: CreateLoginDto) {
     try {
       const token = await this.loginService.register(body);
