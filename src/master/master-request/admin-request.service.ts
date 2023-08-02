@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { Request_admin_access } from '@prisma/client';
-import { UserService } from 'src/app/user/user.service';
+import { UserService } from 'src/admin/user/user.service';
 import { roles } from 'prisma/seedHelp';
 import { TenantsService } from '../tenants/tenants.service';
 import { DashboardsMasterService } from '../dashboards/dashboards.service';

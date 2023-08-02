@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { UserAuthService } from 'src/auth/user_auth/user_auth.service';
 import { v4 as uuidv4 } from 'uuid';
+import { UserResponse } from './Swagger';
 
 @Injectable()
 export class UserService {
@@ -9,7 +10,7 @@ export class UserService {
     private prisma: PrismaService,
     private userAuthService: UserAuthService,
   ) {}
-  async findAll(tenant_id: string) {
+  async findAll(tenant_id: string): Promise<UserResponse[]> {
     return await this.prisma.user.findMany({
       where: {
         tenant_id,
@@ -21,7 +22,7 @@ export class UserService {
       },
     });
   }
-  async findById(userId, tenant_id: string) {
+  async findById(userId, tenant_id: string): Promise<UserResponse> {
     return await this.prisma.user.findFirst({
       where: {
         id: userId,
@@ -37,13 +38,14 @@ export class UserService {
       },
     });
   }
-  async UpdateUSer(user) {
-    return await this.prisma.user.update({
+  async UpdateUSer(user): Promise<UserResponse> {
+    const userUpdate = await this.prisma.user.update({
       where: { id: user.id },
       data: user,
     });
+    return await this.findById(user.id, userUpdate.tenant_id);
   }
-  async createUser(user, tenant_id: string) {
+  async createUser(user, tenant_id: string): Promise<{ user_id: string }> {
     let uuid = uuidv4();
     await this.prisma.user.create({
       data: {
@@ -62,7 +64,7 @@ export class UserService {
     return { user_id: uuid };
   }
 
-  async getUser(email: string) {
+  async getUser(email: string): Promise<UserResponse> {
     return this.prisma.user.findFirst({
       where: {
         OR: [
@@ -76,6 +78,9 @@ export class UserService {
       },
       include: {
         Rls: true,
+        User_Auth: true,
+        Tenant: true,
+        User_Tenant_DashBoard: true,
       },
     });
   }

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Request_admin_access } from '@prisma/client';
-import { UserService } from 'src/app/user/user.service';
+import { UserService } from 'src/admin/user/user.service';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
 import { TempToken } from 'src/helpers/token';
 import { PrismaService } from 'src/services/prisma.service';
