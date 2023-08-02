@@ -10,7 +10,12 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateUserBody, CreateUserResponse, UserResponse } from './Swagger';
+import {
+  CreateUserBody,
+  CreateUserResponse,
+  EditUserBody,
+  UserResponse,
+} from './Swagger';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
 @ApiTags('User')
 @Controller('user')
@@ -36,8 +41,8 @@ export class UserController {
   @Put()
   @Roles('Admin')
   @ApiResponse({ type: UserResponse })
-  @ApiBody({ type: CreateUserBody })
-  async editUser(@Req() req, @Body() Body) {
+  @ApiBody({ type: EditUserBody })
+  async editUser(@Req() req, @Body() Body: EditUserBody) {
     return await this.userService.UpdateUSer(Body);
   }
 

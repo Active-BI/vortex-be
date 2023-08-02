@@ -77,7 +77,7 @@ export class CreateUserBody {
   @ApiProperty()
   name: string;
   @ApiProperty()
-  email: Date;
+  email: string;
   @ApiProperty()
   profession: string;
   @ApiProperty()
@@ -86,6 +86,10 @@ export class CreateUserBody {
   tenant_id: string;
   @ApiProperty()
   rls_id: string;
+}
+export class EditUserBody extends CreateUserBody {
+  @ApiProperty()
+  id: string;
 }
 export class Token {
   @ApiProperty({
