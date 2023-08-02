@@ -9,7 +9,7 @@ async function bootstrap() {
     cors: false,
   });
   app.enableCors({
-    origin: 'https://active-pme-api-e669a9769a4e.herokuapp.com',
+    origin: '*',
   });
   app.setGlobalPrefix('api');
 
