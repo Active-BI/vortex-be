@@ -99,9 +99,37 @@ export class PbiReportController {
       if (!res.ok) throw res;
       return res.json();
     });
-    const refresh = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/datasets/${result.datasetId}/refreshes`;
+    const getDataflows = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/dataflows`;
+    let dataFlowId: any = {};
+    await fetch(getDataflows, {
+      method: 'GET',
+      headers,
+    }).then(async (res: any) => {
+      if (!res.ok) {
+        throw new BadRequestException('Falha ao atualizar relatório');
+      }
+      const data = await res.json();
+      dataFlowId = { id: data.value[0].objectId, ...data.value[0] };
+    });
+    // const headers2 = await this.msalService.getRequestHeader(role_name);
 
-    await fetch(refresh, {
+    const refreshDataflow = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/dataflows/${dataFlowId.id}/refreshes`;
+    await fetch(refreshDataflow, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({
+        notifyOption: true,
+      }),
+    }).then(async (res: any) => {
+      if (!res.ok) {
+        throw new BadRequestException('Falha ao atualizar DataFlow');
+      }
+      return res;
+    });
+
+    const refreshDataset = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/datasets/${result.datasetId}/refreshes`;
+
+    await fetch(refreshDataset, {
       method: 'POST',
       headers,
     }).then((res: any) => {
@@ -111,7 +139,6 @@ export class PbiReportController {
             'Limite de atualizações atingido',
             HttpStatus.TOO_MANY_REQUESTS,
           );
-        console.log(res.ok);
         throw new BadRequestException('Falha ao atualizar relatório');
       }
       return res;
