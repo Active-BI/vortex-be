@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { UserAuthService } from '../user_auth/user_auth.service';
 import { NextFunction, Request } from 'express';
-const Joi = require('joi');
+import * as Joi from 'joi';
 
 interface Requestq extends Request {
   method: 'POST' | 'GET' | 'PUT' | 'DELETE';
@@ -41,6 +41,7 @@ export class ValidateLoginMiddleware implements NestMiddleware {
       }
     }
     if (req.method === 'POST' && !req.path.includes('register')) {
+      console.log(Joi);
       try {
         const schema = Joi.object({
           password: Joi.string()

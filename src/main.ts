@@ -8,11 +8,7 @@ async function bootstrap() {
     bufferLogs: true,
     cors: true,
   });
-  app.enableCors({
-    origin: ['https://active-pme-api-e669a9769a4e.herokuapp.com', '*'],
-    allowedHeaders: '*',
-    methods: ['POST', 'PUT', 'DELETE', 'GET', 'PATCH'],
-  });
+  app.enableCors();
   app.setGlobalPrefix('api');
 
   app.use(expressJson({ limit: '50mb' }));

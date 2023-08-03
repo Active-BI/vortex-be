@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { UserAuthService } from '../user_auth/user_auth.service';
 import { NextFunction, Request } from 'express';
-const Joi = require('joi');
+import * as Joi from 'joi';
 
 interface Requestq extends Request {
   method: 'POST' | 'GET' | 'PUT' | 'DELETE';

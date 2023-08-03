@@ -8,7 +8,7 @@ import { NextFunction, Request } from 'express';
 import { CreateUserBody } from './Swagger';
 import { UserService } from './user.service';
 import { UserAuthService } from 'src/auth/user_auth/user_auth.service';
-const Joi = require('Joi');
+import * as Joi from 'joi';
 
 interface Requestq extends Request {
   method: 'POST' | 'GET' | 'PUT' | 'DELETE';
