@@ -109,13 +109,24 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
       data: [
         {
           id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',
-          contact_email: 'teste@t1master.com.br',
+          contact_email: 'teste@master.com.br',
           name: 'teste master',
           born_date: new Date(),
           description: 'description master',
-          personal_email: 'teste@t1master.com.br',
+          personal_email: 'teste@master.com.br',
           profession: 'master',
           rls_id: '41dd767c-45d6-437d-9ccb-9a4987e07505',
+        },
+        {
+          id: '18da15ab-ae39-4b1c-98e9-0e0859556396',
+          contact_email: 'gustavo.tahara@activebi.com.br',
+          name: 'gustavo',
+          born_date: new Date(),
+          description: 'description master',
+          personal_email: 'gustavo.tahara@activebi.com.br',
+          profession: 'master',
+          tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
+          rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
         },
         {
           id: 'ffe81a3c-6d52-4cf3-bbc1-b655b7281a1b',
@@ -130,7 +141,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
         },
         {
           id: 'a0d8b88b-97b5-40b8-a790-3d3dac9b13be',
-          contact_email: 'admin@t1admin.com.br',
+          contact_email: 'teste@t1admin.com.br',
           name: 'teste admin',
           born_date: new Date(),
           description: 'description admin',
@@ -152,7 +163,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
         },
         {
           id: '16ea8f63-c5de-4c87-94bc-7140493eaab2',
-          contact_email: 'admin@t2admin.com.br',
+          contact_email: 'teste@t2admin.com.br',
           name: 'teste admin 2',
           born_date: new Date(),
           description: 'description admin',
@@ -186,6 +197,17 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           password_hash:
             '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
           user_id: 'ffe81a3c-6d52-4cf3-bbc1-b655b7281a1b',
+        },
+        {
+          id: 'd420b02b-ffcc-43fb-8959-306f067a547e',
+          normalized_contact_email: 'GUSTAVO.TAHARA@ACTIVEBI.COM.BR',
+          last_access: null,
+          anchor: true,
+          reset_pass: null,
+          secret: null,
+          password_hash:
+            '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
+          user_id: '18da15ab-ae39-4b1c-98e9-0e0859556396',
         },
         {
           id: 'c08f9907-9121-4e0e-8d1b-60761701b2ae',

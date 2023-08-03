@@ -23,7 +23,6 @@ interface Requestb extends Request {
 export class ValidateAdminRequestMiddleware implements NestMiddleware {
   constructor(private userAuthService: UserAuthService) {}
   async use(req: Requestb, res: Response, next: NextFunction) {
-    console.log(req.path);
     if (
       req.method === 'POST' &&
       !req.path.includes('accept-and-create-tenant')

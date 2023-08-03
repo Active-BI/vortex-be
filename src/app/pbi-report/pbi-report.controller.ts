@@ -52,7 +52,6 @@ export class PbiReportController {
   async importFile(@Param('type') type, @Req() req, @Body() dados) {
     const { userId, tenant_id } = req.tokenData;
     await this.getDashboardType(type, tenant_id, userId);
-
     await this.pbiReportService.postFile(dados, tenant_id, type);
   }
 
@@ -106,21 +105,21 @@ export class PbiReportController {
       headers,
     }).then(async (res: any) => {
       if (!res.ok) {
-        throw new BadRequestException('Falha ao atualizar relatório');
+        throw new BadRequestException('Falha ao obter dataflow');
       }
       const data = await res.json();
       dataFlowId = { id: data.value[0].objectId, ...data.value[0] };
     });
-    // const headers2 = await this.msalService.getRequestHeader(role_name);
 
     const refreshDataflow = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/dataflows/${dataFlowId.id}/refreshes`;
+
     await fetch(refreshDataflow, {
       method: 'POST',
       headers: headers,
       body: JSON.stringify({
         notifyOption: true,
       }),
-    }).then(async (res: any) => {
+    }).then(async (res) => {
       if (!res.ok) {
         throw new BadRequestException('Falha ao atualizar DataFlow');
       }
@@ -196,14 +195,14 @@ export class PbiReportController {
     const formData = {
       accessLevel: 'View',
     };
-    const listReportRls = ['4a6f3b19-88c4-4547-802e-8964810cfa66'];
+    const listReportRls = ['8dd5b75b-03f5-41ab-8d6c-6a69c8934d88'];
     const shoudPassRls = listReportRls.find((report) => report === reportId);
 
     if (shoudPassRls) {
       formData['identities'] = [
         {
-          username: user.email,
-          roles: [user.role],
+          username: user.contact_email,
+          roles: [user.role_name],
           reports: [reportId],
           datasets: [datasetIds[0]],
         },

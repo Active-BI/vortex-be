@@ -76,9 +76,11 @@ export class LoginService {
     if (!user) {
       throw new UnauthorizedException('Usuário não está pré-cadastrado');
     }
-    if (user.password_hash.length > 0) {
+
+    if (user.password_hash && user.password_hash.length > 0) {
       throw new UnauthorizedException('Usuário já foi cadastrado');
     }
+
     const passwordHash = bcrypt.hashSync(login.password, 10);
     this.userAuthService.update({ ...user, password_hash: passwordHash });
   }

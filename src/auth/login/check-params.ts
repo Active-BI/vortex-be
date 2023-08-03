@@ -41,7 +41,6 @@ export class ValidateLoginMiddleware implements NestMiddleware {
       }
     }
     if (req.method === 'POST' && !req.path.includes('register')) {
-      console.log(Joi);
       try {
         const schema = Joi.object({
           password: Joi.string()

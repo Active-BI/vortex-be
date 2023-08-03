@@ -47,7 +47,6 @@ export class RequestAccessService {
       text: 'secretToReset', // plain text body
       html: emailToRequestAccess(link),
     });
-    console.log(signedToken);
   }
   // Requisição feita por usuário sem login
   async create(createAdminRequestDto: Request_admin_access) {

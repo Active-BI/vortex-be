@@ -29,7 +29,7 @@ export function toCamelCase(str) {
     .replace(/\s+/g, '');
 }
 export function RHTemplate(type) {
-  const sheetData = Object.keys(templates_xlsx[type]);
+  const sheetData = Object.values(templates_xlsx[type]);
 
   // Criando o workbook e worksheet
   const workbook = XLSX.utils.book_new();

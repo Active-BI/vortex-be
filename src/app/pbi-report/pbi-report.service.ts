@@ -6,7 +6,7 @@ import {
   templates_xlsx,
   toCamelCase,
 } from 'src/services/templates';
-
+import * as Joi from 'joi';
 @Injectable()
 export class PbiReportService {
   constructor(
@@ -23,24 +23,68 @@ export class PbiReportService {
     });
   }
   async postFile(dados, tenant_id, type) {
-    const todosObjetosPossuemTodasChaves = dados.every((d) => {
-      return Object.values(templates_xlsx[type]).every((e: string) => {
-        return Object.keys(d).includes(e);
+    console.log({ tenant_id });
+    try {
+      const schema = Joi.array().items(
+        Joi.object({
+          nomeEmpresa: Joi.string().required(),
+          matricula: Joi.string().required(),
+          nome: Joi.string().required(),
+          cargos: Joi.string().required(),
+          dataAdmissao: Joi.string().required(),
+          area: Joi.string().required(),
+          salario: Joi.number().required(),
+          sexo: Joi.string().required(),
+          cutis: Joi.string().required(),
+          dataNascimento: Joi.string().required(),
+          email: Joi.string().required(),
+          vinculoEmpregaticio: Joi.string().required(),
+          situacaoEmpregado: Joi.string().required(),
+          grauInstrucao: Joi.string().required(),
+          pcd: Joi.boolean().required(),
+          desligado: Joi.boolean().required(),
+          dataDesligamento: Joi.any().required(),
+          motivoDesligamento: Joi.any().required(),
+
+          //   'Nome Empresa': Joi.string().required(),
+          //   Matrícula: Joi.string().required(),
+          //   Nome: Joi.string().required(),
+          //   Cargos: Joi.string().required(),
+          //   'Data da Admissão': Joi.string().required(),
+          //   Área: Joi.string().required(),
+          //   Salário: Joi.number().required(),
+          //   Sexo: Joi.string().required(),
+          //   Cútis: Joi.string().required(),
+          //   'Data de Nascimento': Joi.string().required(),
+          //   'E-Mail': Joi.string().required(),
+          //   'Vínculo Empregatício': Joi.string().required(),
+          //   'Situação do Empregado': Joi.string().required(),
+          //   'Grau de Instrução': Joi.string().required(),
+          //   PCD: Joi.boolean().required(),
+          //   Desligado: Joi.boolean().required(),
+          //   'Data de Desligamento': Joi.any().required(),
+          //   'Motivo do Desligamento': Joi.any().required(),
+        }),
+      );
+      try {
+        await schema.validateAsync(dados);
+      } catch (e) {
+        throw new BadRequestException('Arquivo inválido ou campos ausentes.');
+      }
+
+      const dadosFormatados = dados.map((dado) => {
+        if (dado['id']) delete dado.id;
+        return { ...dado, tenant_id: tenant_id };
       });
-    });
-    if (!todosObjetosPossuemTodasChaves) {
-      throw new BadRequestException('Arquivo inválido, campos ausentes.');
+      await this.prisma[type.toLowerCase() + '_table'].deleteMany({
+        where: { tenant_id },
+      });
+      await this.prisma[type.toLowerCase() + '_table'].createMany({
+        data: dadosFormatados,
+      });
+    } catch (e) {
+      throw new BadRequestException('Arquivo inválido ou campos ausentes.');
     }
-    const dadosFormatados = dados.map((dado) => {
-      if (dado['id']) delete dado.id;
-      return { ...dado, tenant_id: tenant_id };
-    });
-    await this.prisma[type.toLowerCase() + '_table'].deleteMany({
-      where: { tenant_id },
-    });
-    await this.prisma[type.toLowerCase() + '_table'].createMany({
-      data: dadosFormatados,
-    });
   }
   async getFile(type: string, tenant_id) {
     const data = await this.prisma[type.toLowerCase() + '_table'].findMany({
