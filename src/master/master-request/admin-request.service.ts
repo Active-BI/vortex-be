@@ -56,13 +56,13 @@ export class MasterRequestService {
       { ...userAuth, rls_id: roles[1].id },
       tenant_id,
     );
-    const tenantsDisponiveis = await this.prisma.tenant_DashBoard.findMany({
+    const tenantsDisponiveis = await this.prisma.tenant_Page.findMany({
       where: { tenant_id },
     });
-    await this.prisma.user_Tenant_DashBoard.createMany({
+    await this.prisma.user_Page.createMany({
       data: tenantsDisponiveis.map((td) => ({
-        tenant_DashBoard_id: td.id,
         user_id,
+        tenant_page_id: td.id,
       })),
     });
     await this.prisma.request_admin_access.update({

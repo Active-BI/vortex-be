@@ -9,9 +9,10 @@ datasource db {
 }
 
 model Rls {
-  id        String @id @default(uuid()) @db.Uuid
+  id        String      @id @default(uuid()) @db.Uuid
   name      String
   User_Auth User[]
+  Page_Role Page_Role[]
 }
 
 model Tenant {
@@ -22,9 +23,10 @@ model Tenant {
   updatedAt            DateTime                @updatedAt
   active               Boolean
   User                 User[]
-  Tenant_DashBoard     Tenant_DashBoard[]
+  // Tenant_DashBoard     Tenant_DashBoard[]
   funionarios_table    rh_funcionarios_table[]
   Request_admin_access Request_admin_access[]
+  Tenant_Page          Tenant_Page[]
 }
 
 model Request_admin_access {
@@ -56,44 +58,65 @@ model User_Auth {
 }
 
 model User {
-  id                    String                  @id @default(uuid()) @db.Uuid
-  name                  String
-  born_date             DateTime?               @db.Date
-  personal_email        String?                 @unique
-  contact_email         String
-  profession            String
-  description           String
-  tenant_id             String?                 @db.Uuid
-  Tenant                Tenant?                 @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  rls_id                String                  @db.Uuid
-  Rls                   Rls                     @relation(fields: [rls_id], references: [id], onDelete: Cascade)
-  User_Tenant_DashBoard User_Tenant_DashBoard[]
-  User_Auth             User_Auth?
+  id             String      @id @default(uuid()) @db.Uuid
+  name           String
+  born_date      DateTime?   @db.Date
+  personal_email String?     @unique
+  contact_email  String
+  profession     String
+  description    String
+  tenant_id      String?     @db.Uuid
+  Tenant         Tenant?     @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  rls_id         String      @db.Uuid
+  Rls            Rls         @relation(fields: [rls_id], references: [id], onDelete: Cascade)
+  User_Auth      User_Auth?
+  User_Page      User_Page[]
 }
 
-model DashBoard {
-  report_id        String             @id @default(uuid()) @db.Uuid
-  name             String
-  type             String
-  group_id         String
-  Tenant_DashBoard Tenant_DashBoard[]
+model Tenant_Page {
+  id        String      @id @default(uuid()) @db.Uuid
+  tenant_id String      @db.Uuid
+  Tenant    Tenant      @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  page_id   String      @db.Uuid
+  Page      Page        @relation(fields: [page_id], references: [id])
+  User_Page User_Page[]
 }
 
-model Tenant_DashBoard {
-  id                    String                  @id @default(uuid()) @db.Uuid
-  tenant_id             String                  @db.Uuid
-  Tenant                Tenant                  @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  dashboard_id          String                  @db.Uuid
-  Dashboard             DashBoard               @relation(fields: [dashboard_id], references: [report_id])
-  user_Tenant_DashBoard User_Tenant_DashBoard[]
+model User_Page {
+  id             String      @id @default(uuid()) @db.Uuid
+  tenant_page_id String      @db.Uuid
+  Tenant_Page    Tenant_Page @relation(fields: [tenant_page_id], references: [id], onDelete: Cascade)
+  user_id        String      @db.Uuid
+  User           User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
-model User_Tenant_DashBoard {
-  id                  String           @id @default(uuid()) @db.Uuid
-  tenant_DashBoard_id String           @db.Uuid
-  Tenant_DashBoard    Tenant_DashBoard @relation(fields: [tenant_DashBoard_id], references: [id], onDelete: Cascade)
-  user_id             String           @db.Uuid
-  User                User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+model Page_Role {
+  id      String @id @default(uuid()) @db.Uuid
+  page_id String @db.Uuid
+  Page    Page   @relation(fields: [page_id], references: [id])
+  rls_id  String @db.Uuid
+  Rls     Rls    @relation(fields: [rls_id], references: [id])
+}
+
+model Page_Group {
+  id    String @id @default(uuid()) @db.Uuid
+  title String
+  icon  String
+  Page  Page[]
+}
+
+model Page {
+  id            String        @id @default(uuid()) @db.Uuid
+  type          String
+  title         String
+  link          String?
+  group_id      String?
+  report_id     String?
+  table_name    String?
+  Page_Role     Page_Role[]
+  page_group_id String?       @db.Uuid
+  Page_Group    Page_Group?   @relation(fields: [page_group_id], references: [id])
+  Tenant_Page   Tenant_Page[]
 }
 
 model rh_funcionarios_table {

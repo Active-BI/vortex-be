@@ -18,8 +18,6 @@ import { UserController } from './admin/user/user.controller';
 import { PbiReportController } from './app/pbi-report/pbi-report.controller';
 import { PbiReportService } from './app/pbi-report/pbi-report.service';
 import { MsalService } from './services/msal.service';
-import { ArquivosController } from './app/arquivos/arquivos.controller';
-import { ArquivosService } from './app/arquivos/arquivos.service';
 import { DashboardController } from './app/dashboard/dashboard.controller';
 import { DashboardService } from './app/dashboard/dashboard.service';
 import { TemplateHandlerService } from './services/templateHandler.service';
@@ -40,7 +38,6 @@ import { MasterRequestController } from './master/master-request/admin-request.c
     UserAuthController,
     UserController,
     PbiReportController,
-    ArquivosController,
     DashboardController,
     TenantsController,
     MasterRequestController,
@@ -65,7 +62,6 @@ import { MasterRequestController } from './master/master-request/admin-request.c
     UserService,
     PbiReportService,
     MsalService,
-    ArquivosService,
     DashboardService,
     TemplateHandlerService,
     TenantsService,

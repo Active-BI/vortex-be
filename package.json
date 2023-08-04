@@ -7,16 +7,17 @@
   "license": "UNLICENSED",
   "prisma": {
     "seed": "ts-node prisma/seed.ts",
-    "migrate-prod": "dotenv -e .env.production npx prisma migrate dev"
+    "migrate-prod": "dotenv -e .env.production npx prisma migrate dev",
+    "migrate-dev": "dotenv -e .env npx prisma migrate dev"
   },
   "scripts": {
     "build": " npx prisma generate && nest build",
     "generate": "npx prisma generate",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "nest start --watch",
-    "start:debug": "nest start --debug --watch",
+    "start:dev": " dotenv -e .env nest start --watch ",
     "start:prod": "node dist/src/main",
+    "start:debug": "nest start --debug --watch",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -41,6 +42,7 @@
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "dotenv": "^16.3.1",
+    "dotenv-cli": "^7.2.1",
     "express-session": "^1.17.3",
     "faker": "^6.6.6",
     "joi": "^17.9.2",
@@ -52,6 +54,7 @@
     "prisma": "^5.0.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
+    "sqlite3": "^5.1.6",
     "uuid": "^9.0.0",
     "xlsx": "^0.18.5"
   },
