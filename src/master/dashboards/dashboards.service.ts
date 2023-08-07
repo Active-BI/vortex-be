@@ -19,6 +19,9 @@ export class DashboardsMasterService {
             page_id: {
               in: dashboardIdList,
             },
+            Tenant: {
+              restrict: false,
+            },
           },
         },
       })
@@ -26,6 +29,15 @@ export class DashboardsMasterService {
   }
   async findAllByTenant(tenant_id) {
     const dashboads = await this.prisma.page.findMany({
+      where: {
+        Tenant_Page: {
+          some: {
+            Tenant: {
+              restrict: false,
+            },
+          },
+        },
+      },
       include: {
         Tenant_Page: true,
       },
@@ -45,6 +57,11 @@ export class DashboardsMasterService {
     const dashboardsByTenant = await this.prisma.tenant_Page.findMany({
       where: {
         tenant_id,
+        AND: {
+          Tenant: {
+            restrict: false,
+          },
+        },
       },
       include: {
         Page: true,
@@ -88,8 +105,7 @@ export class DashboardsMasterService {
       };
       dashboardsByTenant.forEach((dash) => {
         const find = user.User_Page.find(
-          (user_dash) =>
-            dash.page_id === user_dash.Tenant_Page.page_id,
+          (user_dash) => dash.page_id === user_dash.Tenant_Page.page_id,
         );
         if (find)
           userlist[user.id].dashboards.push({

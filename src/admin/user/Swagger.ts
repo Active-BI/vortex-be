@@ -25,6 +25,8 @@ export class TenantClass implements Tenant {
   updatedAt: Date;
   @ApiProperty()
   active: boolean;
+  @ApiProperty()
+  restrict: boolean;
 }
 
 class UserAuthClass implements User_Auth {

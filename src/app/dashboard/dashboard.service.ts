@@ -27,23 +27,85 @@ export class DashboardService {
     });
   }
   async getAllDashboardsByUser(user_id, tenant_id) {
-    return await this.prisma.user_Page.findMany({
-      where: {
-        user_id,
-        AND: {
+    return (
+      await this.prisma.user_Page.findMany({
+        where: {
+          user_id,
+          AND: {
+            Tenant_Page: {
+              tenant_id,
+            },
+          },
+        },
+        select: {
           Tenant_Page: {
-            tenant_id,
+            select: {
+              Page: {
+                include: {
+                  Page_Group: true,
+                  Page_Role: {
+                    select: {
+                      Rls: {
+                        select: {
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
         },
-      },
-      include: {
-        Tenant_Page: {
-          include: {
-            Page: true,
+      })
+    ).map((e) => ({
+      ...e.Tenant_Page.Page,
+      Page_Role: e.Tenant_Page.Page.Page_Role.map((r) => r.Rls.name),
+      Page_Group: e.Tenant_Page.Page.Page_Group,
+    }));
+  }
+  async getAllDashboardsMaster() {
+    return (
+      await this.prisma.user_Page.findMany({
+        where: {
+          Tenant_Page: {
+            Page: {
+              Page_Role: {
+                some: {
+                  Rls: {
+                    name: 'Master',
+                  },
+                },
+              },
+            },
           },
         },
-      },
-    });
+        select: {
+          Tenant_Page: {
+            select: {
+              Page: {
+                include: {
+                  Page_Group: true,
+                  Page_Role: {
+                    select: {
+                      Rls: {
+                        select: {
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      })
+    ).map((e) => ({
+      ...e.Tenant_Page.Page,
+      Page_Role: e.Tenant_Page.Page.Page_Role.map((r) => r.Rls.name),
+      Page_Group: e.Tenant_Page.Page.Page_Group,
+    }));
   }
   async getAllDashboards(tenant_id) {
     return await this.prisma.tenant_Page.findMany({
@@ -51,7 +113,19 @@ export class DashboardService {
         tenant_id,
       },
       include: {
-        Page: true,
+        Page: {
+          include: {
+            Page_Role: {
+              select: {
+                Rls: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
   }

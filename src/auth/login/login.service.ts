@@ -40,6 +40,7 @@ export class LoginService {
       user_auth.User.id,
       user_auth.User.tenant_id,
     );
+
     const tokenObj = new Token(user_auth.User, dashboardUser);
 
     var token = await this.jwtStrategy.signToken(tokenObj);
@@ -58,13 +59,15 @@ export class LoginService {
     );
 
     if (!isHashTrue) throw new ForbiddenException('Senha inválida');
-    const tokenObj = new Token(user_auth.User, []);
+
+    const dashboardUser = await this.dashboardService.getAllDashboardsMaster();
+    const tokenObj = new Token(user_auth.User, dashboardUser);
 
     var token = await this.jwtStrategy.signToken(tokenObj);
 
     delete user_auth.User;
     await this.setLastAccess(user_auth as User_Auth);
-
+    console.log(token);
     return { token };
   }
   setLastAccess(user: User_Auth) {

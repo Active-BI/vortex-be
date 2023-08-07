@@ -22,6 +22,7 @@ model Tenant {
   createdAt            DateTime                @default(now())
   updatedAt            DateTime                @updatedAt
   active               Boolean
+  restrict             Boolean?
   User                 User[]
   // Tenant_DashBoard     Tenant_DashBoard[]
   funionarios_table    rh_funcionarios_table[]

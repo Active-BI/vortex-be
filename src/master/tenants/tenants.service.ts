@@ -26,6 +26,9 @@ export class TenantsService {
 
   async findAll() {
     return await this.prisma.tenant.findMany({
+      where: {
+        restrict: false,
+      },
       orderBy: {
         tenant_name: 'asc',
       },
