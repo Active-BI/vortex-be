@@ -26,17 +26,17 @@ export class PbiReportController {
   private client: Client;
 
   async getDashboardType(type, tenant_id, userId) {
-    const userDashboard = await this.prisma.user_Tenant_DashBoard.findFirst({
+    const userDashboard = await this.prisma.user_Page.findFirst({
       where: {
         user_id: userId,
-        Tenant_DashBoard: {
+        Tenant_Page: {
           tenant_id,
-          Dashboard: {
-            type,
+          Page: {
+            link: type,
           },
         },
       },
-      include: { Tenant_DashBoard: { include: { Dashboard: true } } },
+      include: { Tenant_Page: { include: { Page: true } } },
     });
 
     if (!userDashboard) throw new BadRequestException('Report não encontrado');
@@ -90,7 +90,7 @@ export class PbiReportController {
     const userDashboard = await this.getDashboardType(type, tenant_id, userId);
     const headers = await this.msalService.getRequestHeader(role_name);
 
-    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/reports/${userDashboard.Tenant_DashBoard.Dashboard.report_id}`;
+    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_Page.Page.group_id}/reports/${userDashboard.Tenant_Page.Page.report_id}`;
     const result: any = await fetch(reportInGroupApi, {
       method: 'GET',
       headers,
@@ -98,7 +98,7 @@ export class PbiReportController {
       if (!res.ok) throw res;
       return res.json();
     });
-    const getDataflows = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/dataflows`;
+    const getDataflows = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_Page.Page.group_id}/dataflows`;
     let dataFlowId: any = {};
     await fetch(getDataflows, {
       method: 'GET',
@@ -111,7 +111,7 @@ export class PbiReportController {
       dataFlowId = { id: data.value[0].objectId, ...data.value[0] };
     });
 
-    const refreshDataflow = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/dataflows/${dataFlowId.id}/refreshes`;
+    const refreshDataflow = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_Page.Page.group_id}/dataflows/${dataFlowId.id}/refreshes`;
 
     await fetch(refreshDataflow, {
       method: 'POST',
@@ -126,7 +126,7 @@ export class PbiReportController {
       return res;
     });
 
-    const refreshDataset = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/datasets/${result.datasetId}/refreshes`;
+    const refreshDataset = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_Page.Page.group_id}/datasets/${result.datasetId}/refreshes`;
 
     await fetch(refreshDataset, {
       method: 'POST',
@@ -147,8 +147,9 @@ export class PbiReportController {
   @Get('type/:type')
   async ReportByTYpe(@Param('type') type, @Req() req): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
+    console.log(userId, tenant_id, role_name);
     const userDashboard = await this.getDashboardType(type, tenant_id, userId);
-    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_DashBoard.Dashboard.group_id}/reports/${userDashboard.Tenant_DashBoard.Dashboard.report_id}`;
+    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_Page.Page.group_id}/reports/${userDashboard.Tenant_Page.Page.report_id}`;
 
     // header é o objeto onde está o accessToken
     const headers = await this.msalService.getRequestHeader(role_name);
@@ -175,9 +176,9 @@ export class PbiReportController {
 
     reportEmbedConfig.embedToken =
       await this.getEmbedTokenForSingleReportSingleWorkspace(
-        userDashboard.Tenant_DashBoard.Dashboard.report_id,
+        userDashboard.Tenant_Page.Page.report_id,
         datasetIds,
-        userDashboard.Tenant_DashBoard.Dashboard.group_id,
+        userDashboard.Tenant_Page.Page.group_id,
         user,
         headers,
       );

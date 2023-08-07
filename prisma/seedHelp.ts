@@ -3,24 +3,31 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 
+const ROLES = {
+  User: 'ca21241b-a37d-4e6f-bbb6-26643d3cdd99',
+  Admin: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
+  Master: '41dd767c-45d6-437d-9ccb-9a4987e07505',
+};
 export const roles = [
   {
     name: 'User',
-    id: 'ca21241b-a37d-4e6f-bbb6-26643d3cdd99',
+    id: ROLES.User,
   },
   {
     name: 'Admin',
-    id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
+    id: ROLES.Admin,
   },
   {
     name: 'Master',
-    id: '41dd767c-45d6-437d-9ccb-9a4987e07505',
+    id: ROLES.Master,
   },
 ];
-const tenantIds = [
-  'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
-  'fe4cec7c-d476-4389-9c57-4be40ada2016',
-];
+const TENANTS = {
+  TENANT1: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
+  TENANT2: 'fe4cec7c-d476-4389-9c57-4be40ada2016',
+  MASTER: '3a4dc251-deea-4d2b-b6fb-8a067944b94e',
+};
+const tenantIds = [TENANTS.TENANT1, TENANTS.TENANT2];
 const totalRows = 250;
 const data = [];
 // Gerar e inserir 100 registros com o tenant_id fornecido
@@ -72,9 +79,11 @@ for (let i = 0; i < totalRows; i++) {
 
 export const EmployeeSeed = async (prisma: PrismaClient) => {
   await prisma.rh_funcionarios_table.deleteMany();
-  await prisma.user_Tenant_DashBoard.deleteMany();
-  await prisma.tenant_DashBoard.deleteMany();
-  await prisma.dashBoard.deleteMany();
+  await prisma.page_Role.deleteMany();
+  await prisma.user_Page.deleteMany();
+  await prisma.tenant_Page.deleteMany();
+  await prisma.page_Group.deleteMany();
+  await prisma.page.deleteMany();
   await prisma.user_Auth.deleteMany();
   await prisma.user.deleteMany();
   await prisma.tenant.deleteMany();
@@ -90,21 +99,29 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
     await prisma.tenant.createMany({
       data: [
         {
-          id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
+          id: TENANTS.TENANT1,
           tenant_name: 'Tenant 1',
           tenant_cnpj: '000000000000-11',
           active: true,
+          restrict: false,
         },
         {
-          id: 'fe4cec7c-d476-4389-9c57-4be40ada2016',
+          id: TENANTS.TENANT2,
           tenant_name: 'Tenant 2',
           tenant_cnpj: '11111111111-22',
-
+          restrict: false,
+          active: true,
+        },
+        {
+          id: TENANTS.MASTER,
+          tenant_name: 'Master',
+          tenant_cnpj: '000000000-00000',
+          restrict: true,
           active: true,
         },
       ],
     });
-
+    const userAdmin = '18da15ab-ae39-4b1c-98e9-0e0859556396';
     await prisma.user.createMany({
       data: [
         {
@@ -115,17 +132,18 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           description: 'description master',
           personal_email: 'teste@master.com.br',
           profession: 'master',
+          tenant_id: TENANTS.MASTER,
           rls_id: '41dd767c-45d6-437d-9ccb-9a4987e07505',
         },
         {
-          id: '18da15ab-ae39-4b1c-98e9-0e0859556396',
+          id: userAdmin,
           contact_email: 'gustavo.tahara@activebi.com.br',
           name: 'gustavo',
           born_date: new Date(),
           description: 'description master',
           personal_email: 'gustavo.tahara@activebi.com.br',
           profession: 'master',
-          tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
+          tenant_id: TENANTS.TENANT1,
           rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
         },
         {
@@ -136,7 +154,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           description: 'description user',
           personal_email: 'teste@t1user.com.br',
           profession: 'user',
-          tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
+          tenant_id: TENANTS.TENANT1,
           rls_id: 'ca21241b-a37d-4e6f-bbb6-26643d3cdd99',
         },
         {
@@ -147,7 +165,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           description: 'description admin',
           personal_email: 'teste@t1admin.com.br',
           profession: 'profession admin',
-          tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
+          tenant_id: TENANTS.TENANT1,
           rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
         },
         {
@@ -158,7 +176,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           description: 'description user',
           personal_email: 'teste@t2user.com.br',
           profession: 'user',
-          tenant_id: 'fe4cec7c-d476-4389-9c57-4be40ada2016',
+          tenant_id: TENANTS.TENANT2,
           rls_id: 'ca21241b-a37d-4e6f-bbb6-26643d3cdd99',
         },
         {
@@ -169,7 +187,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           description: 'description admin',
           personal_email: 'teste@t2admin.com.br',
           profession: 'profession admin',
-          tenant_id: 'fe4cec7c-d476-4389-9c57-4be40ada2016',
+          tenant_id: TENANTS.TENANT2,
           rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
         },
       ],
@@ -178,7 +196,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
       data: [
         {
           id: '5c0ab3de-2214-4f49-bbee-a9e8ad3ef6a3',
-          normalized_contact_email: 'TESTE@T1MASTER.COM.BR',
+          normalized_contact_email: 'TESTE@MASTER.COM.BR',
           last_access: null,
           reset_pass: null,
           secret: null,
@@ -207,7 +225,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           secret: null,
           password_hash:
             '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
-          user_id: '18da15ab-ae39-4b1c-98e9-0e0859556396',
+          user_id: userAdmin,
         },
         {
           id: 'c08f9907-9121-4e0e-8d1b-60761701b2ae',
@@ -244,63 +262,184 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
         },
       ],
     });
-    const arrayDeReports = [
-      {
-        type: 'RH_FUNCIONARIOS',
-        report_id: '8dd5b75b-03f5-41ab-8d6c-6a69c8934d88',
-        group_id: 'c807ca26-3f93-463d-aa15-9a12e48174ba',
-        name: 'Funcionários',
-      },
-      {
-        type: 'USUARIOS',
-        report_id: 'a4980e1a-6cf3-460f-9e25-a206bca62c79',
-        group_id: '',
-        name: 'Usuários',
-      },
-    ];
-    await prisma.dashBoard.createMany({
-      data: arrayDeReports,
-    });
 
-    await prisma.tenant_DashBoard.createMany({
+    const screenTypes = {
+      REPORT: 'report',
+      REPORT_UPLOAD: 'report-upload',
+      PAGE: 'page',
+    };
+    await prisma.page_Group.createMany({
       data: [
         {
-          id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
-          dashboard_id: '8dd5b75b-03f5-41ab-8d6c-6a69c8934d88',
-          tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
+          id: '9b0e8176-5c8d-4024-ac28-524ba48d16c9',
+          title: 'RH',
+          icon: 'mat_outline:people_alt',
         },
-
         {
-          id: '891e9633-6e1c-47ab-abdc-f736cce00347',
-          dashboard_id: 'a4980e1a-6cf3-460f-9e25-a206bca62c79',
-          tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
+          id: 'bf296f83-5997-4349-97d6-12df34fd4da6',
+          title: 'Administrador',
+          icon: 'mat_outline:settings',
         },
-
         {
-          id: 'a9f3c05a-33c7-48b0-bd5a-1caff7b83d83',
-          dashboard_id: 'a4980e1a-6cf3-460f-9e25-a206bca62c79',
-          tenant_id: 'fe4cec7c-d476-4389-9c57-4be40ada2016',
+          id: '3457d477-62c8-4596-8e30-71f9095064e2',
+          title: 'Gestão Master',
+          icon: 'mat_outline:settings',
+        },
+        {
+          id: '219abfe8-7478-4db3-9fb3-cf1d38fcace2',
+          title: 'Gestão de telas',
+          icon: 'widgets',
         },
       ],
     });
-    await prisma.user_Tenant_DashBoard.createMany({
+
+    await prisma.page.createMany({
       data: [
         {
-          tenant_DashBoard_id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
+          id: '9a7dc980-cc5f-4060-a111-e006d62e5f18',
+          title: 'Funcionários',
+          link: 'rh_funcionarios',
+          type: screenTypes.REPORT_UPLOAD,
+          report_id: '8dd5b75b-03f5-41ab-8d6c-6a69c8934d88',
+          group_id: 'c807ca26-3f93-463d-aa15-9a12e48174ba',
+          table_name: 'rh_funcionarios',
+          page_group_id: '9b0e8176-5c8d-4024-ac28-524ba48d16c9',
+        },
+        {
+          id: '4f59592f-88b9-4c7e-8478-c1a776e257f0',
+          type: screenTypes.PAGE,
+          title: 'Usuários',
+          link: 'usuarios',
+          page_group_id: 'bf296f83-5997-4349-97d6-12df34fd4da6',
+        },
+        {
+          id: '744b86c7-e6ac-43cf-ad65-1106081d1507',
+          type: screenTypes.PAGE,
+          title: 'Tenants',
+          link: '/master/gestao/tenants',
+          page_group_id: '3457d477-62c8-4596-8e30-71f9095064e2',
+        },
+        {
+          id: '4351cd1c-ff08-4025-b862-5fa9c5938330',
+          type: screenTypes.PAGE,
+          title: 'Solicitações De Cadastro',
+          link: '/master/gestao/solicitacoes-de-cadastro',
+          page_group_id: '3457d477-62c8-4596-8e30-71f9095064e2',
+        },
+        {
+          id: '605a6c99-4e8c-4da5-9b5f-ccb61b42c5e4',
+          type: screenTypes.PAGE,
+          title: 'Telas Da Aplicação',
+          link: '/master/gestao/telas',
+          page_group_id: '219abfe8-7478-4db3-9fb3-cf1d38fcace2',
+        },
+      ],
+    });
+    await prisma.page_Role.createMany({
+      data: [
+        {
+          page_id: '605a6c99-4e8c-4da5-9b5f-ccb61b42c5e4',
+          rls_id: ROLES.Master,
+        },
+        {
+          page_id: '9a7dc980-cc5f-4060-a111-e006d62e5f18',
+          rls_id: ROLES.Admin,
+        },
+        {
+          page_id: '9a7dc980-cc5f-4060-a111-e006d62e5f18',
+          rls_id: ROLES.User,
+        },
+        {
+          page_id: '4f59592f-88b9-4c7e-8478-c1a776e257f0',
+          rls_id: ROLES.Admin,
+        },
+        {
+          page_id: '4351cd1c-ff08-4025-b862-5fa9c5938330',
+          rls_id: ROLES.Master,
+        },
+        {
+          page_id: '744b86c7-e6ac-43cf-ad65-1106081d1507',
+          rls_id: ROLES.Master,
+        },
+      ],
+    });
+    await prisma.tenant_Page.createMany({
+      data: [
+        {
+          id: '679ea9b2-735a-49c1-be40-388077ffd603',
+          page_id: '605a6c99-4e8c-4da5-9b5f-ccb61b42c5e4',
+          tenant_id: TENANTS.MASTER,
+        },
+        {
+          id: '00c1c01d-2076-4d25-b132-1285d9318bbd',
+          page_id: '744b86c7-e6ac-43cf-ad65-1106081d1507',
+          tenant_id: TENANTS.MASTER,
+        },
+        {
+          id: '7b344198-02e8-411b-b801-f6641d1395d1',
+          page_id: '4351cd1c-ff08-4025-b862-5fa9c5938330',
+          tenant_id: TENANTS.MASTER,
+        },
+        {
+          id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
+          page_id: '9a7dc980-cc5f-4060-a111-e006d62e5f18',
+          tenant_id: TENANTS.TENANT1,
+        },
+        {
+          id: '891e9633-6e1c-47ab-abdc-f736cce00347',
+          page_id: '4f59592f-88b9-4c7e-8478-c1a776e257f0',
+          tenant_id: TENANTS.TENANT1,
+        },
+        {
+          id: 'a9f3c05a-33c7-48b0-bd5a-1caff7b83d83',
+          page_id: '9a7dc980-cc5f-4060-a111-e006d62e5f18',
+          tenant_id: TENANTS.TENANT2,
+        },
+        {
+          id: '0f981ca6-a333-41fd-a4e8-1e38416ce3b6',
+          page_id: '4f59592f-88b9-4c7e-8478-c1a776e257f0',
+          tenant_id: TENANTS.TENANT2,
+        },
+      ],
+    });
+    await prisma.user_Page.createMany({
+      data: [
+        {
+          tenant_page_id: '679ea9b2-735a-49c1-be40-388077ffd603',
+          user_id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',
+        },
+        {
+          tenant_page_id: '00c1c01d-2076-4d25-b132-1285d9318bbd',
+          user_id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',
+        },
+        {
+          tenant_page_id: '7b344198-02e8-411b-b801-f6641d1395d1',
+          user_id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',
+        },
+        {
+          tenant_page_id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
+          user_id: userAdmin,
+        },
+        {
+          tenant_page_id: '891e9633-6e1c-47ab-abdc-f736cce00347',
+          user_id: userAdmin,
+        },
+        {
+          tenant_page_id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
           user_id: 'a0d8b88b-97b5-40b8-a790-3d3dac9b13be',
         },
 
         {
-          tenant_DashBoard_id: '891e9633-6e1c-47ab-abdc-f736cce00347',
+          tenant_page_id: 'a9f3c05a-33c7-48b0-bd5a-1caff7b83d83',
           user_id: 'a0d8b88b-97b5-40b8-a790-3d3dac9b13be',
         },
         {
-          tenant_DashBoard_id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
+          tenant_page_id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
           user_id: '16ea8f63-c5de-4c87-94bc-7140493eaab2',
         },
 
         {
-          tenant_DashBoard_id: 'a9f3c05a-33c7-48b0-bd5a-1caff7b83d83',
+          tenant_page_id: 'a9f3c05a-33c7-48b0-bd5a-1caff7b83d83',
           user_id: '16ea8f63-c5de-4c87-94bc-7140493eaab2',
         },
       ],

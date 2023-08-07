@@ -34,7 +34,7 @@ export class UserService {
         Rls: true,
         User_Auth: true,
         Tenant: true,
-        User_Tenant_DashBoard: true,
+        User_Page: true,
       },
     });
   }
@@ -80,13 +80,13 @@ export class UserService {
         Rls: true,
         User_Auth: true,
         Tenant: true,
-        User_Tenant_DashBoard: true,
+        User_Page: true,
       },
     });
   }
 
   async deleteUser(id: string) {
-    await this.prisma.user_Tenant_DashBoard.deleteMany({
+    await this.prisma.user_Page.deleteMany({
       where: {
         user_id: id,
       },

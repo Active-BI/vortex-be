@@ -1,24 +1,24 @@
 const XLSX = require('xlsx');
 export const templates_xlsx = {
   RH_FUNCIONARIOS: {
-    'Nome Empresa': 'nomeEmpresa',
-    Matrícula: 'matricula',
-    Nome: 'nome',
-    Cargos: 'cargos',
-    'Data da Admissão': 'dataAdmissao',
-    Área: 'area',
-    Salário: 'salario',
-    Sexo: 'sexo',
-    Cútis: 'cutis',
-    'Data de Nascimento': 'dataNascimento',
-    'E-Mail': 'email',
-    'Vínculo Empregatício': 'vinculoEmpregaticio',
-    'Situação do Empregado': 'situacaoEmpregado',
-    'Grau de Instrução': 'grauInstrucao',
-    PCD: 'pcd',
-    Desligado: 'desligado',
-    'Data de Desligamento': 'dataDesligamento',
-    'Motivo do Desligamento': 'motivoDesligamento',
+    nomeEmpresa: 'String',
+    matricula: 'String',
+    nome: 'String',
+    cargos: 'String',
+    dataAdmissao: 'data: 29/10/2022',
+    area: 'String',
+    salario: 'String',
+    sexo: 'Masculino ou Feminino',
+    cutis: 'Negro, Branco, Amarelo ou Pardo',
+    dataNascimento: 'data: 29/10/2022',
+    email: 'exemplo@exemplo.com',
+    vinculoEmpregaticio: 'CLT, PJ ou Prazo Determinado (Lei 9.601)',
+    situacaoEmpregado: 'Ativo ou Demitido',
+    grauInstrucao: 'String',
+    pcd: 'VERDADEIRO ou FALSO',
+    desligado: 'VERDADEIRO ou FALSO',
+    dataDesligamento: 'data: 29/10/2022',
+    motivoDesligamento: 'String',
   },
 };
 export function toCamelCase(str) {
@@ -29,7 +29,7 @@ export function toCamelCase(str) {
     .replace(/\s+/g, '');
 }
 export function RHTemplate(type) {
-  const sheetData = Object.values(templates_xlsx[type]);
+  const sheetData = Object.keys(templates_xlsx[type.toUpperCase()]);
 
   // Criando o workbook e worksheet
   const workbook = XLSX.utils.book_new();
@@ -37,6 +37,13 @@ export function RHTemplate(type) {
 
   // Adicionando o worksheet ao workbook
   XLSX.utils.book_append_sheet(workbook, worksheet, 'base');
+
+  const worksheetExample = XLSX.utils.aoa_to_sheet([sheetData]);
+  const rowData = Object.values(templates_xlsx[type.toUpperCase()]);
+  XLSX.utils.sheet_add_aoa(worksheetExample, [sheetData, rowData]);
+
+  // Adicionando a segunda aba ao workbook
+  XLSX.utils.book_append_sheet(workbook, worksheetExample, 'base 2');
 
   const buffer = XLSX.write(workbook, { type: 'buffer' });
   return buffer;

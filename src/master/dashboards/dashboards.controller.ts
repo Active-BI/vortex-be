@@ -31,7 +31,6 @@ export class DashboardsMasterController {
   @Post('/:userid')
   async setDashboardUser(@Req() req, @Body() body, @Param('userid') userid) {
     const { DashboardUserList, tenant_id } = body;
-
     const getTenantDashBoards =
       await this.dashboardsService.findAllTenantDashboard(
         tenant_id,

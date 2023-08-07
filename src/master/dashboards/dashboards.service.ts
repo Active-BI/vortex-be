@@ -8,16 +8,19 @@ export class DashboardsMasterService {
    */
   constructor(private prisma: PrismaService) {}
   async findAll() {
-    return await this.prisma.dashBoard.findMany();
+    return await this.prisma.page.findMany();
   }
   async findAllTenantDashboard(tenant_id: string, dashboardIdList: string[]) {
     return (
-      await this.prisma.tenant_DashBoard.findMany({
+      await this.prisma.tenant_Page.findMany({
         where: {
           tenant_id,
           AND: {
-            dashboard_id: {
+            page_id: {
               in: dashboardIdList,
+            },
+            Tenant: {
+              restrict: false,
             },
           },
         },
@@ -25,29 +28,43 @@ export class DashboardsMasterService {
     ).map((d) => d.id);
   }
   async findAllByTenant(tenant_id) {
-    const dashboads = await this.prisma.dashBoard.findMany({
+    const dashboads = await this.prisma.page.findMany({
+      where: {
+        Tenant_Page: {
+          some: {
+            Tenant: {
+              restrict: false,
+            },
+          },
+        },
+      },
       include: {
-        Tenant_DashBoard: true,
+        Tenant_Page: true,
       },
     });
 
     return dashboads.map((d) => {
-      if (d.Tenant_DashBoard.find((t) => t.tenant_id === tenant_id)) {
-        delete d.Tenant_DashBoard;
+      if (d.Tenant_Page.find((t) => t.tenant_id === tenant_id)) {
+        delete d.Tenant_Page;
         return { ...d, included: true };
       }
-      delete d.Tenant_DashBoard;
+      delete d.Tenant_Page;
       return { ...d, included: false };
     });
   }
 
   async findAllByTenantAndUser(tenant_id) {
-    const dashboardsByTenant = await this.prisma.tenant_DashBoard.findMany({
+    const dashboardsByTenant = await this.prisma.tenant_Page.findMany({
       where: {
         tenant_id,
+        AND: {
+          Tenant: {
+            restrict: false,
+          },
+        },
       },
       include: {
-        Dashboard: true,
+        Page: true,
       },
     });
     const users = await this.prisma.user.findMany({
@@ -69,9 +86,9 @@ export class DashboardsMasterService {
             last_access: true,
           },
         },
-        User_Tenant_DashBoard: {
+        User_Page: {
           include: {
-            Tenant_DashBoard: true,
+            Tenant_Page: true,
           },
         },
       },
@@ -79,7 +96,7 @@ export class DashboardsMasterService {
     let userlist = {};
     users.forEach((user) => {
       const fakeUser = { ...user };
-      delete fakeUser.User_Tenant_DashBoard;
+      delete fakeUser.User_Page;
       delete fakeUser.User_Auth;
       userlist[user.id] = {
         ...fakeUser,
@@ -87,9 +104,8 @@ export class DashboardsMasterService {
         dashboards: [],
       };
       dashboardsByTenant.forEach((dash) => {
-        const find = user.User_Tenant_DashBoard.find(
-          (user_dash) =>
-            dash.dashboard_id === user_dash.Tenant_DashBoard.dashboard_id,
+        const find = user.User_Page.find(
+          (user_dash) => dash.page_id === user_dash.Tenant_Page.page_id,
         );
         if (find)
           userlist[user.id].dashboards.push({
