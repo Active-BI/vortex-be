@@ -285,6 +285,11 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           title: 'Gestão Master',
           icon: 'mat_outline:settings',
         },
+        {
+          id: '219abfe8-7478-4db3-9fb3-cf1d38fcace2',
+          title: 'Gestão de telas',
+          icon: 'widgets',
+        },
       ],
     });
 
@@ -321,10 +326,21 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           link: '/master/gestao/solicitacoes-de-cadastro',
           page_group_id: '3457d477-62c8-4596-8e30-71f9095064e2',
         },
+        {
+          id: '605a6c99-4e8c-4da5-9b5f-ccb61b42c5e4',
+          type: screenTypes.PAGE,
+          title: 'Telas Da Aplicação',
+          link: '/master/gestao/telas',
+          page_group_id: '219abfe8-7478-4db3-9fb3-cf1d38fcace2',
+        },
       ],
     });
     await prisma.page_Role.createMany({
       data: [
+        {
+          page_id: '605a6c99-4e8c-4da5-9b5f-ccb61b42c5e4',
+          rls_id: ROLES.Master,
+        },
         {
           page_id: '9a7dc980-cc5f-4060-a111-e006d62e5f18',
           rls_id: ROLES.Admin,
@@ -349,6 +365,11 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
     });
     await prisma.tenant_Page.createMany({
       data: [
+        {
+          id: '679ea9b2-735a-49c1-be40-388077ffd603',
+          page_id: '605a6c99-4e8c-4da5-9b5f-ccb61b42c5e4',
+          tenant_id: TENANTS.MASTER,
+        },
         {
           id: '00c1c01d-2076-4d25-b132-1285d9318bbd',
           page_id: '744b86c7-e6ac-43cf-ad65-1106081d1507',
@@ -383,6 +404,10 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
     });
     await prisma.user_Page.createMany({
       data: [
+        {
+          tenant_page_id: '679ea9b2-735a-49c1-be40-388077ffd603',
+          user_id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',
+        },
         {
           tenant_page_id: '00c1c01d-2076-4d25-b132-1285d9318bbd',
           user_id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',

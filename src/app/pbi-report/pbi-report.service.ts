@@ -28,7 +28,7 @@ export class PbiReportService {
       const schema = Joi.array().items(
         Joi.object({
           nomeEmpresa: Joi.string().required(),
-          matricula: Joi.string().required(),
+          matricula: Joi.any().required(),
           nome: Joi.string().required(),
           cargos: Joi.string().required(),
           dataAdmissao: Joi.string().required(),
@@ -45,25 +45,6 @@ export class PbiReportService {
           desligado: Joi.boolean().required(),
           dataDesligamento: Joi.any().required(),
           motivoDesligamento: Joi.any().required(),
-
-          //   'Nome Empresa': Joi.string().required(),
-          //   Matrícula: Joi.string().required(),
-          //   Nome: Joi.string().required(),
-          //   Cargos: Joi.string().required(),
-          //   'Data da Admissão': Joi.string().required(),
-          //   Área: Joi.string().required(),
-          //   Salário: Joi.number().required(),
-          //   Sexo: Joi.string().required(),
-          //   Cútis: Joi.string().required(),
-          //   'Data de Nascimento': Joi.string().required(),
-          //   'E-Mail': Joi.string().required(),
-          //   'Vínculo Empregatício': Joi.string().required(),
-          //   'Situação do Empregado': Joi.string().required(),
-          //   'Grau de Instrução': Joi.string().required(),
-          //   PCD: Joi.boolean().required(),
-          //   Desligado: Joi.boolean().required(),
-          //   'Data de Desligamento': Joi.any().required(),
-          //   'Motivo do Desligamento': Joi.any().required(),
         }),
       );
       try {
