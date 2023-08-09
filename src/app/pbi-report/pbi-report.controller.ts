@@ -83,21 +83,12 @@ export class PbiReportController {
 
     res.send(buffer);
   }
-
-  @Get('refresh/:type')
-  async refreshReport(@Param('type') type, @Req() req): Promise<any> {
+  @Get('refresh-dataflow/:type')
+  async refreshDataflow(@Param('type') type, @Req() req): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
     const userDashboard = await this.getDashboardType(type, tenant_id, userId);
     const headers = await this.msalService.getRequestHeader(role_name);
 
-    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_Page.Page.group_id}/reports/${userDashboard.Tenant_Page.Page.report_id}`;
-    const result: any = await fetch(reportInGroupApi, {
-      method: 'GET',
-      headers,
-    }).then((res) => {
-      if (!res.ok) throw res;
-      return res.json();
-    });
     const getDataflows = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_Page.Page.group_id}/dataflows`;
     let dataFlowId: any = {};
     await fetch(getDataflows, {
@@ -124,6 +115,21 @@ export class PbiReportController {
         throw new BadRequestException('Falha ao atualizar DataFlow');
       }
       return res;
+    });
+  }
+  @Get('refresh/:type')
+  async refreshReport(@Param('type') type, @Req() req): Promise<any> {
+    const { userId, tenant_id, role_name } = req.tokenData;
+    const userDashboard = await this.getDashboardType(type, tenant_id, userId);
+    const headers = await this.msalService.getRequestHeader(role_name);
+
+    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_Page.Page.group_id}/reports/${userDashboard.Tenant_Page.Page.report_id}`;
+    const result: any = await fetch(reportInGroupApi, {
+      method: 'GET',
+      headers,
+    }).then((res) => {
+      if (!res.ok) throw res;
+      return res.json();
     });
 
     const refreshDataset = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_Page.Page.group_id}/datasets/${result.datasetId}/refreshes`;

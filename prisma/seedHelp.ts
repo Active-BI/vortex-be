@@ -67,7 +67,12 @@ for (let i = 0; i < totalRows; i++) {
       to: '2000-12-31',
     }),
     email: faker.internet.email(),
-    vinculoEmpregaticio: faker.helpers.arrayElement(['CLT', 'PJ']),
+    vinculoEmpregaticio: faker.helpers.arrayElement([
+      'CLT',
+      'PJ',
+      'Freelance',
+      'Prazo Determinado (Lei 9.601)',
+    ]),
     situacaoEmpregado: faker.helpers.arrayElement(['Ativo', 'Inativo']),
     grauInstrucao: faker.helpers.arrayElement(['Ensino Médio', 'Superior']),
     pcd: faker.datatype.boolean(),

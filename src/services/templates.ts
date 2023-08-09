@@ -1,24 +1,24 @@
 const XLSX = require('xlsx');
 export const templates_xlsx = {
   RH_FUNCIONARIOS: {
-    nomeEmpresa: 'String',
-    matricula: 'String',
-    nome: 'String',
-    cargos: 'String',
-    dataAdmissao: 'data: 29/10/2022',
-    area: 'String',
-    salario: 'String',
-    sexo: 'Masculino ou Feminino',
-    cutis: 'Negro, Branco, Amarelo ou Pardo',
-    dataNascimento: 'data: 29/10/2022',
+    nomeEmpresa: 'alfanumérico',
+    matricula: 'alfanumérico',
+    nome: 'alfanumérico',
+    cargos: 'alfanumérico',
+    dataAdmissao: 'MM/DD/YYYY',
+    area: 'alfanumérico',
+    salario: 'Inteiro ou decimal',
+    sexo: 'Masculino, Feminino ou Outros',
+    cutis: 'Negro, Branco ou Pardo',
+    dataNascimento: 'MM/DD/YYYY',
     email: 'exemplo@exemplo.com',
-    vinculoEmpregaticio: 'CLT, PJ ou Prazo Determinado (Lei 9.601)',
+    vinculoEmpregaticio: 'CLT, PJ, Freelancer ou Prazo Determinado (Lei 9.601)',
     situacaoEmpregado: 'Ativo ou Demitido',
-    grauInstrucao: 'String',
+    grauInstrucao: 'alfanumérico',
     pcd: 'VERDADEIRO ou FALSO',
     desligado: 'VERDADEIRO ou FALSO',
-    dataDesligamento: 'data: 29/10/2022',
-    motivoDesligamento: 'String',
+    dataDesligamento: 'MM/DD/YYYY',
+    motivoDesligamento: 'alfanumérico',
   },
 };
 export function toCamelCase(str) {
@@ -43,7 +43,7 @@ export function RHTemplate(type) {
   XLSX.utils.sheet_add_aoa(worksheetExample, [sheetData, rowData]);
 
   // Adicionando a segunda aba ao workbook
-  XLSX.utils.book_append_sheet(workbook, worksheetExample, 'base 2');
+  XLSX.utils.book_append_sheet(workbook, worksheetExample, 'base exemplo');
 
   const buffer = XLSX.write(workbook, { type: 'buffer' });
   return buffer;

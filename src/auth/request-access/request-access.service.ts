@@ -50,18 +50,21 @@ export class RequestAccessService {
   }
   // Requisição feita por usuário sem login
   async create(createAdminRequestDto: Request_admin_access) {
-    const findByCnpj = await this.prisma.request_admin_access.findFirst({
-      where: {
-        company_cnpj: createAdminRequestDto.company_cnpj,
-      },
-    });
-    const findByTenant = await this.prisma.tenant.findFirst({
-      where: {
-        tenant_cnpj: createAdminRequestDto.company_cnpj,
-      },
-    });
-    if (findByCnpj || findByTenant)
-      throw new BadRequestException('Essa empresa já fez uma solicitação');
+    if (createAdminRequestDto.company_cnpj.length > 0) {
+      const findByCnpj = await this.prisma.request_admin_access.findFirst({
+        where: {
+          company_cnpj: createAdminRequestDto.company_cnpj,
+        },
+      });
+      const findByTenant = await this.prisma.tenant.findFirst({
+        where: {
+          tenant_cnpj: createAdminRequestDto.company_cnpj,
+        },
+      });
+      if (findByCnpj || findByTenant)
+        throw new BadRequestException('Essa empresa já fez uma solicitação');
+    }
+
     const findByEmail = await this.prisma.request_admin_access.findFirst({
       where: { email: createAdminRequestDto.email.toLocaleLowerCase() },
     });
