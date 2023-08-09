@@ -13,11 +13,12 @@ export class TenantsService {
         active: createTenantDto?.active ? true : false,
         tenant_name: createTenantDto.tenant_name,
         tenant_cnpj: createTenantDto.tenant_cnpj,
+        restrict: false,
       },
     });
     await this.prisma.tenant_Page.createMany({
       data: createTenantDto.dashboard.map((d) => ({
-        dashboard_id: d,
+        page_id: d,
         tenant_id: id,
       })),
     });

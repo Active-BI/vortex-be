@@ -8,7 +8,17 @@ export class DashboardsMasterService {
    */
   constructor(private prisma: PrismaService) {}
   async findAll() {
-    return await this.prisma.page.findMany();
+    return await this.prisma.page.findMany({
+      where: {
+        Tenant_Page: {
+          some: {
+            Tenant: {
+              restrict: false,
+            },
+          },
+        },
+      },
+    });
   }
   async findAllTenantDashboard(tenant_id: string, dashboardIdList: string[]) {
     return (
