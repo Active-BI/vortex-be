@@ -38,10 +38,8 @@ export class PbiReportService {
         cutis: Joi.string().required(),
         dataNascimento: Joi.date().required(),
         email: Joi.string().required(),
-        vinculoEmpregaticio: Joi.string()
-          .valid('CLT', 'PJ', 'FREELANCER', 'Prazo Determinado (Lei 9.601)')
-          .required(),
-        situacaoEmpregado: Joi.string().required().valid('Ativo', 'Demitido'),
+        vinculoEmpregaticio: Joi.string().required(),
+        situacaoEmpregado: Joi.string().required(),
         grauInstrucao: Joi.string().required(),
         pcd: Joi.boolean().required(),
         desligado: Joi.boolean().required(),
