@@ -27,15 +27,15 @@ export class PbiReportService {
   async postFile(dados, tenant_id, type) {
     const schema = Joi.array().items(
       Joi.object({
-        nomeEmpresa: Joi.string().required(),
-        matricula: Joi.string().required(),
-        nome: Joi.string().required(),
-        cargos: Joi.string().required(),
+        nomeEmpresa: Joi.any().required(),
+        matricula: Joi.any().required(),
+        nome: Joi.any().required(),
+        cargos: Joi.any().required(),
         dataAdmissao: Joi.date().required(),
-        area: Joi.string().required(),
+        area: Joi.any().required(),
         salario: Joi.number().required(),
-        sexo: Joi.string().valid('Masculino', 'Feminino', 'Outros').required(),
-        cutis: Joi.string().valid('Pardo', 'Branco', 'Negro').required(),
+        sexo: Joi.string().required(),
+        cutis: Joi.string().required(),
         dataNascimento: Joi.date().required(),
         email: Joi.string().required(),
         vinculoEmpregaticio: Joi.string()
@@ -46,7 +46,7 @@ export class PbiReportService {
         pcd: Joi.boolean().required(),
         desligado: Joi.boolean().required(),
         dataDesligamento: Joi.date().allow(null),
-        motivoDesligamento: Joi.string().allow(null).required(),
+        motivoDesligamento: Joi.string().allow(null),
       }),
     );
     try {
@@ -63,6 +63,7 @@ export class PbiReportService {
         return {
           ...dado,
           matricula: String(dado.matricula),
+          nomeEmpresa: String(dado.nomeEmpresa),
           tenant_id: tenant_id,
         };
       });

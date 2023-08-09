@@ -115,6 +115,11 @@ export class DashboardService {
       include: {
         Page: {
           include: {
+            Page_Group: {
+              select: {
+                title: true,
+              },
+            },
             Page_Role: {
               select: {
                 Rls: {
