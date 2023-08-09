@@ -27,8 +27,8 @@ export class PbiReportService {
   async postFile(dados, tenant_id, type) {
     const schema = Joi.array().items(
       Joi.object({
-        nomeEmpresa: Joi.any().required(),
-        matricula: Joi.any().required(),
+        nomeEmpresa: Joi.string().required(),
+        matricula: Joi.string().required(),
         nome: Joi.string().required(),
         cargos: Joi.string().required(),
         dataAdmissao: Joi.date().required(),
