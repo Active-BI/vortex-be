@@ -4,6 +4,12 @@ import { PrismaService } from 'src/services/prisma.service';
 @Injectable()
 export class PageService {
   constructor(private prisma: PrismaService) {}
+  /**
+   *
+   * @param tenantPage [tenant_page_id list]
+   * @param user_id
+   * @param tenant_id
+   */
   async setPageUser(tenantPage, user_id, tenant_id) {
     const tenantDash = await this.prisma.tenant_Page.findMany({
       where: {
@@ -70,30 +76,32 @@ export class PageService {
   }
 
   async getAllPages(tenant_id) {
-    return await this.prisma.tenant_Page.findMany({
-      where: {
-        tenant_id,
-      },
-      include: {
-        Page: {
-          include: {
-            Page_Group: {
-              select: {
-                title: true,
+    return (
+      await this.prisma.tenant_Page.findMany({
+        where: {
+          tenant_id,
+        },
+        include: {
+          Page: {
+            include: {
+              Page_Group: {
+                select: {
+                  title: true,
+                },
               },
-            },
-            Page_Role: {
-              select: {
-                Rls: {
-                  select: {
-                    name: true,
+              Page_Role: {
+                select: {
+                  Rls: {
+                    select: {
+                      name: true,
+                    },
                   },
                 },
               },
             },
           },
         },
-      },
-    });
+      })
+    ).sort((a, b) => a.Page.title.localeCompare(b.Page.title));
   }
 }

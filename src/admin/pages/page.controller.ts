@@ -11,7 +11,11 @@ export class PageController {
     const { tenant_id } = req.tokenData;
     return await this.pageService.getAllPages(tenant_id);
   }
-
+  @Get('/:userid')
+  async getAllPagesByUser(@Req() req, @Param('userid') userid) {
+    const { tenant_id } = req.tokenData;
+    return await this.pageService.getAllPagesByUser(userid, tenant_id);
+  }
   @Post('/:userid')
   async setPageToUser(@Req() req, @Body() body, @Param('userid') userid) {
     const { PageUserList } = body;

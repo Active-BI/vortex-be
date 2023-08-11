@@ -43,7 +43,7 @@ export class LoginService {
       user_auth.User.tenant_id,
     );
 
-    const tokenObj = new Token(user_auth.User, dashboardUser);
+    const tokenObj = new Token(user_auth.User, []);
 
     var token = await this.jwtStrategy.signToken(tokenObj);
 
