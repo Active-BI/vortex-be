@@ -42,7 +42,7 @@ export class ValidateUserAdminMiddleware implements NestMiddleware {
       try {
         const schema = Joi.object({
           name: Joi.string().min(3).required(),
-          email: Joi.string().email().lowercase().required(),
+          email: Joi.string().lowercase().required(),
           profession: Joi.string().required(),
           description: Joi.string().required(),
           rls_id: Joi.string().required(),

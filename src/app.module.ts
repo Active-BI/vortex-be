@@ -15,11 +15,11 @@ import { PrismaService } from 'src/services/prisma.service';
 import { MiddlewareResolver } from './middlwareResolve';
 import { UserService } from './admin/user/user.service';
 import { UserController } from './admin/user/user.controller';
-import { PbiReportController } from './app/pbi-report/pbi-report.controller';
-import { PbiReportService } from './app/pbi-report/pbi-report.service';
+import { PbiReportController } from './admin/pbi-report/pbi-report.controller';
+import { PbiReportService } from './admin/pbi-report/pbi-report.service';
 import { MsalService } from './services/msal.service';
-import { DashboardController } from './app/dashboard/dashboard.controller';
-import { DashboardService } from './app/dashboard/dashboard.service';
+import { PageController } from './admin/pages/page.controller';
+import { PageService } from './admin/pages/page.service';
 import { TemplateHandlerService } from './services/templateHandler.service';
 import { TenantsService } from './master/tenants/tenants.service';
 import { TenantsController } from './master/tenants/tenants.controller';
@@ -38,10 +38,9 @@ import { MasterRequestController } from './master/master-request/admin-request.c
     UserAuthController,
     UserController,
     PbiReportController,
-    DashboardController,
+    PageController,
     TenantsController,
     MasterRequestController,
-    DashboardController,
     DashboardsMasterController,
     RequestAccessController,
   ],
@@ -62,7 +61,7 @@ import { MasterRequestController } from './master/master-request/admin-request.c
     UserService,
     PbiReportService,
     MsalService,
-    DashboardService,
+    PageService,
     TemplateHandlerService,
     TenantsService,
     MasterRequestService,

@@ -4,8 +4,6 @@ import { Request_admin_access } from '@prisma/client';
 import { UserService } from 'src/admin/user/user.service';
 import { roles } from 'prisma/seedHelp';
 import { TenantsService } from '../tenants/tenants.service';
-import { DashboardsMasterService } from '../dashboards/dashboards.service';
-import { DashboardService } from 'src/app/dashboard/dashboard.service';
 
 @Injectable()
 export class MasterRequestService {
@@ -13,8 +11,6 @@ export class MasterRequestService {
     private prisma: PrismaService,
     private userService: UserService,
     private tenantService: TenantsService,
-    private dashboardsService: DashboardsMasterService,
-    private dashboardAdminService: DashboardService,
   ) {}
 
   async createByMaster(createAdminRequestDto: Request_admin_access) {
