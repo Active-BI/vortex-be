@@ -11,6 +11,7 @@ import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
 import { UserAuthService } from '../user_auth/user_auth.service';
 import { User_Auth } from '@prisma/client';
 import { DashboardService } from 'src/admin/dashboard/dashboard.service';
+import { DashboardsMasterService } from 'src/master/dashboards/dashboards.service';
 
 @Injectable()
 export class LoginService {
@@ -18,6 +19,7 @@ export class LoginService {
     private jwtStrategy: JwtStrategy,
     private userAuthService: UserAuthService,
     private dashboardService: DashboardService,
+    private dashboardMasterService: DashboardsMasterService,
   ) {}
 
   async getUserAuth(login) {
@@ -60,7 +62,8 @@ export class LoginService {
 
     if (!isHashTrue) throw new ForbiddenException('Senha inválida');
 
-    const dashboardUser = await this.dashboardService.getAllDashboardsMaster();
+    const dashboardUser =
+      await this.dashboardMasterService.getAllDashboardsMaster();
     const tokenObj = new Token(user_auth.User, dashboardUser);
 
     var token = await this.jwtStrategy.signToken(tokenObj);

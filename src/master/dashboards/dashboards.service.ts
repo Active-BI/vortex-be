@@ -132,4 +132,48 @@ export class DashboardsMasterService {
 
     return Object.values(userlist);
   }
+
+  async getAllDashboardsMaster() {
+    return (
+      await this.prisma.user_Page.findMany({
+        where: {
+          Tenant_Page: {
+            Page: {
+              Page_Role: {
+                some: {
+                  Rls: {
+                    name: 'Master',
+                  },
+                },
+              },
+            },
+          },
+        },
+        select: {
+          Tenant_Page: {
+            select: {
+              Page: {
+                include: {
+                  Page_Group: true,
+                  Page_Role: {
+                    select: {
+                      Rls: {
+                        select: {
+                          name: true,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      })
+    ).map((e) => ({
+      ...e.Tenant_Page.Page,
+      Page_Role: e.Tenant_Page.Page.Page_Role.map((r) => r.Rls.name),
+      Page_Group: e.Tenant_Page.Page.Page_Group,
+    }));
+  }
 }
