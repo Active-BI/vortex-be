@@ -2,15 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 
 @Injectable()
-export class DashboardService {
+export class PageService {
   constructor(private prisma: PrismaService) {}
-  async setDashboardUser(tenantDashBoard, user_id, tenant_id) {
+  async setPageUser(tenantPage, user_id, tenant_id) {
     const tenantDash = await this.prisma.tenant_Page.findMany({
       where: {
         tenant_id,
         AND: {
           id: {
-            in: tenantDashBoard,
+            in: tenantPage,
           },
         },
       },
@@ -26,7 +26,11 @@ export class DashboardService {
       })),
     });
   }
-  async getAllDashboardsByUser(user_id, tenant_id) {
+
+  /**
+   * Usado para  obter as rotas de um usuários admin específico
+   */
+  async getAllPagesByUser(user_id, tenant_id) {
     return (
       await this.prisma.user_Page.findMany({
         where: {
@@ -65,7 +69,7 @@ export class DashboardService {
     }));
   }
 
-  async getAllDashboards(tenant_id) {
+  async getAllPages(tenant_id) {
     return await this.prisma.tenant_Page.findMany({
       where: {
         tenant_id,

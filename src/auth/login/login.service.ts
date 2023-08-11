@@ -10,7 +10,7 @@ import { CreateLoginDto } from './Swagger';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
 import { UserAuthService } from '../user_auth/user_auth.service';
 import { User_Auth } from '@prisma/client';
-import { DashboardService } from 'src/admin/dashboard/dashboard.service';
+import { PageService } from 'src/admin/pages/page.service';
 import { DashboardsMasterService } from 'src/master/dashboards/dashboards.service';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class LoginService {
   constructor(
     private jwtStrategy: JwtStrategy,
     private userAuthService: UserAuthService,
-    private dashboardService: DashboardService,
+    private pageService: PageService,
     private dashboardMasterService: DashboardsMasterService,
   ) {}
 
@@ -38,7 +38,7 @@ export class LoginService {
 
     if (!isHashTrue) throw new ForbiddenException('Senha inválida');
 
-    const dashboardUser = await this.dashboardService.getAllDashboardsByUser(
+    const dashboardUser = await this.pageService.getAllPagesByUser(
       user_auth.User.id,
       user_auth.User.tenant_id,
     );

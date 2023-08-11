@@ -133,6 +133,10 @@ export class DashboardsMasterService {
     return Object.values(userlist);
   }
 
+  /**
+   * Usado para gerar rotas que o master possui acesso
+   * @returns 'rotas que o usuário master possui acesso'
+   */
   async getAllDashboardsMaster() {
     return (
       await this.prisma.user_Page.findMany({

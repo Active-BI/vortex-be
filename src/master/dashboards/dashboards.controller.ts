@@ -1,13 +1,13 @@
 import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { DashboardsMasterService } from './dashboards.service';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
-import { DashboardService } from 'src/admin/dashboard/dashboard.service';
+import { PageService } from 'src/admin/pages/page.service';
 
 @Controller('master/dashboards')
 export class DashboardsMasterController {
   constructor(
     private readonly dashboardsService: DashboardsMasterService,
-    private dashboardAdminService: DashboardService,
+    private pageService: PageService,
   ) {}
 
   @Get('/:tenant_id')
@@ -36,10 +36,6 @@ export class DashboardsMasterController {
         tenant_id,
         DashboardUserList,
       );
-    await this.dashboardAdminService.setDashboardUser(
-      getTenantDashBoards,
-      userid,
-      tenant_id,
-    );
+    await this.pageService.setPageUser(getTenantDashBoards, userid, tenant_id);
   }
 }
