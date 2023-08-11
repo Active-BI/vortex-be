@@ -9,7 +9,14 @@ export class DashboardController {
     const { tenant_id } = req.tokenData;
     return await this.dashboardService.getAllDashboards(tenant_id);
   }
-
+  @Get('/:userid')
+  async getAllDashboardsByUser(@Req() req, @Param('userid') userid) {
+    const { tenant_id } = req.tokenData;
+    return await this.dashboardService.getAllDashboardsByUser(
+      userid,
+      tenant_id,
+    );
+  }
   @Post('/:userid')
   async setDashboardUser(@Req() req, @Body() body, @Param('userid') userid) {
     const { DashboardUserList } = body;

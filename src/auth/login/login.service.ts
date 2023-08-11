@@ -10,7 +10,7 @@ import { CreateLoginDto } from './Swagger';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
 import { UserAuthService } from '../user_auth/user_auth.service';
 import { User_Auth } from '@prisma/client';
-import { DashboardService } from 'src/app/dashboard/dashboard.service';
+import { DashboardService } from 'src/admin/dashboard/dashboard.service';
 
 @Injectable()
 export class LoginService {

@@ -5,7 +5,7 @@ import { UserService } from 'src/admin/user/user.service';
 import { roles } from 'prisma/seedHelp';
 import { TenantsService } from '../tenants/tenants.service';
 import { DashboardsMasterService } from '../dashboards/dashboards.service';
-import { DashboardService } from 'src/app/dashboard/dashboard.service';
+import { DashboardService } from 'src/admin/dashboard/dashboard.service';
 
 @Injectable()
 export class MasterRequestService {

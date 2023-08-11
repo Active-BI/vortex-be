@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { DashboardsMasterService } from './dashboards.service';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
-import { DashboardService } from 'src/app/dashboard/dashboard.service';
+import { DashboardService } from 'src/admin/dashboard/dashboard.service';
 
 @Controller('master/dashboards')
 export class DashboardsMasterController {
