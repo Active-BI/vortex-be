@@ -29,7 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       { ...paylaod },
       {
         secret: process.env['JWT_TEMP_SECRET'],
-        expiresIn: '1h',
+        expiresIn: '5m',
       },
     );
   }

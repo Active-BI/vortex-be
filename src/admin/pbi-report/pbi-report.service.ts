@@ -72,7 +72,6 @@ export class PbiReportService {
         data: dadosFormatados,
       });
     } catch (e) {
-      console.log(e);
       throw new BadRequestException('Erro ao inserir dados.');
     }
   }

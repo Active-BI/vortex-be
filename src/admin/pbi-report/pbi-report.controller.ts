@@ -153,7 +153,6 @@ export class PbiReportController {
   @Get('type/:type')
   async ReportByTYpe(@Param('type') type, @Req() req): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
-    console.log(userId, tenant_id, role_name);
     const userDashboard = await this.getDashboardType(type, tenant_id, userId);
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_Page.Page.group_id}/reports/${userDashboard.Tenant_Page.Page.report_id}`;
 
@@ -219,7 +218,6 @@ export class PbiReportController {
 
     formData['datasets'] = [];
     for (const datasetId of datasetIds) {
-      console.log(datasetId);
       formData['datasets'].push({
         id: datasetId,
       });

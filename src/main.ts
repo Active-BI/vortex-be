@@ -14,7 +14,6 @@ async function bootstrap() {
 
   app.use(expressJson({ limit: '50mb' }));
   ConfigSwagger(app);
-  console.log(env['NODE_ENV']);
   await app.listen(process.env['PORT']);
 }
 bootstrap();
