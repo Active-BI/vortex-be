@@ -248,6 +248,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
               '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
             user_id: userAdmin,
           },
+
           {
             id: '0d336f62-6e97-43d2-84e2-d280db3c47d2',
             normalized_contact_email: 'LUCAS.FRANCA@ACTIVEBI.COM.BR',

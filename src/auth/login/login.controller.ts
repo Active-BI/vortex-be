@@ -24,8 +24,8 @@ export class LoginController {
       const user = await this.loginService.getUserAuth({
         email: userData.email,
       });
-      // const validPin = await this.loginService.verifyPin(body.token, body.pin);
-      // if (!validPin) throw new Error('Pin inválido');
+      const validPin = await this.loginService.verifyPin(body.token, body.pin);
+      if (!validPin) throw new Error('Pin inválido');
       const token = await this.loginService.generateToken(user);
       return { token };
     } catch (e) {
@@ -39,10 +39,10 @@ export class LoginController {
   async Login(@Body() body: CreateLoginDto) {
     try {
       const user_auth = await this.loginService.getUserAuth(body);
-      // if (user_auth.User.Rls.name === 'Master') {
-      //   const token = await this.loginService.checkPassMaster(body);
-      //   return token;
-      // }
+      if (user_auth.User.Rls.name === 'Master') {
+        const token = await this.loginService.checkPassMaster(body);
+        return { token, pass: true };
+      }
       const token = await this.loginService.TFA(body);
 
       return { token };

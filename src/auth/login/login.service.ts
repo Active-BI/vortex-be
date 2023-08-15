@@ -162,7 +162,7 @@ export class LoginService {
 
     delete user_auth.User;
     await this.setLastAccess(user_auth as User_Auth);
-    return { token };
+    return token;
   }
   setLastAccess(user: User_Auth) {
     this.userAuthService.update({ ...user, last_access: new Date() });
