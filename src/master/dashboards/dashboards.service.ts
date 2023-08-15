@@ -99,7 +99,11 @@ export class DashboardsMasterService {
         },
       },
       include: {
-        Page: true,
+        Page: {
+          include: {
+            Page_Group: true,
+          },
+        },
       },
     });
     const users = await this.prisma.user.findMany({
