@@ -10,11 +10,15 @@ import { LoginService } from './login.service';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BypassAuth } from 'src/helpers/strategy/jwtGuard.service';
 import { CreateLoginDto, Token } from './Swagger';
+import { PageService } from 'src/admin/pages/page.service';
 
 @ApiTags('Login')
 @Controller('login')
 export class LoginController {
-  constructor(private readonly loginService: LoginService) {}
+  constructor(
+    private readonly loginService: LoginService,
+    private pageService: PageService,
+  ) {}
 
   // @BypassAuth()
   @Post('tfa')
@@ -27,7 +31,12 @@ export class LoginController {
       const validPin = await this.loginService.verifyPin(body.token, body.pin);
       if (!validPin) throw new Error('Pin inválido');
       const token = await this.loginService.generateToken(user);
-      return { token };
+      const { tenant_id } = req.tokenData;
+      const userRoutes = await this.pageService.getAllPagesByUser(
+        user.User.id,
+        tenant_id,
+      );
+      return { token, userRoutes };
     } catch (e) {
       throw new BadRequestException(e.message);
     }
@@ -41,7 +50,12 @@ export class LoginController {
       const user_auth = await this.loginService.getUserAuth(body);
       if (user_auth.User.Rls.name === 'Master') {
         const token = await this.loginService.checkPassMaster(body);
-        return { token, pass: true };
+        console.log(user_auth);
+        const userRoutes = await this.pageService.getAllPagesByUser(
+          user_auth.User.id,
+          user_auth.User.tenant_id,
+        );
+        return { token, userRoutes, pass: true };
       }
       const token = await this.loginService.TFA(body);
 
