@@ -40,7 +40,11 @@ export class ValidateLoginMiddleware implements NestMiddleware {
         });
       }
     }
-    if (req.method === 'POST' && !req.path.includes('register')) {
+    if (
+      req.method === 'POST' &&
+      !req.path.includes('register') &&
+      !req.path.includes('tfa')
+    ) {
       try {
         const schema = Joi.object({
           password: Joi.string()

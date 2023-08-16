@@ -1,13 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { TemplateHandlerService } from 'src/services/templateHandler.service';
 import { PrismaService } from 'src/services/prisma.service';
-import {
-  generateBuffer,
-  templates_xlsx,
-  toCamelCase,
-} from 'src/services/templates';
+import { generateBuffer, templates_xlsx } from 'src/services/templates';
 import * as Joi from 'joi';
-import moment from 'moment';
 @Injectable()
 export class PbiReportService {
   constructor(
@@ -72,7 +67,6 @@ export class PbiReportService {
         data: dadosFormatados,
       });
     } catch (e) {
-      console.log(e);
       throw new BadRequestException('Erro ao inserir dados.');
     }
   }

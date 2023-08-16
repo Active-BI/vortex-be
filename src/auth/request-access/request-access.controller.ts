@@ -10,7 +10,20 @@ import { RequestAdminAccess, Token } from './Swagger';
 export class RequestAccessController {
   constructor(private readonly requestAccessService: RequestAccessService) {}
 
-  // endpoint para criar nova solicitação de autorização
+  // endpoint para criar nova solicitação de autorização recebendo Token
+  @Get(':token')
+  @ApiBody({
+    type: RequestAdminAccess,
+  })
+  @ApiResponse({
+    type: RequestAdminAccess,
+  })
+  @BypassAuth()
+  async createNewRequest(@Param('token') token: string) {
+    return this.requestAccessService.create(token);
+  }
+
+  // endpoint enviar confirmação de nova solicitação por email
   @BypassAuth()
   @Post()
   @ApiBody({
@@ -19,17 +32,9 @@ export class RequestAccessController {
   @ApiResponse({
     type: RequestAdminAccess,
   })
-  async createNewRequest(@Body() createAdminRequestDto: Request_admin_access) {
-    return this.requestAccessService.create(createAdminRequestDto);
+  async confirmNewRequest(@Body() createAdminRequestDto: Request_admin_access) {
+    return this.requestAccessService.createLinkToConfirmRequestAccess(
+      createAdminRequestDto,
+    );
   }
-
-  // endpoint para gerar link de cadastro
-  // @BypassAuth()
-  // @Get(':email')
-  // @ApiResponse({
-  //   type: Token,
-  // })
-  // async requestEmailAuth(@Param('email') email: string) {
-  //   return this.requestAccessService.createLinkToRequestAccess(email);
-  // }
 }

@@ -1,4 +1,7 @@
-import { Rls } from '@prisma/client';
+export class RegisterToken {
+  userId: string;
+  contact_email: string;
+}
 
 export class Token {
   userId: string;

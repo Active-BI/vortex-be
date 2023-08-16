@@ -157,6 +157,17 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
           },
           {
+            id: '105d8682-383e-45ce-bdb3-6ca4a7257534',
+            contact_email: 'lucas.franca@activebi.com.br',
+            name: 'gustavo',
+            born_date: new Date(),
+            description: 'description master',
+            personal_email: 'lucas.franca@activebi.com.br',
+            profession: 'admin',
+            tenant_id: TENANTS.TENANT1,
+            rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
+          },
+          {
             id: 'ffe81a3c-6d52-4cf3-bbc1-b655b7281a1b',
             contact_email: 'teste@t1user.com.br',
             name: 'teste user',
@@ -236,6 +247,18 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             password_hash:
               '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
             user_id: userAdmin,
+          },
+
+          {
+            id: '0d336f62-6e97-43d2-84e2-d280db3c47d2',
+            normalized_contact_email: 'LUCAS.FRANCA@ACTIVEBI.COM.BR',
+            last_access: null,
+            anchor: true,
+            reset_pass: null,
+            secret: null,
+            password_hash:
+              '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
+            user_id: '105d8682-383e-45ce-bdb3-6ca4a7257534',
           },
           {
             id: 'c08f9907-9121-4e0e-8d1b-60761701b2ae',
