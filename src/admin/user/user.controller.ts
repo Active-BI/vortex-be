@@ -17,6 +17,7 @@ import {
   UserResponse,
 } from './Swagger';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
+import { RegisterToken } from 'src/helpers/token';
 @ApiTags('User')
 @Controller('user')
 export class UserController {
@@ -51,9 +52,16 @@ export class UserController {
   @ApiBody({ type: UserResponse })
   @ApiResponse({ type: CreateUserBody })
   async postUser(@Req() req, @Body() Body) {
-    const { tenant_id } = req.tokenData;
+    const { tenant_id, contact_email, userId } = req.tokenData;
 
-    return await this.userService.createUser(Body, tenant_id);
+    const createUser = await this.userService.createUser(Body, tenant_id);
+    await this.userService.createTransportEmail(
+      Body.email,
+      createUser.user_id,
+      contact_email,
+    );
+
+    return createUser;
   }
 
   @Delete(':id')

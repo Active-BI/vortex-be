@@ -1,9 +1,9 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import { ResetPassTempToken, TempToken, Token } from '../token';
+import { RegisterToken, ResetPassTempToken, TempToken, Token } from '../token';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -15,6 +15,24 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+  async signRegisterToken(paylaod: RegisterToken) {
+    return this.jwtService.sign(
+      { ...paylaod },
+      {
+        secret: process.env['JWT_SECRET'],
+        expiresIn: '24h',
+      },
+    );
+  }
+  async signConfirmRequest(paylaod: any) {
+    return this.jwtService.sign(
+      { ...paylaod },
+      {
+        secret: process.env['JWT_SECRET'],
+        expiresIn: '24h',
+      },
+    );
+  }
   async signToken(paylaod: Token) {
     return this.jwtService.sign(
       { ...paylaod },
@@ -33,15 +51,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       },
     );
   }
+
   async validate(payload) {
+    console.log(
+      await this.jwtService.verifyAsync(payload, {
+        secret: process.env['JWT_SECRET'],
+      }),
+    );
     try {
-      const decoded = await this.jwtService.verifyAsync(payload, {
+      return await this.jwtService.verifyAsync(payload, {
         secret: process.env['JWT_SECRET'],
       });
-
-      return decoded;
     } catch (e) {
-      return false;
+      throw new UnauthorizedException('Token inválido');
     }
   }
 }

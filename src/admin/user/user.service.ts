@@ -3,11 +3,19 @@ import { PrismaService } from 'src/services/prisma.service';
 import { UserAuthService } from 'src/auth/user_auth/user_auth.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EditUserBody, UserResponse } from './Swagger';
+import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
+import { transporter } from 'src/auth/login/login.service';
+import {
+  htmlAcceptRequestAccess,
+  htmlLogin,
+  htmlRegister,
+} from 'src/auth/login/helper';
 
 @Injectable()
 export class UserService {
   constructor(
     private prisma: PrismaService,
+    private jwtStrategy: JwtStrategy,
     private userAuthService: UserAuthService,
   ) {}
   async findAll(tenant_id: string): Promise<UserResponse[]> {
@@ -63,7 +71,43 @@ export class UserService {
 
     return { user_id: uuid };
   }
+  async createTransportEmail(userEmail, userId, author_contact_email) {
+    const token = await this.jwtStrategy.signRegisterToken({
+      userId,
+      contact_email: userEmail,
+    });
+    try {
+      const email = await transporter.sendMail({
+        from: 'embedded@activebi.com.br', // sender address
+        to: userEmail, // list of receivers
+        subject: 'Active PME - Conclua seu cadastro', // Subject line
+        text: 'Ingresso solicitado', // plain text body
+        html: htmlRegister(token, author_contact_email),
+      });
+      console.log(email);
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
+  async acceptRequestAccess(userEmail, userId) {
+    const token = await this.jwtStrategy.signRegisterToken({
+      userId,
+      contact_email: userEmail,
+    });
+    try {
+      const email = await transporter.sendMail({
+        from: 'embedded@activebi.com.br', // sender address
+        to: userEmail, // list of receivers
+        subject: 'Active PME - Solicitação aprovada!!!', // Subject line
+        text: 'Ingresso solicitado', // plain text body
+        html: htmlAcceptRequestAccess(token),
+      });
+      console.log(email);
+    } catch (e) {
+      console.log(e);
+    }
+  }
   async getUser(email: string): Promise<UserResponse> {
     return this.prisma.user.findFirst({
       where: {

@@ -52,6 +52,8 @@ export class MasterRequestService {
       { ...userAuth, rls_id: roles[1].id },
       tenant_id,
     );
+    await this.userService.acceptRequestAccess(userAuth.email, user_id);
+
     const tenantsDisponiveis = await this.prisma.tenant_Page.findMany({
       where: { tenant_id },
     });

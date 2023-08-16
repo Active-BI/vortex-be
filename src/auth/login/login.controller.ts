@@ -7,7 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { LoginService } from './login.service';
-import { ApiBody, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BypassAuth } from 'src/helpers/strategy/jwtGuard.service';
 import { CreateLoginDto, Token } from './Swagger';
 
