@@ -7,6 +7,15 @@ import {
 import { UserAuthService } from '../user_auth/user_auth.service';
 import { NextFunction, Request } from 'express';
 import * as Joi from 'joi';
+const method = (value, helpers) => {
+  if (!value.match(/^[a-zA-Z0-9\s]*$/)) {
+    return new Error('Falta um caractere especial a sua senha');
+  }
+  if (!/[A-Z]/.test(value as string)) {
+    return new Error('Falta uma letra maiúpscula a sua senha');
+  }
+  return value; // Return the value unchanged
+};
 
 interface Requestq extends Request {
   method: 'POST' | 'GET' | 'PUT' | 'DELETE';
@@ -24,11 +33,9 @@ export class ValidateLoginMiddleware implements NestMiddleware {
         const schema = Joi.object({
           password: Joi.string()
             .min(6)
-            .pattern(
-              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{2,}$/,
-            )
+            .custom(method, 'Validar patterns')
             .required(),
-          email: Joi.string().email().lowercase().required(),
+          email: Joi.string().email().required(),
         });
         await schema.validateAsync(req.body);
       } catch (e) {
@@ -49,9 +56,7 @@ export class ValidateLoginMiddleware implements NestMiddleware {
         const schema = Joi.object({
           password: Joi.string()
             .min(6)
-            .pattern(
-              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{2,}$/,
-            )
+            .custom(method, 'Validar patterns')
             .required(),
           email: Joi.string().email().lowercase().required(),
         });
