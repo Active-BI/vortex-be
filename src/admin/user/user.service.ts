@@ -4,12 +4,8 @@ import { UserAuthService } from 'src/auth/user_auth/user_auth.service';
 import { v4 as uuidv4 } from 'uuid';
 import { EditUserBody, UserResponse } from './Swagger';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
-import { transporter } from 'src/auth/login/login.service';
-import {
-  htmlAcceptRequestAccess,
-  htmlLogin,
-  htmlRegister,
-} from 'src/auth/login/helper';
+import { SmtpService } from 'src/services/smtp.service';
+import { message_book } from 'src/services/email_book';
 
 @Injectable()
 export class UserService {
@@ -17,6 +13,7 @@ export class UserService {
     private prisma: PrismaService,
     private jwtStrategy: JwtStrategy,
     private userAuthService: UserAuthService,
+    private smtpService: SmtpService,
   ) {}
   async findAll(tenant_id: string): Promise<UserResponse[]> {
     return await this.prisma.user.findMany({
@@ -76,18 +73,10 @@ export class UserService {
       userId,
       contact_email: userEmail,
     });
-    try {
-      const email = await transporter.sendMail({
-        from: 'embedded@activebi.com.br', // sender address
-        to: userEmail, // list of receivers
-        subject: 'Active PME - Conclua seu cadastro', // Subject line
-        text: 'Ingresso solicitado', // plain text body
-        html: htmlRegister(token, author_contact_email),
-      });
-      console.log(email);
-    } catch (e) {
-      console.log(e);
-    }
+    await this.smtpService.renderMessage(
+      message_book.auth.request_new_sign_up(token, author_contact_email),
+      [userEmail],
+    );
   }
 
   async acceptRequestAccess(userEmail, userId) {
@@ -95,18 +84,10 @@ export class UserService {
       userId,
       contact_email: userEmail,
     });
-    try {
-      const email = await transporter.sendMail({
-        from: 'embedded@activebi.com.br', // sender address
-        to: userEmail, // list of receivers
-        subject: 'Active PME - Solicitação aprovada!!!', // Subject line
-        text: 'Ingresso solicitado', // plain text body
-        html: htmlAcceptRequestAccess(token),
-      });
-      console.log(email);
-    } catch (e) {
-      console.log(e);
-    }
+    await this.smtpService.renderMessage(
+      message_book.request_new_tenant.accept_new_tennat(token),
+      [userEmail],
+    );
   }
   async getUser(email: string): Promise<UserResponse> {
     return this.prisma.user.findFirst({

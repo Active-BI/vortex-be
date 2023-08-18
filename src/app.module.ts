@@ -30,6 +30,7 @@ import { RequestAccessController } from './auth/request-access/request-access.co
 import { RequestAccessService } from './auth/request-access/request-access.service';
 import { MasterRequestService } from './master/master-request/admin-request.service';
 import { MasterRequestController } from './master/master-request/admin-request.controller';
+import { SmtpService } from './services/smtp.service';
 
 @Module({
   controllers: [
@@ -67,6 +68,7 @@ import { MasterRequestController } from './master/master-request/admin-request.c
     MasterRequestService,
     DashboardsMasterService,
     RequestAccessService,
+    SmtpService,
   ],
   exports: [JwtStrategy],
   imports: [

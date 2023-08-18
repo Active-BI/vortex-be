@@ -9,28 +9,13 @@ import * as bcrypt from 'bcrypt';
 import { CreateLoginDto } from './Swagger';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
 import { UserAuthService } from '../user_auth/user_auth.service';
-import { User, User_Auth, User_AuthPayload } from '@prisma/client';
-import { PageService } from 'src/admin/pages/page.service';
+import { User_Auth } from '@prisma/client';
 import { DashboardsMasterService } from 'src/master/dashboards/dashboards.service';
-import { htmlLogin } from './helper';
 import { UserService } from 'src/admin/user/user.service';
-import { UserResponse } from 'src/admin/user/Swagger';
+import { SmtpService } from 'src/services/smtp.service';
+import { message_book } from 'src/services/email_book';
 var speakeasy = require('speakeasy');
-const nodemailer = require('nodemailer');
 
-export const transporter = nodemailer.createTransport({
-  host: 'smtp-mail.outlook.com',
-  port: 587,
-  secure: false,
-  tls: {
-    ciphers: 'SSLv3',
-    rejectUnauthorized: false,
-  },
-  auth: {
-    user: 'embedded@activebi.com.br',
-    pass: 'Paq21687',
-  },
-});
 @Injectable()
 export class LoginService {
   constructor(
@@ -38,20 +23,8 @@ export class LoginService {
     private userAuthService: UserAuthService,
     private userService: UserService,
     private dashboardMasterService: DashboardsMasterService,
+    private smtpService: SmtpService,
   ) {}
-  async createTransportEmail(userEmail, totp) {
-    try {
-      await transporter.sendMail({
-        from: 'embedded@activebi.com.br', // sender address
-        to: userEmail, // list of receivers
-        subject: 'Código de Acesso', // Subject line
-        text: totp, // plain text body
-        html: htmlLogin(totp),
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  }
   async generateTotp(user: User_Auth) {
     var secret = speakeasy.generateSecret({ length: 10 });
 
@@ -59,17 +32,17 @@ export class LoginService {
 
     await this.userAuthService.update(userUpdate);
 
-    const tokenTotp = speakeasy.totp({
+    const totp = speakeasy.totp({
       secret: secret.base32,
       encoding: 'base32',
       period: 300,
       window: 10,
     });
-    this.createTransportEmail(
-      user.normalized_contact_email.toLowerCase(),
-      tokenTotp,
+    await this.smtpService.renderMessage(
+      message_book.auth.security_login(totp),
+      [],
     );
-    return tokenTotp;
+    return totp;
   }
 
   async TFA(login: CreateLoginDto) {
