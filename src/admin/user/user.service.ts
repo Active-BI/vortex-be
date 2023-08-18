@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { UserAuthService } from 'src/auth/user_auth/user_auth.service';
-import { v4 as uuidv4 } from 'uuid';
 import { EditUserBody, UserResponse } from './Swagger';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
 import { SmtpService } from 'src/services/smtp.service';
@@ -51,10 +50,9 @@ export class UserService {
     return await this.findById(user.id, userUpdate.tenant_id);
   }
   async createUser(user, tenant_id: string): Promise<{ user_id: string }> {
-    let uuid = uuidv4();
     await this.prisma.user.create({
       data: {
-        id: uuid,
+        id: user.id,
         name: user.name,
         contact_email: user.email,
         personal_email: user.email,
@@ -64,9 +62,9 @@ export class UserService {
         rls_id: user.rls_id,
       },
     });
-    await this.userAuthService.createAuthUser(user.email, uuid);
+    await this.userAuthService.createAuthUser(user.email, user.id);
 
-    return { user_id: uuid };
+    return { user_id: user.id };
   }
   async createTransportEmail(userEmail, userId, author_contact_email) {
     const token = await this.jwtStrategy.signRegisterToken({

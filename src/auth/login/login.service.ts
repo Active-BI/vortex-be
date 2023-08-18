@@ -40,7 +40,7 @@ export class LoginService {
     });
     await this.smtpService.renderMessage(
       message_book.auth.security_login(totp),
-      [],
+      [userUpdate.normalized_contact_email],
     );
     return totp;
   }

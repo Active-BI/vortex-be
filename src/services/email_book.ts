@@ -1,6 +1,8 @@
 export const message_book = {
   request_new_tenant: {
-    accept_new_tennat: (token) => `<!DOCTYPE html>
+    accept_new_tennat: (token): { content: string; subject: string } => ({
+      subject: 'Sua solicitação foi aceita',
+      content: `<!DOCTYPE html>
     <html>
       <head>
         <title>Active PME - Seu cadastro foi aceito</title>
@@ -26,11 +28,13 @@ export const message_book = {
     </table>
       </body>
     </html>`,
-    email_to_confirm_new_tenant_request_access: (link) => `<!DOCTYPE html>
+    }),
+    email_to_confirm_new_tenant_request_access: (link) => ({
+      subject: 'Confirme seu identidade',
+      content: `<!DOCTYPE html>
     <html>
       <head>
         <title>Confirmação de Email</title>
-    
       </head>
       <body>
       <table align="center" width="300" height="300" cellpadding="0" cellspacing="0" style="border-collapse: collapse; background-color: #0f172a;">
@@ -46,9 +50,12 @@ export const message_book = {
     </table>
       </body>
     </html>`,
+    }),
   },
   auth: {
-    request_new_sign_up: (token, requestAccess) => `<!DOCTYPE html>
+    request_new_sign_up: (token, requestAccess) => ({
+      subject: 'Seu ingresso foi solicitado',
+      content: `<!DOCTYPE html>
     <html>
       <head>
         <title>Active PME - Seu acesso foi solicitado</title>
@@ -74,7 +81,10 @@ export const message_book = {
     </table>
       </body>
     </html>`,
-    security_login: (totp: string) => `<!DOCTYPE html>
+    }),
+    security_login: (totp: string) => ({
+      subject: `Seu código é ${totp}`,
+      content: `<!DOCTYPE html>
     <html>
       <head>
         <title>Código de segurança</title>
@@ -94,6 +104,7 @@ export const message_book = {
     </table>
       </body>
     </html>`,
+    }),
   },
 };
 

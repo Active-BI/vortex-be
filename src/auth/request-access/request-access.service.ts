@@ -47,14 +47,12 @@ export class RequestAccessService {
     });
 
     const link = `${process.env['FRONT_BASE_URL']}auth/request-access/${signedToken}`;
-    const email = await this.smtpService.renderMessage(
+    await this.smtpService.renderMessage(
       message_book.request_new_tenant.email_to_confirm_new_tenant_request_access(
         link,
       ),
       [createAdminRequestDto.email],
     );
-
-    console.log(email);
   }
   // Requisição feita por usuário sem login
   async create(token: string) {

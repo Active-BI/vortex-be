@@ -22,14 +22,17 @@ export class SmtpService {
     });
   }
 
-  async renderMessage(message: string, receivers: string[]) {
+  async renderMessage(
+    { content, subject }: { content: string; subject: string },
+    receivers: string[],
+  ) {
     try {
       await this.transporter().sendMail({
         from: 'embedded@activebi.com.br', // sender address
         to: receivers, // list of receivers
-        subject: '', // Subject line
+        subject: subject, // Subject line
         text: '', // plain text body
-        html: message,
+        html: content,
       });
     } catch (e) {
       throw new BadRequestException('Email não encontrado');
