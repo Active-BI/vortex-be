@@ -1,6 +1,10 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterToken, ResetPassTempToken, TempToken, Token } from '../token';
@@ -53,17 +57,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload) {
-    console.log(
-      await this.jwtService.verifyAsync(payload, {
-        secret: process.env['JWT_SECRET'],
-      }),
-    );
     try {
       return await this.jwtService.verifyAsync(payload, {
         secret: process.env['JWT_SECRET'],
       });
     } catch (e) {
-      throw new UnauthorizedException('Token inválido');
+      throw new ForbiddenException('Token inválido');
     }
   }
 }
