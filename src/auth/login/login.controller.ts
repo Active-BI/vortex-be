@@ -50,7 +50,6 @@ export class LoginController {
       const user_auth = await this.loginService.getUserAuth(body);
       if (user_auth.User.Rls.name === 'Master') {
         const token = await this.loginService.checkPassMaster(body);
-        console.log(user_auth);
         const userRoutes = await this.pageService.getAllPagesByUser(
           user_auth.User.id,
           user_auth.User.tenant_id,

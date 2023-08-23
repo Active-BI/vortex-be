@@ -4,6 +4,7 @@ import { Request_admin_access } from '@prisma/client';
 import { UserService } from 'src/admin/user/user.service';
 import { roles } from 'prisma/seedHelp';
 import { TenantsService } from '../tenants/tenants.service';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class MasterRequestService {
@@ -48,11 +49,14 @@ export class MasterRequestService {
     if (alreadyExists) {
       throw new BadRequestException('Email já está em uso');
     }
+    let uuid = uuidv4();
+
+    await this.userService.acceptRequestAccess(userAuth.email, uuid);
+
     const { user_id } = await this.userService.createUser(
-      { ...userAuth, rls_id: roles[1].id },
+      { ...userAuth, id: uuid, rls_id: roles[1].id },
       tenant_id,
     );
-    await this.userService.acceptRequestAccess(userAuth.email, user_id);
 
     const tenantsDisponiveis = await this.prisma.tenant_Page.findMany({
       where: { tenant_id },
@@ -63,12 +67,8 @@ export class MasterRequestService {
         tenant_page_id: td.id,
       })),
     });
-    await this.prisma.request_admin_access.update({
+    await this.prisma.request_admin_access.delete({
       where: { id },
-      data: {
-        ...userAuth,
-        accept: true,
-      },
     });
   }
   async findAllBlocked() {

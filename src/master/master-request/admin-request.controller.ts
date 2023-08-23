@@ -11,7 +11,6 @@ import { MasterRequestService } from './admin-request.service';
 import { Request_admin_access } from '@prisma/client';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
 import { ApiTags } from '@nestjs/swagger';
-import { BypassAuth } from 'src/helpers/strategy/jwtGuard.service';
 
 @ApiTags('Master/admin-request')
 @Controller('admin-request')

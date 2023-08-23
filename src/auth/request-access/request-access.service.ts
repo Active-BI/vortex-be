@@ -1,21 +1,17 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Request_admin_access } from '@prisma/client';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
 import { PrismaService } from 'src/services/prisma.service';
-import { emailToRequestAccess } from './helper';
-import { transporter } from '../login/login.service';
-import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
+import { SmtpService } from 'src/services/smtp.service';
+import { message_book } from 'src/services/email_book';
 
 @Injectable()
 export class RequestAccessService {
   constructor(
     private prisma: PrismaService,
     private jwtStrategy: JwtStrategy,
+    private smtpService: SmtpService,
   ) {}
 
   async createLinkToConfirmRequestAccess(
@@ -51,14 +47,12 @@ export class RequestAccessService {
     });
 
     const link = `${process.env['FRONT_BASE_URL']}auth/request-access/${signedToken}`;
-    const email = await transporter.sendMail({
-      from: 'embedded@activebi.com.br', // sender address
-      to: createAdminRequestDto.email, // list of receivers
-      subject: 'Confirmar cadastro', // Subject line
-      text: 'Confirmar cadastro', // plain text body
-      html: emailToRequestAccess(link),
-    });
-    console.log(email);
+    await this.smtpService.renderMessage(
+      message_book.request_new_tenant.email_to_confirm_new_tenant_request_access(
+        link,
+      ),
+      [createAdminRequestDto.email],
+    );
   }
   // Requisição feita por usuário sem login
   async create(token: string) {

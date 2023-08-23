@@ -1,15 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { UserAuthService } from 'src/auth/user_auth/user_auth.service';
-import { v4 as uuidv4 } from 'uuid';
 import { EditUserBody, UserResponse } from './Swagger';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
-import { transporter } from 'src/auth/login/login.service';
-import {
-  htmlAcceptRequestAccess,
-  htmlLogin,
-  htmlRegister,
-} from 'src/auth/login/helper';
+import { SmtpService } from 'src/services/smtp.service';
+import { message_book } from 'src/services/email_book';
 
 @Injectable()
 export class UserService {
@@ -17,6 +12,7 @@ export class UserService {
     private prisma: PrismaService,
     private jwtStrategy: JwtStrategy,
     private userAuthService: UserAuthService,
+    private smtpService: SmtpService,
   ) {}
   async findAll(tenant_id: string): Promise<UserResponse[]> {
     return await this.prisma.user.findMany({
@@ -54,10 +50,9 @@ export class UserService {
     return await this.findById(user.id, userUpdate.tenant_id);
   }
   async createUser(user, tenant_id: string): Promise<{ user_id: string }> {
-    let uuid = uuidv4();
     await this.prisma.user.create({
       data: {
-        id: uuid,
+        id: user.id,
         name: user.name,
         contact_email: user.email,
         personal_email: user.email,
@@ -67,27 +62,19 @@ export class UserService {
         rls_id: user.rls_id,
       },
     });
-    await this.userAuthService.createAuthUser(user.email, uuid);
+    await this.userAuthService.createAuthUser(user.email, user.id);
 
-    return { user_id: uuid };
+    return { user_id: user.id };
   }
   async createTransportEmail(userEmail, userId, author_contact_email) {
     const token = await this.jwtStrategy.signRegisterToken({
       userId,
       contact_email: userEmail,
     });
-    try {
-      const email = await transporter.sendMail({
-        from: 'embedded@activebi.com.br', // sender address
-        to: userEmail, // list of receivers
-        subject: 'Active PME - Conclua seu cadastro', // Subject line
-        text: 'Ingresso solicitado', // plain text body
-        html: htmlRegister(token, author_contact_email),
-      });
-      console.log(email);
-    } catch (e) {
-      console.log(e);
-    }
+    await this.smtpService.renderMessage(
+      message_book.auth.request_new_sign_up(token, author_contact_email),
+      [userEmail],
+    );
   }
 
   async acceptRequestAccess(userEmail, userId) {
@@ -95,18 +82,10 @@ export class UserService {
       userId,
       contact_email: userEmail,
     });
-    try {
-      const email = await transporter.sendMail({
-        from: 'embedded@activebi.com.br', // sender address
-        to: userEmail, // list of receivers
-        subject: 'Active PME - Solicitação aprovada!!!', // Subject line
-        text: 'Ingresso solicitado', // plain text body
-        html: htmlAcceptRequestAccess(token),
-      });
-      console.log(email);
-    } catch (e) {
-      console.log(e);
-    }
+    await this.smtpService.renderMessage(
+      message_book.request_new_tenant.accept_new_tennat(token),
+      [userEmail],
+    );
   }
   async getUser(email: string): Promise<UserResponse> {
     return this.prisma.user.findFirst({
@@ -130,19 +109,9 @@ export class UserService {
   }
 
   async deleteUser(id: string) {
-    await this.prisma.user_Page.deleteMany({
+    await this.prisma.tenant.deleteMany({
       where: {
-        user_id: id,
-      },
-    });
-    await this.prisma.user_Auth.deleteMany({
-      where: {
-        user_id: id,
-      },
-    });
-    await this.prisma.user.delete({
-      where: {
-        id,
+        id: id,
       },
     });
   }
