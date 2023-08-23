@@ -15,6 +15,7 @@ export class TokenValidationMiddleware implements NestMiddleware {
         res.status(401).json({ message: 'Token inválido' });
       }
       (req as any).tokenData = await decodedToken;
+      (req as any).token = token;
     } else {
       if (
         !req.baseUrl.includes('login') &&

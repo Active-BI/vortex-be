@@ -18,6 +18,7 @@ export class RoleValidationMiddleware implements NestMiddleware {
       if (!['Admin', 'Master'].includes(decoded.role_name))
         return res.status(403).json({ message: 'Acesso inválido' });
       (req as any).tokenData = decoded;
+      (req as any).token = token;
     } else {
       if (!req.baseUrl.includes('login')) {
         return res.status(401).json({ message: 'Token inválido' });
