@@ -28,13 +28,13 @@ export class LoginController {
       const user = await this.loginService.getUserAuth({
         email: userData.email,
       });
-      const validPin = await this.loginService.verifyPin(body.token, body.pin);
+      const validPin = await this.loginService.verifyPin(req.token, body.pin);
       if (!validPin) throw new Error('Pin inválido');
       const token = await this.loginService.generateToken(user);
-      const { tenant_id } = req.tokenData;
+
       const userRoutes = await this.pageService.getAllPagesByUser(
         user.User.id,
-        tenant_id,
+        user.User.tenant_id,
       );
       return { token, userRoutes };
     } catch (e) {
