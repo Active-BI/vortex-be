@@ -22,9 +22,8 @@ model Tenant {
   createdAt            DateTime                @default(now())
   updatedAt            DateTime                @updatedAt
   active               Boolean
-  restrict             Boolean?
   User                 User[]
-  // Tenant_DashBoard     Tenant_DashBoard[]
+  restrict             Boolean?                @default(false)
   funionarios_table    rh_funcionarios_table[]
   Request_admin_access Request_admin_access[]
   Tenant_Page          Tenant_Page[]
@@ -113,6 +112,7 @@ model Page {
   link          String?
   group_id      String?
   report_id     String?
+  restrict      Boolean?      @default(false)
   table_name    String?
   Page_Role     Page_Role[]
   page_group_id String?       @db.Uuid

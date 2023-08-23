@@ -10,13 +10,7 @@ export class DashboardsMasterService {
   async findAll() {
     return await this.prisma.page.findMany({
       where: {
-        Tenant_Page: {
-          some: {
-            Tenant: {
-              restrict: false,
-            },
-          },
-        },
+        restrict: false,
       },
     });
   }
@@ -26,10 +20,7 @@ export class DashboardsMasterService {
         where: {
           tenant_id,
           AND: {
-            page_id: {
-              in: dashboardIdList,
-            },
-            Tenant: {
+            Page: {
               restrict: false,
             },
           },
@@ -40,13 +31,7 @@ export class DashboardsMasterService {
   async findAllByTenant(tenant_id) {
     const dashboads = await this.prisma.page.findMany({
       where: {
-        Tenant_Page: {
-          some: {
-            Tenant: {
-              restrict: false,
-            },
-          },
-        },
+        restrict: false,
       },
       include: {
         Page_Group: true,
@@ -61,7 +46,7 @@ export class DashboardsMasterService {
         },
         Tenant_Page: {
           select: {
-            tenant_id: true,
+            Tenant: true,
           },
         },
       },
@@ -69,23 +54,24 @@ export class DashboardsMasterService {
 
     return dashboads
       .map((d) => {
-        if (d.Tenant_Page.find((t) => t.tenant_id === tenant_id)) {
+        if (d.Tenant_Page.find((t) => t.Tenant.id === tenant_id)) {
           return { ...d, included: true };
         }
         return { ...d, included: false };
       })
       .map((e) => {
         const filterTenant = e.Tenant_Page.filter(
-          (e) => e.tenant_id === tenant_id,
+          (e) => e.Tenant.id === tenant_id,
         );
         return {
           ...e,
           tenant_Page_id:
-            filterTenant.length < 1 ? '' : filterTenant[0].tenant_id,
+            filterTenant.length < 1 ? '' : filterTenant[0].Tenant.id,
           Page_Role: e.Page_Role.map((r) => r.Rls.name),
           Page_Group: e.Page_Group,
         };
-      });
+      })
+      .filter((e) => e.restrict === false);
   }
 
   async findAllByTenantAndUser(tenant_id) {
@@ -93,7 +79,7 @@ export class DashboardsMasterService {
       where: {
         tenant_id,
         AND: {
-          Tenant: {
+          Page: {
             restrict: false,
           },
         },

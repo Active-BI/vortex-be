@@ -109,19 +109,9 @@ export class UserService {
   }
 
   async deleteUser(id: string) {
-    await this.prisma.user_Page.deleteMany({
+    await this.prisma.tenant.deleteMany({
       where: {
-        user_id: id,
-      },
-    });
-    await this.prisma.user_Auth.deleteMany({
-      where: {
-        user_id: id,
-      },
-    });
-    await this.prisma.user.delete({
-      where: {
-        id,
+        id: id,
       },
     });
   }

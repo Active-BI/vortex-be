@@ -13,7 +13,6 @@ export class TenantsService {
         active: createTenantDto?.active ? true : false,
         tenant_name: createTenantDto.tenant_name,
         tenant_cnpj: createTenantDto.tenant_cnpj,
-        restrict: false,
       },
     });
     await this.prisma.tenant_Page.createMany({
@@ -97,8 +96,20 @@ export class TenantsService {
   }
 
   async remove(id: string) {
-    return await this.prisma.tenant.delete({
-      where: { id: id },
+    const user_pages_del = await this.prisma.tenant.delete({
+      where: {
+        id: id,
+      },
     });
+    // const pages = await this.prisma.tenant_Page.deleteMany({
+    //   where: {
+    //     tenant_id: id,
+    //   },
+    // });
+    console.log(user_pages_del);
+
+    // return await this.prisma.tenant.delete({
+    //   where: { id: id },
+    // });
   }
 }
