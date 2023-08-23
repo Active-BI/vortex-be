@@ -3,7 +3,6 @@ import {
   Get,
   Param,
   Req,
-  Headers,
   BadRequestException,
   Res,
   Post,
@@ -16,15 +15,10 @@ import { JwtService } from '@nestjs/jwt';
 import { EmbedConfig, PowerBiReportDetails } from './powerbi-dashboard.model';
 import { BypassAuth } from 'src/helpers/strategy/jwtGuard.service';
 import { MsalService } from 'src/services/msal.service';
-import { Token } from 'src/helpers/token';
 import { PrismaService } from 'src/services/prisma.service';
-import { Client } from '@microsoft/microsoft-graph-client';
-// import { tabelas } from 'prisma/tabelas';
 
 @Controller('pbi-report')
 export class PbiReportController {
-  private client: Client;
-
   async getDashboardType(type, tenant_id, userId) {
     const userDashboard = await this.prisma.user_Page.findFirst({
       where: {
@@ -43,46 +37,11 @@ export class PbiReportController {
     return userDashboard;
   }
   constructor(
-    private readonly pbiReportService: PbiReportService,
     private msalService: MsalService,
     private prisma: PrismaService,
     private jwtService: JwtService,
   ) {}
-  @Post('post-file/:type')
-  async importFile(@Param('type') type, @Req() req, @Body() dados) {
-    const { userId, tenant_id } = req.tokenData;
-    await this.getDashboardType(type, tenant_id, userId);
-    await this.pbiReportService.postFile(dados, tenant_id, type);
-  }
 
-  @Get('get-file/:type')
-  async downloadTemplate(@Param('type') type, @Req() req, @Res() res) {
-    const { userId, tenant_id } = req.tokenData;
-    await this.getDashboardType(type, tenant_id, userId);
-
-    const buffer = await this.pbiReportService.getFile(type, tenant_id);
-    res.setHeader(
-      'Content-Type',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    );
-    res.setHeader('Content-Disposition', 'attachment; filename=file.xlsx');
-
-    res.send(buffer);
-  }
-  @Get('get-template/:type')
-  async downloadFile(@Param('type') type, @Req() req, @Res() res) {
-    const { userId, tenant_id } = req.tokenData;
-    await this.getDashboardType(type, tenant_id, userId);
-
-    const buffer = this.pbiReportService.getTemplate(type);
-    res.setHeader(
-      'Content-Type',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    );
-    res.setHeader('Content-Disposition', 'attachment; filename=file.xlsx');
-
-    res.send(buffer);
-  }
   @Get('refresh-dataflow/:type')
   async refreshDataflow(@Param('type') type, @Req() req): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;

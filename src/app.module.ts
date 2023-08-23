@@ -31,6 +31,8 @@ import { RequestAccessService } from './auth/request-access/request-access.servi
 import { MasterRequestService } from './master/master-request/admin-request.service';
 import { MasterRequestController } from './master/master-request/admin-request.controller';
 import { SmtpService } from './services/smtp.service';
+import { FilesService } from './admin/files/files.service';
+import { FilesController } from './admin/files/files.controller';
 
 @Module({
   controllers: [
@@ -44,6 +46,7 @@ import { SmtpService } from './services/smtp.service';
     MasterRequestController,
     DashboardsMasterController,
     RequestAccessController,
+    FilesController,
   ],
   providers: [
     PrismaService,
@@ -69,6 +72,7 @@ import { SmtpService } from './services/smtp.service';
     DashboardsMasterService,
     RequestAccessService,
     SmtpService,
+    FilesService,
   ],
   exports: [JwtStrategy],
   imports: [

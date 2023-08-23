@@ -10,15 +10,10 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import {
-  CreateUserBody,
-  CreateUserResponse,
-  EditUserBody,
-  UserResponse,
-} from './Swagger';
+import { CreateUserBody, EditUserBody, UserResponse } from './Swagger';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
-import { RegisterToken } from 'src/helpers/token';
 import { randomUUID } from 'crypto';
+
 @ApiTags('User')
 @Controller('user')
 export class UserController {
