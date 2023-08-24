@@ -13,8 +13,8 @@ export class FilesService {
   getTemplate(type) {
     return this.templateHandler.getTemplate(type);
   }
-  async getDashboardType(type, tenant_id, userId) {
-    const userDashboard = await this.prisma.user_Page.findFirst({
+  async getPageType(type, tenant_id, userId) {
+    const userPage = await this.prisma.user_Page.findFirst({
       where: {
         user_id: userId,
         Tenant_Page: {
@@ -27,8 +27,8 @@ export class FilesService {
       include: { Tenant_Page: { include: { Page: true } } },
     });
 
-    if (!userDashboard) throw new BadRequestException('Report não encontrado');
-    return userDashboard;
+    if (!userPage) throw new BadRequestException('Report não encontrado');
+    return userPage;
   }
   objetoPossuiTodasChaves(objeto, type) {
     return Object.values(templates_xlsx[type]).every((chave) => {
