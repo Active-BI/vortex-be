@@ -2,19 +2,37 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 
 @Injectable()
-export class DashboardsMasterService {
+export class PagesMasterService {
   /**
    *
    */
   constructor(private prisma: PrismaService) {}
   async findAll() {
-    return await this.prisma.page.findMany({
+    return (await this.prisma.page.findMany({
       where: {
         restrict: false,
       },
-    });
+      include: {
+        Page_Group: true,
+        Page_Role: {
+          select: {
+            Rls: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        Tenant_Page: {
+          select: {
+            Tenant: true,
+          },
+        },
+      },
+    })) 
+    .filter((e) => e.restrict === false);;
   }
-  async findAllTenantDashboard(tenant_id: string, dashboardIdList: string[]) {
+  async findAllTenantPage(tenant_id: string) {
     return (
       await this.prisma.tenant_Page.findMany({
         where: {
@@ -153,7 +171,7 @@ export class DashboardsMasterService {
    * @returns 'rotas que o usuário master possui acesso'
    */
 
-  async getAllDashboardsMaster() {
+  async getAllPageMaster() {
     return (
       await this.prisma.user_Page.findMany({
         where: {

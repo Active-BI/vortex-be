@@ -151,33 +151,11 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           {
             id: '105d8682-383e-45ce-bdb3-6ca4a7257534',
             contact_email: 'lucas.franca@activebi.com.br',
-            name: 'gustavo',
+            name: 'lucas',
             born_date: new Date(),
             description: 'description master',
             personal_email: 'lucas.franca@activebi.com.br',
             profession: 'admin',
-            tenant_id: TENANTS.TENANT1,
-            rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
-          },
-          {
-            id: 'ffe81a3c-6d52-4cf3-bbc1-b655b7281a1b',
-            contact_email: 'teste@t1user.com.br',
-            name: 'teste user',
-            born_date: new Date(),
-            description: 'description user',
-            personal_email: 'teste@t1user.com.br',
-            profession: 'user',
-            tenant_id: TENANTS.TENANT1,
-            rls_id: 'ca21241b-a37d-4e6f-bbb6-26643d3cdd99',
-          },
-          {
-            id: 'a0d8b88b-97b5-40b8-a790-3d3dac9b13be',
-            contact_email: 'teste@t1admin.com.br',
-            name: 'teste admin',
-            born_date: new Date(),
-            description: 'description admin',
-            personal_email: 'teste@t1admin.com.br',
-            profession: 'profession admin',
             tenant_id: TENANTS.TENANT1,
             rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
           },
@@ -197,17 +175,6 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             user_id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',
           },
           {
-            id: '6ea9ee12-2651-415e-860b-032b5febaaeb',
-            normalized_contact_email: 'TESTE@T1USER.COM.BR',
-            last_access: null,
-            reset_pass: null,
-            anchor: false,
-            secret: null,
-            password_hash:
-              '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
-            user_id: 'ffe81a3c-6d52-4cf3-bbc1-b655b7281a1b',
-          },
-          {
             id: 'd420b02b-ffcc-43fb-8959-306f067a547e',
             normalized_contact_email: 'GUSTAVO.TAHARA@ACTIVEBI.COM.BR',
             last_access: null,
@@ -218,7 +185,6 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
               '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
             user_id: userAdmin,
           },
-
           {
             id: '0d336f62-6e97-43d2-84e2-d280db3c47d2',
             normalized_contact_email: 'LUCAS.FRANCA@ACTIVEBI.COM.BR',
@@ -230,21 +196,11 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
               '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
             user_id: '105d8682-383e-45ce-bdb3-6ca4a7257534',
           },
-          {
-            id: 'c08f9907-9121-4e0e-8d1b-60761701b2ae',
-            normalized_contact_email: 'TESTE@T1ADMIN.COM.BR',
-            last_access: null,
-            anchor: true,
-            reset_pass: null,
-            secret: null,
-            password_hash:
-              '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
-            user_id: 'a0d8b88b-97b5-40b8-a790-3d3dac9b13be',
-          },
         ],
       });
 
       const screenTypes = {
+        DASHBOARD: 'dashboard',
         REPORT: 'report',
         REPORT_UPLOAD: 'report-upload',
         PAGE: 'page',
@@ -311,23 +267,23 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             link: '/master/gestao/solicitacoes-de-cadastro',
             page_group_id: '3457d477-62c8-4596-8e30-71f9095064e2',
           },
-          // {
-          //   id: '605a6c99-4e8c-4da5-9b5f-ccb61b42c5e4',
-          //   restrict: true,
-          //   type: screenTypes.PAGE,
-          //   title: 'Telas Da Aplicação',
-          //   link: '/master/gestao/telas',
-          //   page_group_id: '219abfe8-7478-4db3-9fb3-cf1d38fcace2',
-          // },
+          {
+            id: '605a6c99-4e8c-4da5-9b5f-ccb61b42c5e4',
+            restrict: true,
+            type: screenTypes.PAGE,
+            title: 'Telas Da Aplicação',
+            link: '/master/gestao/telas',
+            page_group_id: '219abfe8-7478-4db3-9fb3-cf1d38fcace2',
+          },
         ],
       });
       await prisma.tenant_Page.createMany({
         data: [
-          // {
-          //   id: '679ea9b2-735a-49c1-be40-388077ffd603',
-          //   page_id: '605a6c99-4e8c-4da5-9b5f-ccb61b42c5e4',
-          //   tenant_id: TENANTS.MASTER,
-          // },
+          {
+            id: '679ea9b2-735a-49c1-be40-388077ffd603',
+            page_id: '605a6c99-4e8c-4da5-9b5f-ccb61b42c5e4',
+            tenant_id: TENANTS.MASTER,
+          },
           {
             id: '00c1c01d-2076-4d25-b132-1285d9318bbd',
             page_id: '744b86c7-e6ac-43cf-ad65-1106081d1507',
@@ -352,10 +308,10 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
       });
       await prisma.page_Role.createMany({
         data: [
-          // {
-          //   page_id: '605a6c99-4e8c-4da5-9b5f-ccb61b42c5e4',
-          //   rls_id: ROLES.Master,
-          // },
+          {
+            page_id: '605a6c99-4e8c-4da5-9b5f-ccb61b42c5e4',
+            rls_id: ROLES.Master,
+          },
           {
             page_id: '9a7dc980-cc5f-4060-a111-e006d62e5f18',
             rls_id: ROLES.Admin,
@@ -380,10 +336,10 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
       });
       await prisma.user_Page.createMany({
         data: [
-          // {
-          //   tenant_page_id: '679ea9b2-735a-49c1-be40-388077ffd603',
-          //   user_id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',
-          // },
+          {
+            tenant_page_id: '679ea9b2-735a-49c1-be40-388077ffd603',
+            user_id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',
+          },
           {
             tenant_page_id: '00c1c01d-2076-4d25-b132-1285d9318bbd',
             user_id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',

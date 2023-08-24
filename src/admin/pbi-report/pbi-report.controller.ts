@@ -19,8 +19,8 @@ import { PrismaService } from 'src/services/prisma.service';
 
 @Controller('pbi-report')
 export class PbiReportController {
-  async getDashboardType(type, tenant_id, userId) {
-    const userDashboard = await this.prisma.user_Page.findFirst({
+  async getPageType(type, tenant_id, userId) {
+    const userPage = await this.prisma.user_Page.findFirst({
       where: {
         user_id: userId,
         Tenant_Page: {
@@ -33,8 +33,8 @@ export class PbiReportController {
       include: { Tenant_Page: { include: { Page: true } } },
     });
 
-    if (!userDashboard) throw new BadRequestException('Report não encontrado');
-    return userDashboard;
+    if (!userPage) throw new BadRequestException('Report não encontrado');
+    return userPage;
   }
   constructor(
     private msalService: MsalService,
@@ -45,10 +45,10 @@ export class PbiReportController {
   @Get('refresh-dataflow/:type')
   async refreshDataflow(@Param('type') type, @Req() req): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
-    const userDashboard = await this.getDashboardType(type, tenant_id, userId);
+    const userPage = await this.getPageType(type, tenant_id, userId);
     const headers = await this.msalService.getRequestHeader(role_name);
 
-    const getDataflows = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_Page.Page.group_id}/dataflows`;
+    const getDataflows = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/dataflows`;
     let dataFlowId: any = {};
     await fetch(getDataflows, {
       method: 'GET',
@@ -61,7 +61,7 @@ export class PbiReportController {
       dataFlowId = { id: data.value[0].objectId, ...data.value[0] };
     });
 
-    const refreshDataflow = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_Page.Page.group_id}/dataflows/${dataFlowId.id}/refreshes`;
+    const refreshDataflow = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/dataflows/${dataFlowId.id}/refreshes`;
 
     await fetch(refreshDataflow, {
       method: 'POST',
@@ -79,10 +79,10 @@ export class PbiReportController {
   @Get('refresh/:type')
   async refreshReport(@Param('type') type, @Req() req): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
-    const userDashboard = await this.getDashboardType(type, tenant_id, userId);
+    const userPage = await this.getPageType(type, tenant_id, userId);
     const headers = await this.msalService.getRequestHeader(role_name);
 
-    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_Page.Page.group_id}/reports/${userDashboard.Tenant_Page.Page.report_id}`;
+    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/reports/${userPage.Tenant_Page.Page.report_id}`;
     const result: any = await fetch(reportInGroupApi, {
       method: 'GET',
       headers,
@@ -91,7 +91,7 @@ export class PbiReportController {
       return res.json();
     });
 
-    const refreshDataset = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_Page.Page.group_id}/datasets/${result.datasetId}/refreshes`;
+    const refreshDataset = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/datasets/${result.datasetId}/refreshes`;
 
     await fetch(refreshDataset, {
       method: 'POST',
@@ -112,8 +112,8 @@ export class PbiReportController {
   @Get('type/:type')
   async ReportByTYpe(@Param('type') type, @Req() req): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
-    const userDashboard = await this.getDashboardType(type, tenant_id, userId);
-    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userDashboard.Tenant_Page.Page.group_id}/reports/${userDashboard.Tenant_Page.Page.report_id}`;
+    const userPage = await this.getPageType(type, tenant_id, userId);
+    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/reports/${userPage.Tenant_Page.Page.report_id}`;
 
     // header é o objeto onde está o accessToken
     const headers = await this.msalService.getRequestHeader(role_name);
@@ -140,9 +140,9 @@ export class PbiReportController {
 
     reportEmbedConfig.embedToken =
       await this.getEmbedTokenForSingleReportSingleWorkspace(
-        userDashboard.Tenant_Page.Page.report_id,
+        userPage.Tenant_Page.Page.report_id,
         datasetIds,
-        userDashboard.Tenant_Page.Page.group_id,
+        userPage.Tenant_Page.Page.group_id,
         user,
         headers,
       );

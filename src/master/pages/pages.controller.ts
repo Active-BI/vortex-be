@@ -1,12 +1,12 @@
 import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
-import { DashboardsMasterService } from './dashboards.service';
+import { PagesMasterService } from './pages.service';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
 import { PageService } from 'src/admin/pages/page.service';
 
-@Controller('master/dashboards')
-export class DashboardsMasterController {
+@Controller('master/pages')
+export class PagesMasterController {
   constructor(
-    private readonly dashboardsService: DashboardsMasterService,
+    private readonly dashboardsService: PagesMasterService,
     private pageService: PageService,
   ) {}
 
@@ -30,11 +30,10 @@ export class DashboardsMasterController {
   @Roles('Master')
   @Post('/:userid')
   async setDashboardUser(@Req() req, @Body() body, @Param('userid') userid) {
-    const { DashboardUserList, tenant_id } = body;
+    const {  tenant_id } = body;
     const getTenantDashBoards =
-      await this.dashboardsService.findAllTenantDashboard(
+      await this.dashboardsService.findAllTenantPage(
         tenant_id,
-        DashboardUserList,
       );
     await this.pageService.setPageUser(getTenantDashBoards, userid, tenant_id);
   }
