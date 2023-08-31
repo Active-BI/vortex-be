@@ -99,10 +99,11 @@ model Page_Role {
 }
 
 model Page_Group {
-  id    String @id @default(uuid()) @db.Uuid
-  title String
-  icon  String
-  Page  Page[]
+  id       String   @id @default(uuid()) @db.Uuid
+  title    String
+  restrict Boolean? @default(false)
+  icon     String
+  Page     Page[]
 }
 
 model Page {

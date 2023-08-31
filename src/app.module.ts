@@ -33,6 +33,8 @@ import { MasterRequestController } from './master/master-request/admin-request.c
 import { SmtpService } from './services/smtp.service';
 import { FilesService } from './admin/files/files.service';
 import { FilesController } from './admin/files/files.controller';
+import { GroupsController } from './master/groups/groups.controller';
+import { GroupsService } from './master/groups/groups.service';
 
 @Module({
   controllers: [
@@ -46,7 +48,8 @@ import { FilesController } from './admin/files/files.controller';
     MasterRequestController,
     RequestAccessController,
     FilesController,
-    PagesMasterController
+    PagesMasterController,
+    GroupsController,
   ],
   providers: [
     PrismaService,
@@ -73,6 +76,7 @@ import { FilesController } from './admin/files/files.controller';
     RequestAccessService,
     SmtpService,
     FilesService,
+    GroupsService,
   ],
   exports: [JwtStrategy],
   imports: [
