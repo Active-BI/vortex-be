@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { Page } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma.service';
 
 @Injectable()
@@ -56,6 +57,16 @@ export class PagesMasterService {
           select: {
             Tenant: true,
           },
+        },
+      },
+    });
+  }
+  async findByTitle(title) {
+    return await this.prisma.page.findFirst({
+      where: {
+        restrict: false,
+        AND: {
+          title,
         },
       },
     });
@@ -241,5 +252,30 @@ export class PagesMasterService {
       Page_Role: e.Tenant_Page.Page.Page_Role.map((r) => r.Rls.name),
       Page_Group: e.Tenant_Page.Page.Page_Group,
     }));
+  }
+
+  async update(id: string, updateGroupDto: Page) {
+    return await this.prisma.page.update({
+      where: {
+        id,
+      },
+      data: updateGroupDto,
+    });
+  }
+  async create(createGroup: Page) {
+    const findPage = await this.findByTitle(createGroup.title);
+    if (findPage) {
+      throw new BadRequestException('Pagina já existe');
+    }
+    return await this.prisma.page.create({
+      data: createGroup,
+    });
+  }
+  async remove(id: string) {
+    return await this.prisma.page.delete({
+      where: {
+        id,
+      },
+    });
   }
 }
