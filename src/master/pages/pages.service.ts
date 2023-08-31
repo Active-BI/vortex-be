@@ -8,9 +8,38 @@ export class PagesMasterService {
    */
   constructor(private prisma: PrismaService) {}
   async findAll() {
-    return (await this.prisma.page.findMany({
+    return (
+      await this.prisma.page.findMany({
+        where: {
+          restrict: false,
+        },
+        include: {
+          Page_Group: true,
+          Page_Role: {
+            select: {
+              Rls: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+          Tenant_Page: {
+            select: {
+              Tenant: true,
+            },
+          },
+        },
+      })
+    ).filter((e) => e.restrict === false);
+  }
+  async findById(id) {
+    return await this.prisma.page.findFirst({
       where: {
         restrict: false,
+        AND: {
+          id,
+        },
       },
       include: {
         Page_Group: true,
@@ -29,8 +58,7 @@ export class PagesMasterService {
           },
         },
       },
-    })) 
-    .filter((e) => e.restrict === false);;
+    });
   }
   async findAllTenantPage(tenant_id: string) {
     return (

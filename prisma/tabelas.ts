@@ -250,6 +250,7 @@ export async function insertRoutes(prisma: PrismaClient) {
         const [report_id, group_id] = child.link.split('/').slice(1);
         child['report_id'] = report_id;
         child['group_id'] = group_id;
+        child['report_type'] = 'report';
         child['page_group_id'] = parentRoute.id;
         child.id = randomUUID();
         childRoutes.push(child as any);

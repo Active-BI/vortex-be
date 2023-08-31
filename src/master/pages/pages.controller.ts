@@ -10,7 +10,7 @@ export class PagesMasterController {
     private pageService: PageService,
   ) {}
 
-  @Get('/:tenant_id')
+  @Get('by-tenant/:tenant_id')
   @Roles('Master')
   async findAllByTenant(@Param('tenant_id') tenant_id) {
     return await this.dashboardsService.findAllByTenant(tenant_id);
@@ -27,14 +27,17 @@ export class PagesMasterController {
     return await this.dashboardsService.findAll();
   }
 
+  @Get('/:pageId')
+  @Roles('Master')
+  async findByPageId(@Param('pageId') userid) {
+    return await this.dashboardsService.findById(userid);
+  }
   @Roles('Master')
   @Post('/:userid')
   async setDashboardUser(@Req() req, @Body() body, @Param('userid') userid) {
-    const {  tenant_id } = body;
+    const { tenant_id } = body;
     const getTenantDashBoards =
-      await this.dashboardsService.findAllTenantPage(
-        tenant_id,
-      );
+      await this.dashboardsService.findAllTenantPage(tenant_id);
     await this.pageService.setPageUser(getTenantDashBoards, userid, tenant_id);
   }
 }

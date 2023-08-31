@@ -108,6 +108,7 @@ model Page_Group {
 model Page {
   id            String        @id @default(uuid()) @db.Uuid
   type          String
+  report_type   String?
   title         String
   link          String?
   group_id      String?

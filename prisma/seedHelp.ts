@@ -203,8 +203,10 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
         DASHBOARD: 'dashboard',
         REPORT: 'report',
         REPORT_UPLOAD: 'report-upload',
+        DASBOARD_UPLOAD: 'dashboard-upload',
         PAGE: 'page',
       };
+
       await prisma.page_Group.createMany({
         data: [
           {
