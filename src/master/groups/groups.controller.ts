@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { GroupsService } from './groups.service';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
+import { ApiTags } from '@nestjs/swagger';
 export type Create_Page_Group = {
   title: string;
   icon: string;
@@ -16,6 +17,7 @@ export type Create_Page_Group = {
 export interface Update_Page_Group extends Create_Page_Group {
   id: string;
 }
+@ApiTags('Master/Groups')
 @Controller('master/groups')
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
@@ -41,6 +43,7 @@ export class GroupsController {
   @Roles('Master')
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateGroupDto: Update_Page_Group) {
+    console.log(updateGroupDto);
     return this.groupsService.update(id, updateGroupDto);
   }
 

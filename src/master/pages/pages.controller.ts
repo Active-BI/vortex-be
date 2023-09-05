@@ -13,7 +13,9 @@ import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
 import { PageService } from 'src/admin/pages/page.service';
 import { Update_Page_Group } from '../groups/groups.controller';
 import { Page } from '@prisma/client';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Master/pages')
 @Controller('master/pages')
 export class PagesMasterController {
   constructor(

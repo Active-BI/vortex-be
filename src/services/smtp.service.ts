@@ -16,8 +16,8 @@ export class SmtpService {
         rejectUnauthorized: false,
       },
       auth: {
-        user: 'embedded@activebi.com.br',
-        pass: 'Paq21687',
+        user: process.env['SMTP_EMAIL'],
+        pass: process.env['SMTP_PASS'],
       },
     });
   }
@@ -28,13 +28,15 @@ export class SmtpService {
   ) {
     try {
       await this.transporter().sendMail({
-        from: 'embedded@activebi.com.br', // sender address
+        from: process.env['SMTP_EMAIL'], // sender address
         to: receivers, // list of receivers
         subject: subject, // Subject line
         text: '', // plain text body
         html: content,
       });
     } catch (e) {
+      console.log(e);
+
       throw new BadRequestException('Email não encontrado');
     }
   }

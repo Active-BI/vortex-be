@@ -16,21 +16,71 @@ export class GroupsService {
   }
 
   async findAll() {
-    return await this.prisma.page_Group.findMany({
-      where: {
-        restrict: false,
-      },
-    });
+    return (
+      await this.prisma.page_Group.findMany({
+        where: {
+          restrict: false,
+        },
+        include: {
+          Page: {
+            include: {
+              Page_Group: true,
+              Page_Role: {
+                select: {
+                  Rls: {
+                    select: {
+                      name: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      })
+    ).filter((e) => e.restrict === false);
   }
 
   async findOne(id: string) {
     return await this.prisma.page_Group.findUnique({
-      where: { id },
+      where: { id, restrict: false },
+      include: {
+        Page: {
+          include: {
+            Page_Group: true,
+            Page_Role: {
+              select: {
+                Rls: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
   }
   async findOneByName(title: string) {
     return await this.prisma.page_Group.findFirst({
       where: { title },
+      include: {
+        Page: {
+          include: {
+            Page_Group: true,
+            Page_Role: {
+              select: {
+                Rls: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
   }
   async update(id: string, updateGroupDto: Update_Page_Group) {

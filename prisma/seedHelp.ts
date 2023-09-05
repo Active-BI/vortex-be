@@ -222,11 +222,13 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           {
             id: '3457d477-62c8-4596-8e30-71f9095064e2',
             title: 'Gestão Master',
+            restrict: true,
             icon: 'mat_outline:settings',
           },
           {
             id: '219abfe8-7478-4db3-9fb3-cf1d38fcace2',
             title: 'Gestão de telas',
+            restrict: true,
             icon: 'widgets',
           },
         ],

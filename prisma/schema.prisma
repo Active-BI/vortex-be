@@ -78,7 +78,7 @@ model Tenant_Page {
   tenant_id String      @db.Uuid
   Tenant    Tenant      @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   page_id   String      @db.Uuid
-  Page      Page        @relation(fields: [page_id], references: [id])
+  Page      Page        @relation(fields: [page_id], references: [id], onDelete: Cascade)
   User_Page User_Page[]
 }
 
@@ -93,7 +93,7 @@ model User_Page {
 model Page_Role {
   id      String @id @default(uuid()) @db.Uuid
   page_id String @db.Uuid
-  Page    Page   @relation(fields: [page_id], references: [id])
+  Page    Page   @relation(fields: [page_id], references: [id], onDelete: Cascade)
   rls_id  String @db.Uuid
   Rls     Rls    @relation(fields: [rls_id], references: [id])
 }
@@ -118,7 +118,7 @@ model Page {
   table_name    String?
   Page_Role     Page_Role[]
   page_group_id String?       @db.Uuid
-  Page_Group    Page_Group?   @relation(fields: [page_group_id], references: [id])
+  Page_Group    Page_Group?   @relation(fields: [page_group_id], references: [id], onDelete: Cascade)
   Tenant_Page   Tenant_Page[]
 }
 

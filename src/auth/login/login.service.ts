@@ -40,7 +40,7 @@ export class LoginService {
     });
     await this.smtpService.renderMessage(
       message_book.auth.security_login(totp),
-      [userUpdate.normalized_contact_email],
+      [userUpdate.normalized_contact_email.toLocaleLowerCase()],
     );
     return totp;
   }
@@ -126,8 +126,7 @@ export class LoginService {
 
     if (!isHashTrue) throw new ForbiddenException('Senha inválida');
 
-    const dashboardUser =
-      await this.pagesMasterService.getAllPageMaster();
+    const dashboardUser = await this.pagesMasterService.getAllPageMaster();
     const tokenObj = new Token(user_auth.User, dashboardUser);
 
     var token = await this.jwtStrategy.signToken(tokenObj);
