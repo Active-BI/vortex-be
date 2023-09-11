@@ -16,14 +16,19 @@ import { PrismaService } from 'src/services/prisma.service';
 
 @Controller('pbi-report')
 export class PbiReportController {
-  async getPageType(type, tenant_id, userId) {
+  async getPageType(group, type, tenant_id, userId) {
     const userPage = await this.prisma.user_Page.findFirst({
       where: {
         user_id: userId,
         Tenant_Page: {
           tenant_id,
           Page: {
-            link: type,
+            AND: {
+              Page_Group: {
+                formated_title: group,
+              },
+              formated_title: type,
+            },
           },
         },
       },
@@ -39,10 +44,14 @@ export class PbiReportController {
     private jwtService: JwtService,
   ) {}
 
-  @Get('refresh-dataflow/:type')
-  async refreshDataflow(@Param('type') type, @Req() req): Promise<any> {
+  @Get('refresh-dataflow/:group/:type')
+  async refreshDataflow(
+    @Param('type') type,
+    @Param('group') group,
+    @Req() req,
+  ): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
-    const userPage = await this.getPageType(type, tenant_id, userId);
+    const userPage = await this.getPageType(group, type, tenant_id, userId);
     const headers = await this.msalService.getRequestHeader(role_name);
 
     const getDataflows = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/dataflows`;
@@ -73,10 +82,14 @@ export class PbiReportController {
       return res;
     });
   }
-  @Get('refresh/:type')
-  async refreshReport(@Param('type') type, @Req() req): Promise<any> {
+  @Get('refresh/:group/:type')
+  async refreshReport(
+    @Param('type') type,
+    @Param('group') group,
+    @Req() req,
+  ): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
-    const userPage = await this.getPageType(type, tenant_id, userId);
+    const userPage = await this.getPageType(group, type, tenant_id, userId);
     const headers = await this.msalService.getRequestHeader(role_name);
 
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/reports/${userPage.Tenant_Page.Page.report_id}`;
@@ -106,10 +119,14 @@ export class PbiReportController {
     });
   }
 
-  @Get('type/:type')
-  async ReportByTYpe(@Param('type') type, @Req() req): Promise<any> {
+  @Get(':group/:type')
+  async ReportByTYpe(
+    @Param('type') type,
+    @Param('group') group,
+    @Req() req,
+  ): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
-    const userPage = await this.getPageType(type, tenant_id, userId);
+    const userPage = await this.getPageType(group, type, tenant_id, userId);
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/reports/${userPage.Tenant_Page.Page.report_id}`;
 
     // header é o objeto onde está o accessToken

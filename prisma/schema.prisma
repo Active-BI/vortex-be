@@ -99,27 +99,32 @@ model Page_Role {
 }
 
 model Page_Group {
-  id       String   @id @default(uuid()) @db.Uuid
-  title    String
-  restrict Boolean? @default(false)
-  icon     String
-  Page     Page[]
+  id             String   @id @default(uuid()) @db.Uuid
+  title          String
+  formated_title String?
+  restrict       Boolean? @default(false)
+  icon           String
+  Page           Page[]
 }
 
 model Page {
-  id            String        @id @default(uuid()) @db.Uuid
-  type          String
-  report_type   String?
-  title         String
-  link          String?
-  group_id      String?
-  report_id     String?
-  restrict      Boolean?      @default(false)
-  table_name    String?
-  Page_Role     Page_Role[]
-  page_group_id String?       @db.Uuid
-  Page_Group    Page_Group?   @relation(fields: [page_group_id], references: [id], onDelete: Cascade)
-  Tenant_Page   Tenant_Page[]
+  id                     String        @id @default(uuid()) @db.Uuid
+  type                   String
+  report_type            String?
+  formated_title         String?
+  title                  String
+  descricao_painel       String?
+  responsavel            String?
+  link                   String?
+  group_id               String?
+  report_id              String?
+  possui_dados_sensiveis Boolean?      @default(false)
+  restrict               Boolean?      @default(false)
+  table_name             String?
+  Page_Role              Page_Role[]
+  page_group_id          String?       @db.Uuid
+  Page_Group             Page_Group?   @relation(fields: [page_group_id], references: [id], onDelete: Cascade)
+  Tenant_Page            Tenant_Page[]
 }
 
 model rh_funcionarios_table {
