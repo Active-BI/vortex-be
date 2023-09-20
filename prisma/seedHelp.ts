@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import { insertRoutes } from './tabelas';
@@ -139,11 +139,11 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           },
           {
             id: userAdmin,
-            contact_email: 'gustavo.tahara@activebi.com.br',
-            name: 'gustavo',
+            contact_email: 'luiz@activebi.com.br',
+            name: 'Luiz',
             born_date: new Date(),
             description: 'description master',
-            personal_email: 'gustavo.tahara@activebi.com.br',
+            personal_email: 'luiz@activebi.com.br',
             profession: 'master',
             tenant_id: TENANTS.TENANT1,
             rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
@@ -176,7 +176,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           },
           {
             id: 'd420b02b-ffcc-43fb-8959-306f067a547e',
-            normalized_contact_email: 'GUSTAVO.TAHARA@ACTIVEBI.COM.BR',
+            normalized_contact_email: 'LUIZ@ACTIVEBI.COM.BR',
             last_access: null,
             anchor: true,
             reset_pass: null,
@@ -225,7 +225,6 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             id: '3457d477-62c8-4596-8e30-71f9095064e2',
             title: 'Gestão Master',
             formated_title: 'administrador',
-
             restrict: true,
             icon: 'mat_outline:settings',
           },

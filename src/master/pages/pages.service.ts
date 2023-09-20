@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Page } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma.service';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class PagesMasterService {
@@ -267,8 +268,9 @@ export class PagesMasterService {
     if (findPage) {
       throw new BadRequestException('Pagina já existe');
     }
+    const id = randomUUID();
     return await this.prisma.page.create({
-      data: createGroup,
+      data: { ...createGroup, id },
     });
   }
   async remove(id: string) {
