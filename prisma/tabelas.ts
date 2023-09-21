@@ -266,6 +266,12 @@ export async function insertRoutes(prisma: PrismaClient) {
         id: parentRoute.id,
         title: parentRoute.title,
         icon: parentRoute.icon,
+        formated_title: parentRoute.title
+          .split(' ')
+          .join('-')
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, ''),
       },
     });
     for (const childRoute of childRoutes) {
@@ -279,6 +285,12 @@ export async function insertRoutes(prisma: PrismaClient) {
             group_id: childRoute.group_id,
             report_id: childRoute.report_id,
             page_group_id: childRoute.page_group_id,
+            formated_title: childRoute.title
+              .split(' ')
+              .join('-')
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, ''),
           },
         });
         await prisma.page_Role.createMany({

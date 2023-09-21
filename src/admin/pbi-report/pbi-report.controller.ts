@@ -17,6 +17,7 @@ import { PrismaService } from 'src/services/prisma.service';
 @Controller('pbi-report')
 export class PbiReportController {
   async getPageType(group, type, tenant_id, userId) {
+    console.log(type, group, userId);
     const userPage = await this.prisma.user_Page.findFirst({
       where: {
         user_id: userId,
