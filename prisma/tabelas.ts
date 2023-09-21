@@ -250,6 +250,7 @@ export async function insertRoutes(prisma: PrismaClient) {
         const [report_id, group_id] = child.link.split('/').slice(1);
         child['report_id'] = report_id;
         child['group_id'] = group_id;
+        child['report_type'] = 'report';
         child['page_group_id'] = parentRoute.id;
         child.id = randomUUID();
         childRoutes.push(child as any);
@@ -265,12 +266,19 @@ export async function insertRoutes(prisma: PrismaClient) {
         id: parentRoute.id,
         title: parentRoute.title,
         icon: parentRoute.icon,
+        formated_title: parentRoute.title
+          .split(' ')
+          .join('-')
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, ''),
       },
     });
     for (const childRoute of childRoutes) {
       if (childRoute.page_group_id === parentRoute.id) {
         const createPage = await prisma.page.create({
           data: {
+            report_type: 'report',
             id: childRoute.id,
             type: childRoute.type,
             title: childRoute.title,
@@ -278,6 +286,12 @@ export async function insertRoutes(prisma: PrismaClient) {
             group_id: childRoute.group_id,
             report_id: childRoute.report_id,
             page_group_id: childRoute.page_group_id,
+            formated_title: childRoute.title
+              .split(' ')
+              .join('-')
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, ''),
           },
         });
         await prisma.page_Role.createMany({

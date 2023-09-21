@@ -1,22 +1,21 @@
 import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { FilesService } from './files.service';
-import { PbiReportController } from '../pbi-report/pbi-report.controller';
 
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
-  @Post('upload-file/:type')
+  @Post('upload/:type')
   async importFile(@Param('type') type, @Req() req, @Body() dados) {
     const { userId, tenant_id } = req.tokenData;
-    await this.filesService.getDashboardType(type, tenant_id, userId);
+    await this.filesService.getPageType(type, tenant_id, userId);
     await this.filesService.postFile(dados, tenant_id, type);
   }
 
   @Get('download-pbi-data/:type')
   async downloadFile(@Param('type') type, @Req() req, @Res() res) {
     const { userId, tenant_id } = req.tokenData;
-    await this.filesService.getDashboardType(type, tenant_id, userId);
+    await this.filesService.getPageType(type, tenant_id, userId);
 
     const buffer = await this.filesService.getFile(type, tenant_id);
     res.setHeader(
@@ -30,7 +29,7 @@ export class FilesController {
   @Get('get-template/:type')
   async downloadTemplate(@Param('type') type, @Req() req, @Res() res) {
     const { userId, tenant_id } = req.tokenData;
-    await this.filesService.getDashboardType(type, tenant_id, userId);
+    await this.filesService.getPageType(type, tenant_id, userId);
 
     const buffer = this.filesService.getTemplate(type);
     res.setHeader(

@@ -22,7 +22,6 @@ export class MsalService {
         password: config.pbiPassword,
         roles: [userRls],
       };
-
       return clientApplication.acquireTokenByUsernamePassword(
         usernamePasswordRequest,
       );

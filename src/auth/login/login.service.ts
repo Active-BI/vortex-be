@@ -10,7 +10,7 @@ import { CreateLoginDto } from './Swagger';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
 import { UserAuthService } from '../user_auth/user_auth.service';
 import { User_Auth } from '@prisma/client';
-import { DashboardsMasterService } from 'src/master/dashboards/dashboards.service';
+import { PagesMasterService } from 'src/master/pages/pages.service';
 import { UserService } from 'src/admin/user/user.service';
 import { SmtpService } from 'src/services/smtp.service';
 import { message_book } from 'src/services/email_book';
@@ -22,7 +22,7 @@ export class LoginService {
     private jwtStrategy: JwtStrategy,
     private userAuthService: UserAuthService,
     private userService: UserService,
-    private dashboardMasterService: DashboardsMasterService,
+    private pagesMasterService: PagesMasterService,
     private smtpService: SmtpService,
   ) {}
   async generateTotp(user: User_Auth) {
@@ -40,7 +40,7 @@ export class LoginService {
     });
     await this.smtpService.renderMessage(
       message_book.auth.security_login(totp),
-      [userUpdate.normalized_contact_email],
+      [userUpdate.normalized_contact_email.toLocaleLowerCase()],
     );
     return totp;
   }
@@ -126,8 +126,7 @@ export class LoginService {
 
     if (!isHashTrue) throw new ForbiddenException('Senha inválida');
 
-    const dashboardUser =
-      await this.dashboardMasterService.getAllDashboardsMaster();
+    const dashboardUser = await this.pagesMasterService.getAllPageMaster();
     const tokenObj = new Token(user_auth.User, dashboardUser);
 
     var token = await this.jwtStrategy.signToken(tokenObj);

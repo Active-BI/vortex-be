@@ -1,20 +1,81 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { Page } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma.service';
-
+import { randomUUID } from 'crypto';
+export interface pageAndRoles extends Page {
+  roles: string[];
+}
 @Injectable()
-export class DashboardsMasterService {
+export class PagesMasterService {
   /**
    *
    */
   constructor(private prisma: PrismaService) {}
   async findAll() {
-    return await this.prisma.page.findMany({
+    return (
+      await this.prisma.page.findMany({
+        where: {
+          restrict: false,
+        },
+        include: {
+          Page_Group: true,
+          Page_Role: {
+            select: {
+              Rls: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+          Tenant_Page: {
+            select: {
+              Tenant: true,
+            },
+          },
+        },
+      })
+    ).filter((e) => e.restrict === false);
+  }
+  async findById(id) {
+    return await this.prisma.page.findFirst({
       where: {
         restrict: false,
+        AND: {
+          id,
+        },
+      },
+      include: {
+        Page_Group: true,
+        Page_Role: {
+          select: {
+            Rls: {
+              select: {
+                name: true,
+                id: true,
+              },
+            },
+          },
+        },
+        Tenant_Page: {
+          select: {
+            Tenant: true,
+          },
+        },
       },
     });
   }
-  async findAllTenantDashboard(tenant_id: string, dashboardIdList: string[]) {
+  async findByTitle(title) {
+    return await this.prisma.page.findFirst({
+      where: {
+        restrict: false,
+        AND: {
+          title,
+        },
+      },
+    });
+  }
+  async findAllTenantPage(tenant_id: string) {
     return (
       await this.prisma.tenant_Page.findMany({
         where: {
@@ -153,7 +214,7 @@ export class DashboardsMasterService {
    * @returns 'rotas que o usuário master possui acesso'
    */
 
-  async getAllDashboardsMaster() {
+  async getAllPageMaster() {
     return (
       await this.prisma.user_Page.findMany({
         where: {
@@ -195,5 +256,45 @@ export class DashboardsMasterService {
       Page_Role: e.Tenant_Page.Page.Page_Role.map((r) => r.Rls.name),
       Page_Group: e.Tenant_Page.Page.Page_Group,
     }));
+  }
+
+  async update(id: string, updateGroupDto: pageAndRoles) {
+    const { roles, ...data } = updateGroupDto;
+    const page = await this.prisma.page.update({
+      where: {
+        id,
+      },
+      data: data,
+    });
+    await this.prisma.page_Role.deleteMany({
+      where: {
+        page_id: id,
+      },
+    });
+
+    await this.prisma.page_Role.createMany({
+      data: roles.map((r) => ({
+        page_id: id,
+        rls_id: r,
+      })),
+    });
+    return page;
+  }
+  async create(createGroup: Page) {
+    const findPage = await this.findByTitle(createGroup.title);
+    if (findPage) {
+      throw new BadRequestException('Pagina já existe');
+    }
+    const id = randomUUID();
+    return await this.prisma.page.create({
+      data: { ...createGroup, id },
+    });
+  }
+  async remove(id: string) {
+    return await this.prisma.page.delete({
+      where: {
+        id,
+      },
+    });
   }
 }

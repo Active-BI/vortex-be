@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Post,
   Req,
   UnauthorizedException,
@@ -74,5 +75,13 @@ export class LoginController {
     } catch (e) {
       throw new UnauthorizedException(e.message);
     }
+  }
+
+  @BypassAuth()
+  @Get('test-cors')
+  @ApiBody({ type: CreateLoginDto })
+  async testCors(@Body() body: CreateLoginDto, @Req() Req) {
+    console.log(Req);
+    return 'ok';
   }
 }

@@ -24,8 +24,8 @@ import { TemplateHandlerService } from './services/templateHandler.service';
 import { TenantsService } from './master/tenants/tenants.service';
 import { TenantsController } from './master/tenants/tenants.controller';
 import { RolesGuard } from './helpers/roleDecorator/roles.guard';
-import { DashboardsMasterService } from './master/dashboards/dashboards.service';
-import { DashboardsMasterController } from './master/dashboards/dashboards.controller';
+import { PagesMasterService } from './master/pages/pages.service';
+import { PagesMasterController } from './master/pages/pages.controller';
 import { RequestAccessController } from './auth/request-access/request-access.controller';
 import { RequestAccessService } from './auth/request-access/request-access.service';
 import { MasterRequestService } from './master/master-request/admin-request.service';
@@ -33,6 +33,8 @@ import { MasterRequestController } from './master/master-request/admin-request.c
 import { SmtpService } from './services/smtp.service';
 import { FilesService } from './admin/files/files.service';
 import { FilesController } from './admin/files/files.controller';
+import { GroupsController } from './master/groups/groups.controller';
+import { GroupsService } from './master/groups/groups.service';
 
 @Module({
   controllers: [
@@ -44,9 +46,10 @@ import { FilesController } from './admin/files/files.controller';
     PageController,
     TenantsController,
     MasterRequestController,
-    DashboardsMasterController,
     RequestAccessController,
     FilesController,
+    PagesMasterController,
+    GroupsController,
   ],
   providers: [
     PrismaService,
@@ -69,10 +72,11 @@ import { FilesController } from './admin/files/files.controller';
     TemplateHandlerService,
     TenantsService,
     MasterRequestService,
-    DashboardsMasterService,
+    PagesMasterService,
     RequestAccessService,
     SmtpService,
     FilesService,
+    GroupsService,
   ],
   exports: [JwtStrategy],
   imports: [
