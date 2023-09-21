@@ -17,7 +17,6 @@ import { PrismaService } from 'src/services/prisma.service';
 @Controller('pbi-report')
 export class PbiReportController {
   async getPageType(group, type, tenant_id, userId) {
-    console.log(type, group, userId);
     const userPage = await this.prisma.user_Page.findFirst({
       where: {
         user_id: userId,
@@ -35,6 +34,7 @@ export class PbiReportController {
       },
       include: { Tenant_Page: { include: { Page: true } } },
     });
+
     if (!userPage) throw new BadRequestException('Report não encontrado');
     return userPage;
   }
@@ -136,7 +136,11 @@ export class PbiReportController {
       method: 'GET',
       headers,
     }).then((res) => {
+      console.log('aaaaaaaaaaaaaaaaaaaaaaa');
+
+      console.log(res);
       if (!res.ok) throw res;
+
       return res.json();
     });
     const reportDetails = new PowerBiReportDetails(
