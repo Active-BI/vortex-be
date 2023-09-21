@@ -8,7 +8,7 @@ import {
   Post,
   Req,
 } from '@nestjs/common';
-import { PagesMasterService } from './pages.service';
+import { PagesMasterService, pageAndRoles } from './pages.service';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
 import { PageService } from 'src/admin/pages/page.service';
 import { Update_Page_Group } from '../groups/groups.controller';
@@ -61,7 +61,7 @@ export class PagesMasterController {
 
   @Roles('Master')
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGroupDto: Page) {
+  update(@Param('id') id: string, @Body() updateGroupDto: pageAndRoles) {
     return this.pagesMasterService.update(id, updateGroupDto);
   }
 

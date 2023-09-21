@@ -2,7 +2,9 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Page } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma.service';
 import { randomUUID } from 'crypto';
-
+export interface pageAndRoles extends Page {
+  roles: string[];
+}
 @Injectable()
 export class PagesMasterService {
   /**
@@ -50,6 +52,7 @@ export class PagesMasterService {
             Rls: {
               select: {
                 name: true,
+                id: true,
               },
             },
           },
@@ -255,13 +258,27 @@ export class PagesMasterService {
     }));
   }
 
-  async update(id: string, updateGroupDto: Page) {
-    return await this.prisma.page.update({
+  async update(id: string, updateGroupDto: pageAndRoles) {
+    const { roles, ...data } = updateGroupDto;
+    const page = await this.prisma.page.update({
       where: {
         id,
       },
-      data: updateGroupDto,
+      data: data,
     });
+    await this.prisma.page_Role.deleteMany({
+      where: {
+        page_id: id,
+      },
+    });
+
+    await this.prisma.page_Role.createMany({
+      data: roles.map((r) => ({
+        page_id: id,
+        rls_id: r,
+      })),
+    });
+    return page;
   }
   async create(createGroup: Page) {
     const findPage = await this.findByTitle(createGroup.title);
