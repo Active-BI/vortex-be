@@ -11,7 +11,15 @@ export class GroupsService {
       throw new BadRequestException('Grupo já existe');
     }
     return await this.prisma.page_Group.create({
-      data: createGroup,
+      data: {
+        ...createGroup,
+        formated_title: createGroup.title
+          .toLowerCase()
+          .split(' ')
+          .join('-')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, ''),
+      },
     });
   }
 
@@ -88,7 +96,15 @@ export class GroupsService {
       where: {
         id,
       },
-      data: updateGroupDto,
+      data: {
+        ...updateGroupDto,
+        formated_title: updateGroupDto.title
+          .toLowerCase()
+          .split(' ')
+          .join('-')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, ''),
+      },
     });
   }
 
