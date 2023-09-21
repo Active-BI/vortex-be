@@ -280,15 +280,27 @@ export class PagesMasterService {
     });
     return page;
   }
-  async create(createGroup: Page) {
+  async create(createGroup: pageAndRoles) {
     const findPage = await this.findByTitle(createGroup.title);
     if (findPage) {
       throw new BadRequestException('Pagina já existe');
     }
     const id = randomUUID();
-    return await this.prisma.page.create({
-      data: { ...createGroup, id },
+
+    const { roles, ...data } = createGroup;
+
+    const page = await this.prisma.page.create({
+      data: { ...data, id },
     });
+
+    await this.prisma.page_Role.createMany({
+      data: roles.map((r) => ({
+        page_id: id,
+        rls_id: r,
+      })),
+    });
+
+    return page;
   }
   async remove(id: string) {
     return await this.prisma.page.delete({
