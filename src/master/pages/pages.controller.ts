@@ -45,6 +45,7 @@ export class PagesMasterController {
   async findByPageId(@Param('pageId') userid) {
     return await this.pagesMasterService.findById(userid);
   }
+
   @Roles('Master')
   @Post('/:userid')
   async setDashboardUser(@Req() req, @Body() body, @Param('userid') userid) {
@@ -53,9 +54,10 @@ export class PagesMasterController {
       await this.pagesMasterService.findAllTenantPage(tenant_id);
     await this.pageService.setPageUser(getTenantDashBoards, userid, tenant_id);
   }
+
   @Roles('Master')
   @Post('')
-  async postPage(@Body() body: Page) {
+  async postPage(@Body() body: pageAndRoles) {
     return await this.pagesMasterService.create(body);
   }
 

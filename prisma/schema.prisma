@@ -122,8 +122,8 @@ model Page {
   restrict               Boolean?      @default(false)
   table_name             String?
   Page_Role              Page_Role[]
-  page_group_id          String?       @db.Uuid
-  Page_Group             Page_Group?   @relation(fields: [page_group_id], references: [id], onDelete: Cascade)
+  page_group_id          String        @db.Uuid
+  Page_Group             Page_Group    @relation(fields: [page_group_id], references: [id], onDelete: Cascade)
   Tenant_Page            Tenant_Page[]
 }
 
