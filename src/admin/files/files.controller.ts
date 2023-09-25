@@ -5,7 +5,7 @@ import { FilesService } from './files.service';
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
-  @Post('upload/:type')
+  @Post('upload/:group/:type')
   async importFile(@Param('type') type, @Req() req, @Body() dados) {
     const { userId, tenant_id } = req.tokenData;
     await this.filesService.getPageType(type, tenant_id, userId);
@@ -26,8 +26,13 @@ export class FilesController {
 
     res.send(buffer);
   }
-  @Get('get-template/:type')
-  async downloadTemplate(@Param('type') type, @Req() req, @Res() res) {
+  @Get('get-template/:group/:type')
+  async downloadTemplate(
+    @Param('type') type,
+    @Param('group') group,
+    @Req() req,
+    @Res() res,
+  ) {
     const { userId, tenant_id } = req.tokenData;
     await this.filesService.getPageType(type, tenant_id, userId);
 

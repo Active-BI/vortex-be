@@ -83,7 +83,7 @@ for (let i = 0; i < totalRows; i++) {
 }
 
 export const EmployeeSeed = async (prisma: PrismaClient) => {
-  await prisma.rh_funcionarios_table.deleteMany();
+  await prisma.funcionarios_table.deleteMany();
   await prisma.page_Role.deleteMany();
   await prisma.user_Page.deleteMany();
   await prisma.tenant_Page.deleteMany();
@@ -368,7 +368,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
       await prisma.request_admin_access.createMany({
         data: userRequests,
       });
-      await prisma.rh_funcionarios_table.createMany({
+      await prisma.funcionarios_table.createMany({
         data,
       });
     });

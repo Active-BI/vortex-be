@@ -1,6 +1,6 @@
 const XLSX = require('xlsx');
 export const templates_xlsx = {
-  RH_FUNCIONARIOS: {
+  FUNCIONARIOS: {
     nomeEmpresa: 'alfanumérico',
     matricula: 'alfanumérico',
     nome: 'alfanumérico',

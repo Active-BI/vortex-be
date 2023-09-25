@@ -20,13 +20,12 @@ export class FilesService {
         Tenant_Page: {
           tenant_id,
           Page: {
-            link: type,
+            formated_title: type,
           },
         },
       },
       include: { Tenant_Page: { include: { Page: true } } },
     });
-
     if (!userPage) throw new BadRequestException('Report não encontrado');
     return userPage;
   }

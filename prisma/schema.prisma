@@ -16,15 +16,15 @@ model Rls {
 }
 
 model Tenant {
-  id                   String                  @id @default(uuid()) @db.Uuid
+  id                   String                 @id @default(uuid()) @db.Uuid
   tenant_name          String
   tenant_cnpj          String
-  createdAt            DateTime                @default(now())
-  updatedAt            DateTime                @updatedAt
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
   active               Boolean
   User                 User[]
-  restrict             Boolean?                @default(false)
-  funionarios_table    rh_funcionarios_table[]
+  restrict             Boolean?               @default(false)
+  funionarios_table    funcionarios_table[]
   Request_admin_access Request_admin_access[]
   Tenant_Page          Tenant_Page[]
 }
@@ -127,7 +127,7 @@ model Page {
   Tenant_Page            Tenant_Page[]
 }
 
-model rh_funcionarios_table {
+model funcionarios_table {
   id                  String    @id @default(uuid()) @db.Uuid
   nomeEmpresa         String
   matricula           String
