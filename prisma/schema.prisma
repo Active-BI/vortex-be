@@ -3,20 +3,20 @@ generator client {
 }
 
 datasource db {
-  provider          = "postgresql"
+  provider          = "sqlserver"
   url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("DATABASE_URL_SHADOW")
 }
 
 model Rls {
-  id        String      @id @default(uuid()) @db.Uuid
+  id        String      @id @default(uuid())
   name      String
   User_Auth User[]
   Page_Role Page_Role[]
 }
 
 model Tenant {
-  id                   String                 @id @default(uuid()) @db.Uuid
+  id                   String                 @id @default(uuid())
   tenant_name          String
   tenant_cnpj          String
   createdAt            DateTime               @default(now())
@@ -30,14 +30,14 @@ model Tenant {
 }
 
 model Request_admin_access {
-  id                  String   @id @default(uuid()) @db.Uuid
+  id                  String   @id @default(uuid())
   createdAt           DateTime @default(now())
   company_description String
   company_name        String
   company_cnpj        String
   email               String
   name                String
-  tenant_id           String?  @db.Uuid
+  tenant_id           String?
   Tenant              Tenant?  @relation(fields: [tenant_id], references: [id])
   description         String
   profession          String
@@ -46,60 +46,60 @@ model Request_admin_access {
 }
 
 model User_Auth {
-  id                       String    @id @default(uuid()) @db.Uuid
+  id                       String    @id @default(uuid())
   secret                   String?
   reset_pass               String?
   password_hash            String?
   anchor                   Boolean
   normalized_contact_email String?
-  last_access              DateTime? @db.Timestamptz()
-  user_id                  String    @unique @db.Uuid
+  last_access              DateTime?
+  user_id                  String    @unique
   User                     User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id             String      @id @default(uuid()) @db.Uuid
+  id             String      @id @default(uuid())
   name           String
   born_date      DateTime?   @db.Date
   personal_email String?     @unique
   contact_email  String
   profession     String
   description    String
-  tenant_id      String?     @db.Uuid
+  tenant_id      String?
   Tenant         Tenant?     @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  rls_id         String      @db.Uuid
+  rls_id         String
   Rls            Rls         @relation(fields: [rls_id], references: [id], onDelete: Cascade)
   User_Auth      User_Auth?
   User_Page      User_Page[]
 }
 
 model Tenant_Page {
-  id        String      @id @default(uuid()) @db.Uuid
-  tenant_id String      @db.Uuid
+  id        String      @id @default(uuid())
+  tenant_id String
   Tenant    Tenant      @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  page_id   String      @db.Uuid
+  page_id   String
   Page      Page        @relation(fields: [page_id], references: [id], onDelete: Cascade)
   User_Page User_Page[]
 }
 
 model User_Page {
-  id             String      @id @default(uuid()) @db.Uuid
-  tenant_page_id String      @db.Uuid
+  id             String      @id @default(uuid())
+  tenant_page_id String
   Tenant_Page    Tenant_Page @relation(fields: [tenant_page_id], references: [id], onDelete: Cascade)
-  user_id        String      @db.Uuid
-  User           User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id        String
+  User           User        @relation(fields: [user_id], references: [id], onUpdate: NoAction)
 }
 
 model Page_Role {
-  id      String @id @default(uuid()) @db.Uuid
-  page_id String @db.Uuid
+  id      String @id @default(uuid())
+  page_id String
   Page    Page   @relation(fields: [page_id], references: [id], onDelete: Cascade)
-  rls_id  String @db.Uuid
+  rls_id  String
   Rls     Rls    @relation(fields: [rls_id], references: [id])
 }
 
 model Page_Group {
-  id             String   @id @default(uuid()) @db.Uuid
+  id             String   @id @default(uuid())
   title          String
   formated_title String?
   restrict       Boolean? @default(false)
@@ -108,7 +108,7 @@ model Page_Group {
 }
 
 model Page {
-  id                     String        @id @default(uuid()) @db.Uuid
+  id                     String        @id @default(uuid())
   type                   String
   report_type            String?
   formated_title         String?
@@ -122,13 +122,13 @@ model Page {
   restrict               Boolean?      @default(false)
   table_name             String?
   Page_Role              Page_Role[]
-  page_group_id          String        @db.Uuid
+  page_group_id          String
   Page_Group             Page_Group    @relation(fields: [page_group_id], references: [id], onDelete: Cascade)
   Tenant_Page            Tenant_Page[]
 }
 
 model funcionarios_table {
-  id                  String    @id @default(uuid()) @db.Uuid
+  id                  String    @id @default(uuid())
   nomeEmpresa         String
   matricula           String
   nome                String
@@ -148,6 +148,6 @@ model funcionarios_table {
   dataDesligamento    DateTime?
   motivoDesligamento  String?
   timestamp           DateTime  @default(now())
-  tenant_id           String    @db.Uuid
+  tenant_id           String
   Tenant              Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
 }
