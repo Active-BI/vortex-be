@@ -4,6 +4,12 @@ import { FilesService } from './files.service';
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
+  // @Get('data')
+  // async importFile(@Param('type') type, @Req() req, @Body() dados) {
+  //   const { userId, tenant_id } = req.tokenData;
+  //   await this.filesService.getPageType(type, tenant_id, userId);
+  //   await this.filesService.postFile(dados, tenant_id, type);
+  // }
 
   @Post('upload/:group/:type')
   async importFile(@Param('type') type, @Req() req, @Body() dados) {

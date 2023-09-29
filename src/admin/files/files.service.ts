@@ -76,10 +76,10 @@ export class FilesService {
           tenant_id: tenant_id,
         };
       });
-      await this.prisma[type.toLowerCase() + '_table'].deleteMany({
+      await this.prisma.funcionarios_table.deleteMany({
         where: { tenant_id },
       });
-      await this.prisma[type.toLowerCase() + '_table'].createMany({
+      await this.prisma.funcionarios_table.createMany({
         data: dadosFormatados,
       });
     } catch (e) {
