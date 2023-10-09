@@ -250,7 +250,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             report_id: '8dd5b75b-03f5-41ab-8d6c-6a69c8934d88',
             group_id: 'c807ca26-3f93-463d-aa15-9a12e48174ba',
             restrict: false,
-            table_name: 'rh_funcionarios',
+            table_name: 'funcionarios',
             page_group_id: '9b0e8176-5c8d-4024-ac28-524ba48d16c9',
           },
           {
