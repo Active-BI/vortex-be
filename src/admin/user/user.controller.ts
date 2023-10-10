@@ -63,7 +63,18 @@ export class UserController {
 
     return createUser;
   }
-
+  @Post('resend')
+  @Roles('Admin')
+  @ApiBody({ type: UserResponse })
+  @ApiResponse({ type: CreateUserBody })
+  async sendInvite(@Req() req, @Body() Body) {
+    const { contact_email } = req.tokenData;
+    await this.userService.createTransportEmail(
+      Body.email,
+      Body.user_id,
+      contact_email,
+    );
+  }
   @Delete(':id')
   @Roles('Admin')
   @ApiResponse({ type: 'void' })
