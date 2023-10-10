@@ -24,7 +24,6 @@ export class ValidateUserAdminMiddleware implements NestMiddleware {
         const schema = Joi.object({
           id: Joi.string().required(),
           name: Joi.string().min(3).required(),
-          profession: Joi.string().required(),
           description: Joi.string().required(),
           rls_id: Joi.string().required(),
         });
@@ -38,12 +37,11 @@ export class ValidateUserAdminMiddleware implements NestMiddleware {
         });
       }
     }
-    if (req.method === 'POST') {
+    if (req.method === 'POST' && !req.path.includes('resend')) {
       try {
         const schema = Joi.object({
           name: Joi.string().min(3).required(),
           email: Joi.string().lowercase().required(),
-          profession: Joi.string().required(),
           description: Joi.string().required(),
           rls_id: Joi.string().required(),
         });

@@ -59,8 +59,7 @@ export class UserResponse implements User {
   personal_email: string;
   @ApiProperty()
   contact_email: string;
-  @ApiProperty()
-  profession: string;
+
   @ApiProperty()
   description: string;
   @ApiProperty()

@@ -7,8 +7,6 @@ export const config = {
   reportId: '',
   scopeBase: 'https://analysis.windows.net/powerbi/api/Dataset.ReadWrite.All',
   clientId: '30d5ab4d-3887-415d-9ab4-d2a00e9cff0a',
-  pbiUsername: 'embeddedpbi@activebi.com.br',
-  pbiPassword: 'Nof03560',
   tenantId: '915fe7db-2988-4ee1-b20b-fd2e18641985',
   clientSecret: '',
   GRAPH_ENDPOINT: 'https://graph.microsoft.com',
