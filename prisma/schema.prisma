@@ -61,7 +61,7 @@ model User {
   born_date      DateTime?   @db.Date
   personal_email String?     @unique
   contact_email  String
-  description    String
+  description    String?
   tenant_id      String?
   Tenant         Tenant?     @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   rls_id         String

@@ -27,8 +27,6 @@ export class ValidateLoginMiddleware implements NestMiddleware {
           company_cnpj: Joi.string().required(),
           email: Joi.string().email().lowercase().required(),
           name: Joi.string().required(),
-          description: Joi.string(),
-          profession: Joi.string().required(),
         });
         await schema.validateAsync(req.body);
       } catch (e) {
