@@ -35,6 +35,9 @@ model Request_admin_access {
   company_description String
   company_name        String
   company_cnpj        String
+  company_uf          String?
+  company_size        String?
+  company_segment     String?
   email               String
   name                String
   tenant_id           String?

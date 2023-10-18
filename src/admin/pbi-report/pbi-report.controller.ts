@@ -149,6 +149,11 @@ export class PbiReportController {
 
     // header é o objeto onde está o accessToken
     const headers = await this.msalService.getRequestHeader(role_name);
+    console.log({
+      headers,
+      groupId: userPage.Tenant_Page.Page.group_id,
+      reportId: userPage.Tenant_Page.Page.report_id,
+    });
 
     const result: any = await fetch(reportInGroupApi, {
       method: 'GET',
@@ -236,5 +241,53 @@ export class PbiReportController {
       if (!res.ok) throw res;
       return res.json();
     });
+  }
+
+  @Get(':group/:type/exportTo')
+  async exportTo(
+    @Param('type') type,
+    @Param('group') group,
+    @Req() req,
+  ): Promise<any> {
+    const { userId, tenant_id, role_name } = req.tokenData;
+    const userPage = await this.getPageType(group, type, tenant_id, userId);
+    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/reports/${userPage.Tenant_Page.Page.report_id}/ExportTo`;
+    // header é o objeto onde está o accessToken
+    const headers = await this.msalService.getRequestHeader(role_name);
+    console.log({ headers });
+
+    const result: any = await fetch(reportInGroupApi, {
+      method: 'POST',
+      body: {
+        format: 'PDF',
+      },
+      headers,
+    } as any).then((res) => {
+      if (!res.ok) throw res;
+      console.log(res);
+      return res.json();
+    });
+    const reportDetails = new PowerBiReportDetails(
+      result.id,
+      result.name,
+      result.embedUrl,
+    );
+    const reportEmbedConfig = new EmbedConfig();
+
+    reportEmbedConfig.reportsDetail = [reportDetails];
+    const datasetIds = [result.datasetId];
+    const user = this.jwtService.decode(
+      req.headers.authorization.split(' ')[1],
+    );
+
+    reportEmbedConfig.embedToken =
+      await this.getEmbedTokenForSingleReportSingleWorkspace(
+        userPage.Tenant_Page.Page.report_id,
+        datasetIds,
+        userPage.Tenant_Page.Page.group_id,
+        user,
+        headers,
+      );
+    return reportEmbedConfig;
   }
 }
