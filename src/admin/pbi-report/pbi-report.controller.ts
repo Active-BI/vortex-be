@@ -118,6 +118,24 @@ export class PbiReportController {
       return res;
     });
   }
+  @Get('data/:group/:type')
+  async checkIfReportHasData(
+    @Param('type') type,
+    @Param('group') group,
+    @Req() req,
+  ): Promise<any> {
+    const { userId, tenant_id } = req.tokenData;
+    const userPage = await this.getPageType(group, type, tenant_id, userId);
+    console.log(userPage.Tenant_Page.Page.table_name);
+    const data = await this.prisma[
+      (userPage.Tenant_Page.Page.table_name + '_table') as 'funcionarios_table'
+    ].findMany({
+      where: {
+        tenant_id,
+      },
+    });
+    return data.length > 0;
+  }
 
   @Get(':group/:type')
   async ReportByTYpe(
@@ -136,9 +154,6 @@ export class PbiReportController {
       method: 'GET',
       headers,
     }).then((res) => {
-      console.log('aaaaaaaaaaaaaaaaaaaaaaa');
-
-      console.log(res);
       if (!res.ok) throw res;
 
       return res.json();
