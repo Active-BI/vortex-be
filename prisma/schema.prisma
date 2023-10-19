@@ -22,6 +22,9 @@ model Tenant {
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
   active               Boolean
+  company_uf           String?
+  company_size         String?
+  company_segment      String?
   User                 User[]
   restrict             Boolean?               @default(false)
   funionarios_table    funcionarios_table[]
@@ -35,6 +38,9 @@ model Request_admin_access {
   company_description String
   company_name        String
   company_cnpj        String
+  company_uf          String?
+  company_size        String?
+  company_segment     String?
   email               String
   name                String
   tenant_id           String?
