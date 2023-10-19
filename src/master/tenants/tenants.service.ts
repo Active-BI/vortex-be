@@ -13,6 +13,9 @@ export class TenantsService {
         active: createTenantDto?.active ? true : false,
         tenant_name: createTenantDto.tenant_name,
         tenant_cnpj: createTenantDto.tenant_cnpj,
+        company_segment: createTenantDto.company_segment,
+        company_size: createTenantDto.company_size,
+        company_uf: createTenantDto.company_uf,
       },
     });
     await this.prisma.tenant_Page.createMany({
