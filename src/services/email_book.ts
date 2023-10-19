@@ -17,7 +17,7 @@ export const message_book = {
           <h2 style="margin-top: 0; font-size: 24px; color: #ffffff; font-family: Arial, sans-serif;">Conclua seu cadastro</h2>
           <p style="margin-bottom: 20px; font-size: 16px; color: #ffffff; font-family: Arial, sans-serif;">Crie sua senha de acesso do Active PME</p>
           <p style="margin: 0;">
-            <a href="${process.env['FRONT_BASE_URL']}auth/sign-up/${token}"
+            <a href="${process.env['FRONT_BASE_URL']}/#/auth/sign-up/${token}"
               style="display: inline-block; padding: 20px 20px; background-color: #ffffff; color: #0f172a; font-size: 16px; text-decoration: none; font-family: Arial, sans-serif;"
             >
               Criar Senha
@@ -70,7 +70,7 @@ export const message_book = {
           <h2 style="margin-top: 0; font-size: 24px; color: #ffffff; font-family: Arial, sans-serif;">Esse usuário solicitou seu ingresso no Active PME</h2>
           <p style="margin-bottom: 20px; font-size: 16px; color: #ffffff; font-family: Arial, sans-serif;">Conclua agora mesmo seu cadastro!</p>
           <p style="margin: 0;">
-            <a href="${process.env['FRONT_BASE_URL']}auth/sign-up/${token}"
+            <a href="${process.env['FRONT_BASE_URL']}/#/auth/sign-up/${token}"
               style="display: inline-block; padding: 20px 20px; background-color: #ffffff; color: #0f172a; font-size: 16px; text-decoration: none; font-family: Arial, sans-serif;"
             >
               Criar Senha

@@ -42,8 +42,6 @@ for (let i = 0; i < 5; i++) {
     company_cnpj: '000000000000' + i,
     email: faker.internet.email(),
     name: faker.person.fullName(),
-    description: faker.lorem.paragraph(1),
-    profession: faker.person.jobTitle(),
     blocked: false,
     accept: false,
   });

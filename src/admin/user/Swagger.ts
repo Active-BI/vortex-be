@@ -14,6 +14,12 @@ class RlsClass implements Rls {
 
 export class TenantClass implements Tenant {
   @ApiProperty()
+  company_uf: string;
+  @ApiProperty()
+  company_size: string;
+  @ApiProperty()
+  company_segment: string;
+  @ApiProperty()
   id: string;
   @ApiProperty()
   tenant_name: string;
