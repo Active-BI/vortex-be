@@ -2,7 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 import { EmployeeSeed } from './seedHelp';
 const prisma = new PrismaClient();
 async function main() {
-  // await EmployeeSeed(prisma);
+  await EmployeeSeed(prisma);
 }
 
 main()
