@@ -76,6 +76,15 @@ export class LoginController {
       throw new UnauthorizedException(e.message);
     }
   }
+  @Get('routes')
+  async GetRoutes(@Req() req) {
+    const userData = req.tokenData;
+    const user = await this.loginService.getUserAuth({
+      email: userData.contact_email,
+    });
+    const userRoutes = await this.pageService.getAllPagesByUser(user.User.id, user.User.tenant_id,);
+    return { userRoutes };
+  }
 
   @BypassAuth()
   @Get('test-cors')
