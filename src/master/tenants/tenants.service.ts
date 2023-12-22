@@ -12,10 +12,13 @@ export class TenantsService {
         id,
         active: createTenantDto?.active ? true : false,
         tenant_name: createTenantDto.tenant_name,
+        tenant_color: createTenantDto.tenant_color,
+        tenant_image: createTenantDto.tenant_image,
         tenant_cnpj: createTenantDto.tenant_cnpj,
         company_segment: createTenantDto.company_segment,
         company_size: createTenantDto.company_size,
         company_uf: createTenantDto.company_uf,
+        company_description: createTenantDto.company_description
       },
     });
     await this.prisma.tenant_Page.createMany({
@@ -26,7 +29,6 @@ export class TenantsService {
     });
     return { tenant_id: id, ...createTenantDto };
   }
-
   async findAll() {
     return await this.prisma.tenant.findMany({
       where: {
@@ -41,6 +43,8 @@ export class TenantsService {
   async findOne(id: string) {
     return await this.prisma.tenant.findFirstOrThrow({ where: { id } });
   }
+
+
 
   async update(id: string, updateTenantDto: any) {
     await this.prisma.user_Page.deleteMany({
@@ -94,25 +98,30 @@ export class TenantsService {
       data: {
         active: updateTenantDto.active,
         tenant_name: updateTenantDto.tenant_name,
+        tenant_color: updateTenantDto.tenant_color,
+        tenant_image: updateTenantDto.tenant_image,
+        company_segment: updateTenantDto.company_segment,
+        company_size: updateTenantDto.company_size,
+        company_uf: updateTenantDto.company_uf,
+        company_description: updateTenantDto.company_description,
+        tenant_cnpj: updateTenantDto.tenant_cnpj,
       },
     });
   }
 
   async remove(id: string) {
-    const user_pages_del = await this.prisma.tenant.delete({
-      where: {
-        id: id,
-      },
-    });
-    // const pages = await this.prisma.tenant_Page.deleteMany({
-    //   where: {
-    //     tenant_id: id,
-    //   },
-    // });
-    console.log(user_pages_del);
-
-    // return await this.prisma.tenant.delete({
-    //   where: { id: id },
-    // });
-  }
+    await this.prisma.tenant.delete({
+       where: {
+         id: id,
+       },
+     });
+     // const pages = await this.prisma.tenant_Page.deleteMany({
+     //   where: {
+     //     tenant_id: id,
+     //   },
+     // });
+     // return await this.prisma.tenant.delete({
+     //   where: { id: id },
+     // });
+   }
 }

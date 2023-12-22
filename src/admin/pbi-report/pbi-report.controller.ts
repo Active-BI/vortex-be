@@ -44,6 +44,52 @@ export class PbiReportController {
     private jwtService: JwtService,
   ) {}
 
+  @Get('dashboard/:group/:type')
+  async DashByTYpe(
+    @Param('type') type,
+    @Param('group') group,
+    @Req() req,
+  ): Promise<any> {
+    const { userId, tenant_id, role_name } = req.tokenData;
+    const userPage = await this.getPageType(group, type, tenant_id, userId);
+    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/dashboards/${userPage.Tenant_Page.Page.report_id}`;
+
+    // header é o objeto onde está o accessToken
+    const headers = await this.msalService.getRequestHeader(role_name);
+ 
+
+    const result: any = await fetch(reportInGroupApi, {
+      method: 'GET',
+      headers,
+    }).then((res) => {
+      console.log(res.status)
+      if (!res.ok) throw res;
+
+      return res.json();
+    });
+    const reportDetails = new PowerBiReportDetails(
+      result.id,
+      result.name,
+      result.embedUrl,
+    );
+    const reportEmbedConfig = new EmbedConfig();
+
+    reportEmbedConfig.reportsDetail = [reportDetails];
+    const datasetIds = [result.datasetId];
+    const user = this.jwtService.decode(
+      req.headers.authorization.split(' ')[1],
+    );
+
+    reportEmbedConfig.embedToken =
+      await this.getEmbedTokenForSingleDashboardSingleWorkspace(
+        userPage.Tenant_Page.Page.report_id,
+        datasetIds,
+        userPage.Tenant_Page.Page.group_id,
+        user,
+        headers,
+      );
+    return reportEmbedConfig;
+  }
   @Get('refresh-dataflow/:group/:type')
   async refreshDataflow(
     @Param('type') type,
@@ -242,7 +288,61 @@ export class PbiReportController {
       return res.json();
     });
   }
+  @BypassAuth()
+  async getEmbedTokenForSingleDashboardSingleWorkspace(
+    reportId,
+    datasetIds,
+    targetWorkspaceId,
+    user,
+    header,
+  ) {
+    const formData = {
+      accessLevel: 'View',
+    };
+    const listReportRls = ['8dd5b75b-03f5-41ab-8d6c-6a69c8934d88'];
+    const shoudPassRls = listReportRls.find((report) => report === reportId);
 
+    if (shoudPassRls) {
+      formData['identities'] = [
+        {
+          username: user.contact_email,
+          roles: [user.role_name],
+          reports: [reportId],
+          datasets: [datasetIds[0]],
+        },
+      ];
+    }
+    // Add dataset ids in the request
+
+    formData['datasets'] = [];
+    for (const datasetId of datasetIds) {
+      formData['datasets'].push({
+        id: datasetId,
+      });
+    }
+
+    // Add targetWorkspace id in the request
+    if (targetWorkspaceId) {
+      formData['targetWorkspaces'] = [];
+
+      formData['targetWorkspaces'].push({
+        id: targetWorkspaceId,
+      });
+    }
+
+    // Generate Embed token for single report, workspace, and multiple datasets. Refer https://aka.ms/MultiResourceEmbedToken
+    const embedTokenApi = `https://api.powerbi.com/v1.0/myorg/groups/${targetWorkspaceId}/dashboards/${reportId}/GenerateToken`;
+    return await fetch(embedTokenApi, {
+      method: 'POST',
+      headers: header,
+      body: JSON.stringify({
+        ...formData,
+      }),
+    }).then((res) => {
+      if (!res.ok) throw res;
+      return res.json();
+    });
+  }
   @Get(':group/:type/exportTo')
   async exportTo(
     @Param('type') type,

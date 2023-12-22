@@ -278,7 +278,7 @@ export async function insertRoutes(prisma: PrismaClient) {
       if (childRoute.page_group_id === parentRoute.id) {
         const createPage = await prisma.page.create({
           data: {
-            report_type: 'report',
+            page_type: 'report',
             id: childRoute.id,
             type: childRoute.type,
             title: childRoute.title,

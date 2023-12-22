@@ -81,7 +81,6 @@ for (let i = 0; i < totalRows; i++) {
 }
 
 export const EmployeeSeed = async (prisma: PrismaClient) => {
-  await prisma.funcionarios_table.deleteMany();
   await prisma.page_Role.deleteMany();
   await prisma.user_Page.deleteMany();
   await prisma.tenant_Page.deleteMany();
@@ -241,7 +240,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             formated_title: 'funcionarios',
             link: 'view-report/rh/funcionarios',
             type: 'basic',
-            report_type: screenTypes.REPORT_UPLOAD,
+            page_type: screenTypes.REPORT_UPLOAD,
             report_id: '8dd5b75b-03f5-41ab-8d6c-6a69c8934d88',
             group_id: 'c807ca26-3f93-463d-aa15-9a12e48174ba',
             restrict: false,
@@ -251,7 +250,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           {
             id: '4f59592f-88b9-4c7e-8478-c1a776e257f0',
             type: 'basic',
-            report_type: screenTypes.PAGE,
+            page_type: screenTypes.PAGE,
             title: 'Usuários',
             formated_title: 'usuarios',
             restrict: false,
@@ -261,7 +260,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           {
             id: '744b86c7-e6ac-43cf-ad65-1106081d1507',
             type: 'basic',
-            report_type: screenTypes.PAGE,
+            page_type: screenTypes.PAGE,
             restrict: true,
             title: 'Ambientes',
             link: '/master/gestao/tenants',
@@ -270,7 +269,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           {
             id: '4351cd1c-ff08-4025-b862-5fa9c5938330',
             type: 'basic',
-            report_type: screenTypes.PAGE,
+            page_type: screenTypes.PAGE,
             restrict: true,
             title: 'Solicitações De Cadastro',
             link: '/master/gestao/solicitacoes-de-cadastro',
@@ -280,7 +279,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             id: '605a6c99-4e8c-4da5-9b5f-ccb61b42c5e4',
             restrict: true,
             type: 'basic',
-            report_type: screenTypes.PAGE,
+            page_type: screenTypes.PAGE,
             title: 'Telas Da Aplicação',
             link: '/master/gestao/telas',
             page_group_id: '219abfe8-7478-4db3-9fb3-cf1d38fcace2',
@@ -363,8 +362,8 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
       await prisma.request_admin_access.createMany({
         data: userRequests,
       });
-      await prisma.funcionarios_table.createMany({
-        data,
-      });
+      // await prisma.funcionarios_table.createMany({
+      //   data,
+      // });
     });
 };

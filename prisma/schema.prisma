@@ -24,10 +24,12 @@ model Tenant {
   active               Boolean
   company_uf           String?
   company_size         String?
+  tenant_color         String?
+  tenant_image         String?
+  company_description String?
   company_segment      String?
   User                 User[]
   restrict             Boolean?               @default(false)
-  funionarios_table    funcionarios_table[]
   Request_admin_access Request_admin_access[]
   Tenant_Page          Tenant_Page[]
 }
@@ -113,7 +115,7 @@ model Page_Group {
 model Page {
   id                     String        @id @default(uuid())
   type                   String
-  report_type            String?
+  page_type            String?
   formated_title         String?
   title                  String
   descricao_painel       String?
@@ -152,5 +154,4 @@ model funcionarios_table {
   motivoDesligamento  String?
   timestamp           DateTime  @default(now())
   tenant_id           String
-  Tenant              Tenant    @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
 }

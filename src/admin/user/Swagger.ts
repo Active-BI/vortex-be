@@ -11,7 +11,6 @@ class RlsClass implements Rls {
   @ApiProperty({})
   name: string;
 }
-
 export class TenantClass implements Tenant {
   @ApiProperty()
   company_uf: string;
@@ -20,9 +19,15 @@ export class TenantClass implements Tenant {
   @ApiProperty()
   company_segment: string;
   @ApiProperty()
+  company_description
+  @ApiProperty()
   id: string;
   @ApiProperty()
   tenant_name: string;
+  @ApiProperty()
+  tenant_image: string;
+  @ApiProperty()
+  tenant_color: string;
   @ApiProperty()
   tenant_cnpj: string;
   @ApiProperty()
@@ -34,6 +39,7 @@ export class TenantClass implements Tenant {
   @ApiProperty()
   restrict: boolean;
 }
+
 
 class UserAuthClass implements User_Auth {
   @ApiProperty()
