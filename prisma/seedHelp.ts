@@ -208,7 +208,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             secret: null,
             password_hash:
               '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
-            user_id: userAdmin,
+            user_id: '095d8682-383e-45ce-bdb3-6ca4a7257534',
           },
           {
             id: 'd620b02b-ffcc-43fb-8959-306f067a547e',
@@ -219,7 +219,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             secret: null,
             password_hash:
               '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
-            user_id: userAdmin,
+            user_id: '025d8682-383e-45ce-bdb3-6ca4a7257534',
           },
           {
             id: '0d336f62-6e97-43d2-84e2-d280db3c47d2',
@@ -399,6 +399,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             tenant_page_id: '7b344198-02e8-411b-b801-f6641d1395d1',
             user_id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',
           },
+
         ],
       });
       await prisma.request_admin_access.createMany({

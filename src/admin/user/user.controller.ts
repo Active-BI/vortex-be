@@ -64,11 +64,12 @@ export class UserController {
     return createUser;
   }
   @Post('resend')
-  @Roles('Admin')
+  @Roles('Admin', 'Master')
   @ApiBody({ type: UserResponse })
   @ApiResponse({ type: CreateUserBody })
   async sendInvite(@Req() req, @Body() Body) {
     const { contact_email } = req.tokenData;
+    console.log(Body)
     await this.userService.createTransportEmail(
       Body.email,
       Body.user_id,

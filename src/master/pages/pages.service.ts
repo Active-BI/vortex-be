@@ -164,6 +164,7 @@ export class PagesMasterService {
       },
       select: {
         name: true,
+        contact_email: true,
         id: true,
         Rls: true,
         Tenant: true,
