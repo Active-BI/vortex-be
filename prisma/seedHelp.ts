@@ -153,6 +153,26 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             tenant_id: TENANTS.TENANT1,
             rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
           },
+          {
+            id: '095d8682-383e-45ce-bdb3-6ca4a7257534',
+            contact_email: 'felipe.niaradi@activebi.com.br',
+            name: 'Felipe Niaradi',
+            born_date: new Date(),
+            description: 'description master',
+            personal_email: 'felipe.niaradi@activebi.com.br',
+            tenant_id: TENANTS.TENANT1,
+            rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
+          },
+          {
+            id: '025d8682-383e-45ce-bdb3-6ca4a7257534',
+            contact_email: 'bianca.froes@activebi.com.br',
+            name: 'Bianca Froes',
+            born_date: new Date(),
+            description: 'description master',
+            personal_email: 'bianca.froes@activebi.com.br',
+            tenant_id: TENANTS.TENANT1,
+            rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
+          },
         ],
       });
       await prisma.user_Auth.createMany({
@@ -171,6 +191,28 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           {
             id: 'd420b02b-ffcc-43fb-8959-306f067a547e',
             normalized_contact_email: 'LUIZ@ACTIVEBI.COM.BR',
+            last_access: null,
+            anchor: true,
+            reset_pass: null,
+            secret: null,
+            password_hash:
+              '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
+            user_id: userAdmin,
+          },
+          {
+            id: 'd520b02b-ffcc-43fb-8959-306f067a547e',
+            normalized_contact_email: 'FELIPE.NIARADI@ACTIVEBI.COM.BR',
+            last_access: null,
+            anchor: true,
+            reset_pass: null,
+            secret: null,
+            password_hash:
+              '$2b$10$LKl2Tqnm9c8Lh/qkAESd1.H2.UdmmKUryng1Xd0zvbRq3PGxMGTRG',
+            user_id: userAdmin,
+          },
+          {
+            id: 'd620b02b-ffcc-43fb-8959-306f067a547e',
+            normalized_contact_email: 'BIANCA.FROES@ACTIVEBI.COM.BR',
             last_access: null,
             anchor: true,
             reset_pass: null,
