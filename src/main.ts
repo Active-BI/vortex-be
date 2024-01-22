@@ -15,6 +15,8 @@ async function bootstrap() {
   });
   app.use(expressJson({ limit: '50mb' }));
   ConfigSwagger(app);
+  console.log(process.env['DATABASE_URL'])
+  console.log(process.env['PORT'])
   await app.listen(process.env['PORT']);
 }
 bootstrap();
