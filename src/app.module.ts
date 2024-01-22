@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { JwtStrategy } from './helpers/strategy/jwtStrategy.service';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './helpers/strategy/jwtGuard.service';
@@ -35,6 +35,8 @@ import { FilesService } from './admin/files/files.service';
 import { FilesController } from './admin/files/files.controller';
 import { GroupsController } from './master/groups/groups.controller';
 import { GroupsService } from './master/groups/groups.service';
+import { OfficeController } from './admin/office/office.controller';
+import { OfficeService } from './admin/office/office.service';
 
 @Module({
   controllers: [
@@ -50,6 +52,7 @@ import { GroupsService } from './master/groups/groups.service';
     FilesController,
     PagesMasterController,
     GroupsController,
+    OfficeController
   ],
   providers: [
     PrismaService,
@@ -77,6 +80,7 @@ import { GroupsService } from './master/groups/groups.service';
     SmtpService,
     FilesService,
     GroupsService,
+    OfficeService
   ],
   exports: [JwtStrategy],
   imports: [

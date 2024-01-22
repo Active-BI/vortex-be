@@ -24,8 +24,8 @@ export class ValidateUserAdminMiddleware implements NestMiddleware {
         const schema = Joi.object({
           id: Joi.string().required(),
           name: Joi.string().min(3).required(),
-          description: Joi.string().required(),
           rls_id: Joi.string().required(),
+          office_id: Joi.string().required(),
         });
         await schema.validateAsync(req.body);
       } catch (e) {
@@ -42,7 +42,7 @@ export class ValidateUserAdminMiddleware implements NestMiddleware {
         const schema = Joi.object({
           name: Joi.string().min(3).required(),
           email: Joi.string().lowercase().required(),
-          description: Joi.string().required(),
+          office_id: Joi.string().required(),
           rls_id: Joi.string().required(),
         });
         await schema.validateAsync(req.body);

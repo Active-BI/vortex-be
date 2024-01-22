@@ -32,6 +32,7 @@ model Tenant {
   restrict             Boolean?               @default(false)
   Request_admin_access Request_admin_access[]
   Tenant_Page          Tenant_Page[]
+  Office Office[]
 }
 
 model Request_admin_access {
@@ -69,13 +70,14 @@ model User {
   born_date      DateTime?   @db.Date
   personal_email String?     @unique
   contact_email  String
-  description    String?
   tenant_id      String?
   Tenant         Tenant?     @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   rls_id         String
   Rls            Rls         @relation(fields: [rls_id], references: [id], onDelete: Cascade)
   User_Auth      User_Auth?
   User_Page      User_Page[]
+  office_id       String?
+  Office            Office?         @relation(fields: [office_id], references: [id])
 }
 
 model Tenant_Page {
@@ -111,6 +113,15 @@ model Page_Group {
   icon           String
   Page           Page[]
 }
+
+model Office {
+  id  String  @id @default(uuid())
+  name String
+  tenant_id String
+  Tenant    Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  User                User[]
+}
+
 
 model Page {
   id                     String        @id @default(uuid())

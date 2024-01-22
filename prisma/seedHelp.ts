@@ -128,7 +128,6 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             contact_email: 'teste@master.com.br',
             name: 'teste master',
             born_date: new Date(),
-            description: 'description master',
             personal_email: 'teste@master.com.br',
             tenant_id: TENANTS.MASTER,
             rls_id: '41dd767c-45d6-437d-9ccb-9a4987e07505',
@@ -138,7 +137,6 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             contact_email: 'luiz@activebi.com.br',
             name: 'Luiz',
             born_date: new Date(),
-            description: 'description master',
             personal_email: 'luiz@activebi.com.br',
             tenant_id: TENANTS.TENANT1,
             rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
@@ -148,7 +146,6 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             contact_email: 'lucas.franca@activebi.com.br',
             name: 'lucas',
             born_date: new Date(),
-            description: 'description master',
             personal_email: 'lucas.franca@activebi.com.br',
             tenant_id: TENANTS.TENANT1,
             rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
@@ -158,7 +155,6 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             contact_email: 'felipe.niaradi@activebi.com.br',
             name: 'Felipe Niaradi',
             born_date: new Date(),
-            description: 'description master',
             personal_email: 'felipe.niaradi@activebi.com.br',
             tenant_id: TENANTS.TENANT1,
             rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
@@ -168,7 +164,6 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             contact_email: 'bianca.froes@activebi.com.br',
             name: 'Bianca Froes',
             born_date: new Date(),
-            description: 'description master',
             personal_email: 'bianca.froes@activebi.com.br',
             tenant_id: TENANTS.TENANT1,
             rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
@@ -234,12 +229,17 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           },
         ],
       });
-
+      await prisma.office.createMany({
+        data: [
+          {
+            name: 'Cargo teste',
+            tenant_id: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19'
+          }
+        ]
+      })
       const screenTypes = {
         DASHBOARD: 'dashboard',
         REPORT: 'report',
-        REPORT_UPLOAD: 'report-upload',
-        DASBOARD_UPLOAD: 'dashboard-upload',
         PAGE: 'page',
       };
 
@@ -282,7 +282,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             formated_title: 'funcionarios',
             link: 'view-report/rh/funcionarios',
             type: 'basic',
-            page_type: screenTypes.REPORT_UPLOAD,
+            page_type: screenTypes.REPORT,
             report_id: '8dd5b75b-03f5-41ab-8d6c-6a69c8934d88',
             group_id: 'c807ca26-3f93-463d-aa15-9a12e48174ba',
             restrict: false,
@@ -300,6 +300,16 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             page_group_id: 'bf296f83-5997-4349-97d6-12df34fd4da6',
           },
           {
+            id: '5f59592f-88b9-4c7e-8478-c1a776e257f0',
+            type: 'basic',
+            page_type: screenTypes.PAGE,
+            title: 'Cargos',
+            formated_title: 'cargos',
+            restrict: false,
+            link: 'administrador/cargos',
+            page_group_id: 'bf296f83-5997-4349-97d6-12df34fd4da6',
+          },
+          {
             id: '744b86c7-e6ac-43cf-ad65-1106081d1507',
             type: 'basic',
             page_type: screenTypes.PAGE,
@@ -308,15 +318,15 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             link: '/master/gestao/tenants',
             page_group_id: '3457d477-62c8-4596-8e30-71f9095064e2',
           },
-          {
-            id: '4351cd1c-ff08-4025-b862-5fa9c5938330',
-            type: 'basic',
-            page_type: screenTypes.PAGE,
-            restrict: true,
-            title: 'Solicitações De Cadastro',
-            link: '/master/gestao/solicitacoes-de-cadastro',
-            page_group_id: '3457d477-62c8-4596-8e30-71f9095064e2',
-          },
+          // {
+          //   id: '4351cd1c-ff08-4025-b862-5fa9c5938330',
+          //   type: 'basic',
+          //   page_type: screenTypes.PAGE,
+          //   restrict: true,
+          //   title: 'Solicitações De Cadastro',
+          //   link: '/master/gestao/solicitacoes-de-cadastro',
+          //   page_group_id: '3457d477-62c8-4596-8e30-71f9095064e2',
+          // },
           {
             id: '605a6c99-4e8c-4da5-9b5f-ccb61b42c5e4',
             restrict: true,
@@ -340,11 +350,11 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             page_id: '744b86c7-e6ac-43cf-ad65-1106081d1507',
             tenant_id: TENANTS.MASTER,
           },
-          {
-            id: '7b344198-02e8-411b-b801-f6641d1395d1',
-            page_id: '4351cd1c-ff08-4025-b862-5fa9c5938330',
-            tenant_id: TENANTS.MASTER,
-          },
+          // {
+          //   id: '7b344198-02e8-411b-b801-f6641d1395d1',
+          //   page_id: '4351cd1c-ff08-4025-b862-5fa9c5938330',
+          //   tenant_id: TENANTS.MASTER,
+          // },
           {
             id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
             page_id: '9a7dc980-cc5f-4060-a111-e006d62e5f18',
@@ -353,6 +363,11 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           {
             id: '891e9633-6e1c-47ab-abdc-f736cce00347',
             page_id: '4f59592f-88b9-4c7e-8478-c1a776e257f0',
+            tenant_id: TENANTS.TENANT1,
+          },
+          {
+            id: '991e9633-6e1c-47ab-abdc-f736cce00347',
+            page_id: '5f59592f-88b9-4c7e-8478-c1a776e257f0',
             tenant_id: TENANTS.TENANT1,
           },
         ],
@@ -376,9 +391,13 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             rls_id: ROLES.Admin,
           },
           {
-            page_id: '4351cd1c-ff08-4025-b862-5fa9c5938330',
-            rls_id: ROLES.Master,
+            page_id: '5f59592f-88b9-4c7e-8478-c1a776e257f0',
+            rls_id: ROLES.Admin,
           },
+          // {
+          //   page_id: '4351cd1c-ff08-4025-b862-5fa9c5938330',
+          //   rls_id: ROLES.Master,
+          // },
           {
             page_id: '744b86c7-e6ac-43cf-ad65-1106081d1507',
             rls_id: ROLES.Master,
@@ -395,18 +414,15 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             tenant_page_id: '00c1c01d-2076-4d25-b132-1285d9318bbd',
             user_id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',
           },
-          {
-            tenant_page_id: '7b344198-02e8-411b-b801-f6641d1395d1',
-            user_id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',
-          },
+          // {
+          //   tenant_page_id: '7b344198-02e8-411b-b801-f6641d1395d1',
+          //   user_id: '93d9b34b-1a00-4a83-b935-63a69f16ecf4',
+          // },
 
         ],
       });
       await prisma.request_admin_access.createMany({
         data: userRequests,
       });
-      // await prisma.funcionarios_table.createMany({
-      //   data,
-      // });
     });
 };

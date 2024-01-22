@@ -71,14 +71,12 @@ export class UserResponse implements User {
   personal_email: string;
   @ApiProperty()
   contact_email: string;
-
-  @ApiProperty()
-  description: string;
   @ApiProperty()
   tenant_id: string;
   @ApiProperty()
   rls_id: string;
-
+  @ApiProperty()
+  office_id: string;
   @ApiProperty()
   Rls: RlsClass;
   @ApiProperty()
