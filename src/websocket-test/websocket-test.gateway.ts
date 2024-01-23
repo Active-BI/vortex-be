@@ -48,7 +48,6 @@ export class WebsocketTestGateway
   handleEvent(client: Socket, message) {
     const { sessionId, userName, tenant_id } = JSON.parse(message);
     const userByEmail = this.socketService.getUserSession(sessionId);
-    console.log(userByEmail)
     if (userByEmail) {
       userByEmail.setSocket(client);
       return;
@@ -76,7 +75,8 @@ export class WebsocketTestGateway
   }
   @SubscribeMessage('user-check')
   async userCheck(client: Socket, message: any): Promise<void> {
-    const { sessionId: sessionEmail } = message;
+    const sessionEmail= message;
+
     const userByEmail = this.socketService.getUserSession(sessionEmail);
     if (userByEmail) {
       userByEmail.setSocket(client);
