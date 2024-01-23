@@ -48,6 +48,7 @@ export class WebsocketTestGateway
   handleEvent(client: Socket, message) {
     const { sessionId, userName, tenant_id } = JSON.parse(message);
     const userByEmail = this.socketService.getUserSession(sessionId);
+    console.log(userByEmail)
     if (userByEmail) {
       userByEmail.setSocket(client);
       return;

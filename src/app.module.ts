@@ -39,6 +39,8 @@ import { OfficeController } from './admin/office/office.controller';
 import { OfficeService } from './admin/office/office.service';
 import { WebsocketTestGateway } from './websocket-test/websocket-test.gateway';
 import { SocketSessionService } from './websocket-test/serviceSocket';
+import { SocketController } from './admin/socket/socket.controller';
+import { SocketService } from './admin/socket/socket.service';
 @Module({
   controllers: [
     AppController,
@@ -53,7 +55,8 @@ import { SocketSessionService } from './websocket-test/serviceSocket';
     FilesController,
     PagesMasterController,
     GroupsController,
-    OfficeController
+    OfficeController,
+    SocketController
   ],
   providers: [
     PrismaService,
@@ -84,6 +87,7 @@ import { SocketSessionService } from './websocket-test/serviceSocket';
     OfficeService,
     WebsocketTestGateway,
     SocketSessionService,
+    SocketService
   ],
   exports: [JwtStrategy],
   imports: [
