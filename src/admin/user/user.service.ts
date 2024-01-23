@@ -51,21 +51,13 @@ export class UserService {
     return await this.findById(user.id, userUpdate.tenant_id);
   }
   async createUser(user, tenant_id: string): Promise<{ user_id: string }> {
-    console.log(  {
-      id: user.id,
-      name: user.name,
-      contact_email: user.email,
-      personal_email: user.email,
-      description: user.description,
-      tenant_id,
-      rls_id: user.rls_id,
-    },)
     await this.prisma.user.create({
       data: {
         id: user.id,
         name: user.name,
         contact_email: user.email,
         personal_email: user.email,
+        office_id: user.office_id,
         tenant_id,
         rls_id: user.rls_id,
       },

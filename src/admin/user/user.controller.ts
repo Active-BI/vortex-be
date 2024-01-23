@@ -40,8 +40,6 @@ export class UserController {
   @ApiResponse({ type: UserResponse })
   @ApiBody({ type: EditUserBody })
   async editUser(@Req() req, @Body() Body: EditUserBody) {
-    console.log(Body)
-
     return await this.userService.UpdateUSer(Body);
   }
 
@@ -51,7 +49,7 @@ export class UserController {
   @ApiResponse({ type: CreateUserBody })
   async postUser(@Req() req, @Body() Body) {
     const { tenant_id, contact_email } = req.tokenData;
-    console.log(Body)
+    console.log('AO CRIAR',{Body})
 
     const uuid = randomUUID();
     const createUser = await this.userService.createUser(
