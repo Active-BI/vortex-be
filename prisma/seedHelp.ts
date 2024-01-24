@@ -278,15 +278,15 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
         data: [
           {
             id: '9a7dc980-cc5f-4060-a111-e006d62e5f18',
-            title: 'Funcionários',
-            formated_title: 'funcionarios',
-            link: 'view-report/rh/funcionarios',
+            title: 'RH - Case',
+            formated_title: 'rh_case',
+            link: 'view-report/rh/rh_case',
             type: 'basic',
             page_type: screenTypes.REPORT,
-            report_id: '8dd5b75b-03f5-41ab-8d6c-6a69c8934d88',
+            report_id: '833aca7c-6bc2-45fd-a8bb-26614cc3324a ',
             group_id: 'c807ca26-3f93-463d-aa15-9a12e48174ba',
             restrict: false,
-            table_name: 'funcionarios',
+            table_name: '',
             page_group_id: '9b0e8176-5c8d-4024-ac28-524ba48d16c9',
           },
           {
@@ -307,6 +307,16 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             formated_title: 'cargos',
             restrict: false,
             link: 'administrador/cargos',
+            page_group_id: 'bf296f83-5997-4349-97d6-12df34fd4da6',
+          },
+          {
+            id: 'a420c591-776d-4e42-ae25-885df7279923',
+            type: 'basic',
+            page_type: screenTypes.PAGE,
+            title: 'Conexões',
+            formated_title: 'conexoes',
+            restrict: false,
+            link: 'administrador/conexoes',
             page_group_id: 'bf296f83-5997-4349-97d6-12df34fd4da6',
           },
           {
@@ -361,6 +371,11 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             tenant_id: TENANTS.TENANT1,
           },
           {
+            id: 'e9096230-a79c-4cd4-81ab-d352363a003c',
+            page_id: 'a420c591-776d-4e42-ae25-885df7279923',
+            tenant_id: TENANTS.TENANT1,
+          },
+          {
             id: '891e9633-6e1c-47ab-abdc-f736cce00347',
             page_id: '4f59592f-88b9-4c7e-8478-c1a776e257f0',
             tenant_id: TENANTS.TENANT1,
@@ -382,9 +397,18 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             page_id: '9a7dc980-cc5f-4060-a111-e006d62e5f18',
             rls_id: ROLES.Admin,
           },
+          
           {
             page_id: '9a7dc980-cc5f-4060-a111-e006d62e5f18',
             rls_id: ROLES.User,
+          },
+          {
+            page_id: 'a420c591-776d-4e42-ae25-885df7279923',
+            rls_id: ROLES.User,
+          },
+          {
+            page_id: 'a420c591-776d-4e42-ae25-885df7279923',
+            rls_id: ROLES.Admin,
           },
           {
             page_id: '4f59592f-88b9-4c7e-8478-c1a776e257f0',

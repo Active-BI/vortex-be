@@ -89,6 +89,13 @@ model Tenant_Page {
   User_Page User_Page[]
 }
 
+model UserInOut {
+  id     String   @id @default(uuid()) @db.Uuid
+  status String
+  email  String
+  data   DateTime @db.Timestamptz(3)
+}
+
 model User_Page {
   id             String      @id @default(uuid())
   tenant_page_id String

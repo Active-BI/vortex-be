@@ -37,7 +37,10 @@ import { GroupsController } from './master/groups/groups.controller';
 import { GroupsService } from './master/groups/groups.service';
 import { OfficeController } from './admin/office/office.controller';
 import { OfficeService } from './admin/office/office.service';
-
+import { WebsocketTestGateway } from './websocket-test/websocket-test.gateway';
+import { SocketSessionService } from './websocket-test/serviceSocket';
+import { SocketController } from './admin/socket/socket.controller';
+import { SocketService } from './admin/socket/socket.service';
 @Module({
   controllers: [
     AppController,
@@ -52,7 +55,8 @@ import { OfficeService } from './admin/office/office.service';
     FilesController,
     PagesMasterController,
     GroupsController,
-    OfficeController
+    OfficeController,
+    SocketController
   ],
   providers: [
     PrismaService,
@@ -80,7 +84,10 @@ import { OfficeService } from './admin/office/office.service';
     SmtpService,
     FilesService,
     GroupsService,
-    OfficeService
+    OfficeService,
+    WebsocketTestGateway,
+    SocketSessionService,
+    SocketService
   ],
   exports: [JwtStrategy],
   imports: [
