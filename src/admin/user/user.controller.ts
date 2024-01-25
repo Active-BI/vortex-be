@@ -49,7 +49,6 @@ export class UserController {
   @ApiResponse({ type: CreateUserBody })
   async postUser(@Req() req, @Body() Body) {
     const { tenant_id, contact_email } = req.tokenData;
-    console.log('AO CRIAR',{Body})
 
     const uuid = randomUUID();
     const createUser = await this.userService.createUser(

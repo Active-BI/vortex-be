@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import * as moment from "moment";
 import { Socket } from 'socket.io';
 
 export class UserSession {
   sessionId: string;
   private name: string;
   private sockets: Map<string, Socket>;
-  private status: boolean;
+  status: boolean;
+  last_update: moment.Moment;
   tenant_id: string;
+  private init_session: moment.Moment;
 
   constructor(sessionId: string, name: string, tenant_id: string, socket: Socket) {
     this.sessionId = sessionId;
@@ -14,7 +17,7 @@ export class UserSession {
     this.status = true;
     this.tenant_id = tenant_id;
     this.sockets = new Map<string, Socket>();
-
+    this.init_session = moment().utc()
     this.setSocket(socket);
   }
   setSocket(socket: Socket): boolean {
@@ -25,7 +28,8 @@ export class UserSession {
     return this.sockets.has(socketId);
   }
   setStatus(status: boolean) {
-    this.status = status;
+      this.status = status;
+      this.last_update = moment().utc()
   }
   getSocket(socketId: string): Socket {
     return this.sockets.get(socketId);
@@ -64,7 +68,9 @@ export class UserSession {
 
 @Injectable()
 export class SocketSessionService {
-  constructor() {}
+  constructor() {
+
+  }
   userSessions = new Map<string, UserSession>();
 
   addUserSession(socket: Socket, sessionId: string, userName: string,tenant_id: string) {
@@ -103,10 +109,33 @@ export class SocketSessionService {
       const connectedSockets = Array.from(userSession['sockets'].values()).some(
         (socket) => socket.connected,
       );
-      if (!connectedSockets) {
-
+      const timeInitSession = moment(moment().utc()).diff(userSession.last_update, 'hours')
+      if (timeInitSession > 24) {
+        this.removeUserSession(id)
       }
-      userSession.setStatus(connectedSockets);
+      const time = moment(moment().utc()).diff(userSession.last_update, 'seconds')
+      if (!connectedSockets) {
+        if (time > 10) {
+          // se for falso ele mantém para n reiniciaar a contagem de 10 minutos para enviar o evento para o banco de dados fechar a conexão
+          if (userSession.status !== false) {
+            userSession.setStatus(false);
+          }
+          // se passar de 10 minutos e a conexão se mater fechada um evento é enviado
+          if (time > 600) {
+            // send event to close a connection
+          }
+        }
+      } else {
+        if (userSession.status === false) {
+          // send event to start a connection
+        }
+        userSession.setStatus(true);
+      }
+    }
+
+    for (const [id, userSession] of arrayOfSessions) {
+      const time = moment(moment().utc()).diff(userSession.last_update, 'seconds')
+      console.log({user: id, time, status: userSession.status})
     }
   }
 
@@ -114,7 +143,9 @@ export class SocketSessionService {
     const existUserSession = this.getUserSession(sessionId);
     if (existUserSession) {
       const userSession = existUserSession;
-
+      if (userSession.status === true) {
+          // send event to close a connection
+        }
       userSession.removeAllSockets();
 
       this.userSessions.delete(sessionId);

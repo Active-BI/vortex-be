@@ -6,7 +6,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { SocketSessionService } from './serviceSocket';
+import { SocketSessionService, UserSession } from './serviceSocket';
 import { Server, Socket } from 'socket.io';
 
 export interface userToken {
@@ -32,14 +32,19 @@ export class WebsocketTestGateway
 
   constructor(
     private socketService: SocketSessionService,
-  ) {}
+  ) {
+    setInterval(() => {
+      this.checkSocketConnections()
+    }, 5100)
+  }
   afterInit(server: any) {}
   handleConnection(client: any, ...args: any[]) {
-    this.checkSocketConnections();
+    // this.checkSocketConnections();
   }
   handleDisconnect(client: any) {
-    this.checkSocketConnections();
+    // this.checkSocketConnections();
   }
+
   async checkSocketConnections() {
     this.socketService.SessionIsActive();
     this.server.emit('refresh-conn');

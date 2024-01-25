@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "User_Session_Hist" ADD COLUMN     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
