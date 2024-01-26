@@ -71,6 +71,7 @@ model User_Session_Hist {
   tenant_id String
   created_at DateTime @default(now())
   exited_at DateTime?
+  updated_at DateTime? @updatedAt
   User User @relation(fields: [email], references: [contact_email])
   Tenant Tenant @relation(fields: [tenant_id], references: [id])
 }

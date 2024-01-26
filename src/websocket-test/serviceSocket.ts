@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import * as moment from "moment";
-import { Socket } from 'socket.io';
+import { Socket,Server } from 'socket.io';
+
+interface Isession {
+    tenant_id: string
+    email: string
+}
 
 export class UserSession {
   sessionId: string;
@@ -9,7 +15,7 @@ export class UserSession {
   status: boolean;
   last_update: moment.Moment;
   tenant_id: string;
-  private init_session: moment.Moment;
+  init_session: moment.Moment;
 
   constructor(sessionId: string, name: string, tenant_id: string, socket: Socket) {
     this.sessionId = sessionId;
@@ -18,10 +24,13 @@ export class UserSession {
     this.tenant_id = tenant_id;
     this.sockets = new Map<string, Socket>();
     this.init_session = moment().utc()
+    this.last_update = moment().utc()
     this.setSocket(socket);
   }
   setSocket(socket: Socket): boolean {
     this.sockets.set(socket.id, socket);
+    this.last_update = moment().utc()
+
     return true;
   }
   hasSocket(socketId: string): boolean {
@@ -68,8 +77,17 @@ export class UserSession {
 
 @Injectable()
 export class SocketSessionService {
-  constructor() {
+  constructor(private eventEmitter: EventEmitter2) {
 
+  }
+  private server: Server;
+  sendEvent(name, data: Isession) {
+    this.eventEmitter.emit(
+      name,
+      {
+        payload: data,
+      },
+    );
   }
   userSessions = new Map<string, UserSession>();
 
@@ -109,27 +127,41 @@ export class SocketSessionService {
       const connectedSockets = Array.from(userSession['sockets'].values()).some(
         (socket) => socket.connected,
       );
-      const timeInitSession = moment(moment().utc()).diff(userSession.last_update, 'hours')
+      const timeInitSession = moment(moment().utc()).diff(userSession.init_session, 'hours')
       if (timeInitSession > 24) {
         this.removeUserSession(id)
+        this.sendEvent('close.session', {
+          tenant_id: userSession.tenant_id,
+          email: userSession.sessionId,
+        })
       }
       const time = moment(moment().utc()).diff(userSession.last_update, 'seconds')
+      console.log(connectedSockets, 'sockets conecteds?')
       if (!connectedSockets) {
         if (time > 10) {
           // se for falso ele mantém para n reiniciaar a contagem de 10 minutos para enviar o evento para o banco de dados fechar a conexão
-          if (userSession.status !== false) {
+          console.log(userSession.status , 'status')
+          if (userSession.status === true) {
             userSession.setStatus(false);
           }
           // se passar de 10 minutos e a conexão se mater fechada um evento é enviado
-          if (time > 600) {
+          if (time > 60) {
             // send event to close a connection
+            this.sendEvent('close.session', {
+              tenant_id: userSession.tenant_id,
+              email: userSession.sessionId,
+            })
           }
         }
       } else {
         if (userSession.status === false) {
-          // send event to start a connection
+          this.sendEvent('create.session', {
+            tenant_id: userSession.tenant_id,
+            email: userSession.sessionId,
+          })
+            userSession.setStatus(true);
         }
-        userSession.setStatus(true);
+
       }
     }
 
@@ -145,6 +177,10 @@ export class SocketSessionService {
       const userSession = existUserSession;
       if (userSession.status === true) {
           // send event to close a connection
+          this.sendEvent('close.session', {
+            tenant_id: userSession.tenant_id,
+            email: userSession.sessionId,
+          })
         }
       userSession.removeAllSockets();
 

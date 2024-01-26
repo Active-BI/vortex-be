@@ -8,7 +8,7 @@ import {
 } from '@nestjs/websockets';
 import { SocketSessionService, UserSession } from './serviceSocket';
 import { Server, Socket } from 'socket.io';
-
+ 
 export interface userToken {
   userId: string;
   name: string;
@@ -34,20 +34,21 @@ export class WebsocketTestGateway
     private socketService: SocketSessionService,
   ) {
     setInterval(() => {
-      this.checkSocketConnections()
+      this.checkSocketConnections();
     }, 5100)
   }
   afterInit(server: any) {}
   handleConnection(client: any, ...args: any[]) {
-    // this.checkSocketConnections();
+    this.checkSocketConnections();
   }
   handleDisconnect(client: any) {
-    // this.checkSocketConnections();
+    this.checkSocketConnections();
   }
 
   async checkSocketConnections() {
     this.socketService.SessionIsActive();
     this.server.emit('refresh-conn');
+
   }
   @SubscribeMessage('login')
   handleEvent(client: Socket, message) {
@@ -58,6 +59,10 @@ export class WebsocketTestGateway
       return;
     }
     this.socketService.addUserSession(client, sessionId, userName, tenant_id);
+    this.socketService.sendEvent('create.session',{
+      email: sessionId,
+      tenant_id,
+    })
     this.server.emit('refresh-conn');
   }
 
@@ -69,17 +74,17 @@ export class WebsocketTestGateway
       this.server.emit('refresh-conn');
     }
   }
-  @SubscribeMessage('user-check-session')
-  async userCheckSession(client: Socket, message: any): Promise<void> {
-    const { sessionId: sessionEmail } = message;
-    const userByEmail = this.socketService.getUserSession(sessionEmail);
-    if (!userByEmail) {
-      client.emit('logout');
-    } else {
-    }
-  }
+
   @SubscribeMessage('user-check')
   async userCheck(client: Socket, message: any): Promise<void> {
+    // this.socketService.addUserSession(client, 'lucas.franca+1@activebi.com.br', 'lucas', 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',)
+    // const userByEmail = this.socketService.getUserSession('lucas.franca+1@activebi.com.br') as UserSession;
+    // userByEmail.setSocket(client);
+    //   this.checkSocketConnections();
+    //   this.socketService.sendEvent('create.session',{
+    //     email: 'lucas.franca+1@activebi.com.br',
+    //     tenant_id: "d6c5a0ad-9723-421d-ba63-897aa9f59c19",
+    //   })
     const sessionEmail= message;
 
     const userByEmail = this.socketService.getUserSession(sessionEmail);

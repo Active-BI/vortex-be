@@ -42,6 +42,7 @@ import { SocketSessionService } from './websocket-test/serviceSocket';
 import { SocketController } from './admin/socket/socket.controller';
 import { SocketService } from './admin/socket/socket.service';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import SessionRepository from './core/session/repository';
 
 @Module({
   controllers: [
@@ -89,7 +90,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     OfficeService,
     WebsocketTestGateway,
     SocketSessionService,
-    SocketService
+    SocketService,
+    SessionRepository
   ],
   exports: [JwtStrategy],
   imports: [
