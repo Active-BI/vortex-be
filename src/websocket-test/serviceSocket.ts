@@ -28,9 +28,16 @@ export class UserSession {
     this.setSocket(socket);
   }
   setSocket(socket: Socket): boolean {
-    this.sockets.set(socket.id, socket);
+    let socketsList:  Map<string, Socket> =  new Map<string, Socket>()
+    socketsList.set(socket.id, socket);
     this.last_update = moment().utc()
-
+    this.sockets.forEach((socket) => { 
+      if (socket.connected) {
+        socketsList.set(socket.id, socket);
+      }
+    }
+    );
+    this.sockets = socketsList
     return true;
   }
   hasSocket(socketId: string): boolean {
@@ -120,7 +127,38 @@ export class SocketSessionService {
 
     return socketSessions;
   }
+  deactivateSockets() {
+    const arrayOfSessions = this.userSessions;
 
+    for (const [id, userSession] of arrayOfSessions) {
+      const connectedSockets = Array.from(userSession['sockets'].values()).some(
+        (socket) => socket.connected,
+      );
+      const lastUpdate =  moment(moment().utc()).diff(userSession.last_update, 'seconds') 
+      if(connectedSockets && lastUpdate < 10 && userSession.status === false) {
+        userSession.setStatus(true)
+        this.sendEvent('create.session', {
+          tenant_id: userSession.tenant_id,
+          email: userSession.sessionId,
+        })
+      }
+      if(!connectedSockets || lastUpdate > 10 && userSession.status === true) {
+        userSession.setStatus(false)
+        this.sendEvent('close.session', {
+          tenant_id: userSession.tenant_id,
+          email: userSession.sessionId,
+        })
+      }
+      const timeInitSession = moment(moment().utc()).diff(userSession.init_session, 'hours')
+      if (timeInitSession > 24) {
+        this.removeUserSession(id)
+        this.sendEvent('close.session', {
+          tenant_id: userSession.tenant_id,
+          email: userSession.sessionId,
+        })
+      }
+    }
+  }
   SessionIsActive() {
     const arrayOfSessions = this.userSessions;
     for (const [id, userSession] of arrayOfSessions) {
@@ -135,23 +173,28 @@ export class SocketSessionService {
           email: userSession.sessionId,
         })
       }
-      const time = moment(moment().utc()).diff(userSession.last_update, 'seconds')
-      console.log(connectedSockets, 'sockets conecteds?')
+      let time;
+      if ( userSession.status === false && !connectedSockets) {
+        time =  moment(moment().utc()).diff(userSession.last_update, 'seconds')
+      } else {
+        time = 0 
+        userSession.setStatus(true)
+      }
+      console.log({connectedSockets, time, status: userSession.status})
       if (!connectedSockets) {
-        if (time > 10) {
-          // se for falso ele mantém para n reiniciaar a contagem de 10 minutos para enviar o evento para o banco de dados fechar a conexão
-          console.log(userSession.status , 'status')
-          if (userSession.status === true) {
-            userSession.setStatus(false);
-          }
-          // se passar de 10 minutos e a conexão se mater fechada um evento é enviado
-          if (time > 60) {
+        if (userSession.status === true) {
+          userSession.setStatus(false);
+        }
+        if (time > 5) {
+          userSession.removeAllSockets()
+        }
+          // se passar de 1 minuto e a conexão se mater fechada um evento é enviado
+          if (time > 20) {
             // send event to close a connection
             this.sendEvent('close.session', {
               tenant_id: userSession.tenant_id,
               email: userSession.sessionId,
             })
-          }
         }
       } else {
         if (userSession.status === false) {
@@ -161,13 +204,7 @@ export class SocketSessionService {
           })
             userSession.setStatus(true);
         }
-
       }
-    }
-
-    for (const [id, userSession] of arrayOfSessions) {
-      const time = moment(moment().utc()).diff(userSession.last_update, 'seconds')
-      console.log({user: id, time, status: userSession.status})
     }
   }
 
