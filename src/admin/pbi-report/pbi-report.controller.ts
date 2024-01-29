@@ -195,11 +195,6 @@ export class PbiReportController {
 
     // header é o objeto onde está o accessToken
     const headers = await this.msalService.getRequestHeader(role_name);
-    console.log({
-      headers,
-      groupId: userPage.Tenant_Page.Page.group_id,
-      reportId: userPage.Tenant_Page.Page.report_id,
-    });
 
     const result: any = await fetch(reportInGroupApi, {
       method: 'GET',

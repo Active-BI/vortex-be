@@ -32,7 +32,8 @@ model Tenant {
   restrict             Boolean?               @default(false)
   Request_admin_access Request_admin_access[]
   Tenant_Page          Tenant_Page[]
-  Office Office[]
+  Office               Office[]
+  User_Session_Hist    User_Session_Hist[]
 }
 
 model Request_admin_access {
@@ -62,20 +63,31 @@ model User_Auth {
   last_access              DateTime?
   user_id                  String    @unique
   User                     User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
-}
 
+}
+model User_Session_Hist {
+  id             String      @id @default(uuid())
+  email        String
+  tenant_id String
+  created_at DateTime @default(now())
+  exited_at DateTime?
+  updated_at DateTime? @updatedAt
+  User User @relation(fields: [email], references: [contact_email],  onDelete: Cascade)
+  Tenant Tenant @relation(fields: [tenant_id], references: [id])
+}
 model User {
   id             String      @id @default(uuid())
   name           String
   born_date      DateTime?   @db.Date
   personal_email String?     @unique
-  contact_email  String
+  contact_email  String     @unique
   tenant_id      String?
   Tenant         Tenant?     @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
   rls_id         String
   Rls            Rls         @relation(fields: [rls_id], references: [id], onDelete: Cascade)
   User_Auth      User_Auth?
   User_Page      User_Page[]
+  User_Session_Hist User_Session_Hist[]
   office_id       String?
   Office            Office?         @relation(fields: [office_id], references: [id])
 }

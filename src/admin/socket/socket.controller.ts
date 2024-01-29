@@ -8,6 +8,11 @@ export class SocketController {
   constructor(private readonly socketService: SocketService) {}
 
   @Get(':id')
+  findAllActiveSessions(@Param('id') tenant_id) {
+    return this.socketService.findAllActiveSessions(tenant_id);
+  }
+
+  @Get('all/:id')
   findAll(@Param('id') tenant_id) {
     return this.socketService.findAll(tenant_id);
   }
