@@ -16,7 +16,7 @@ export class SocketService {
     })
     const sessionRealTime = await this.SocketService.getAllSocketSessionsByTenant(tenant_id)
     const a = sessionRealTime.reduce((acc, act) => {
-      act['log'] = sessionHist.filter(a => a.email === act.sessionId).length
+      act['log'] = sessionHist.filter(a => a.email === act.sessionId)
        acc.push(act)
        return acc
     },[])
@@ -40,7 +40,7 @@ export class SocketService {
     })
     const sessionRealTime = await this.SocketService.getAllSocketSessionsByTenant(tenant_id)
     const a = user.reduce((acc, act) => {
-      act['log'] = sessionHist.filter(a => a.email === act.contact_email).length
+      act['log'] = sessionHist.filter(a => a.email === act.contact_email)
 
       if (sessionRealTime.length > 0){
         act['status'] = sessionRealTime.find(u =>act.contact_email  === u.sessionId)
