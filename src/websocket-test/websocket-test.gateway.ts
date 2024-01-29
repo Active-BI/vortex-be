@@ -95,12 +95,16 @@ export class WebsocketTestGateway
   @SubscribeMessage('alive') 
   async alive(client: Socket, message: any): Promise<void> {
     const sessionEmail= message;
-
+    console.log({sessionEmail})
     const userByEmail = this.socketService.getUserSession(sessionEmail);
-    if (userByEmail) {
-      userByEmail.setSocket(client);
-      userByEmail.setStatus(true)
+    if (!userByEmail) {
+      client.emit('logout');
   }
+  if (userByEmail) {
+    console.log('entrou')
+    userByEmail.setSocket(client);
+    userByEmail.setStatus(true)
+}
 }
   @SubscribeMessage('user-check')
   async userCheck(client: Socket, message: any): Promise<void> {

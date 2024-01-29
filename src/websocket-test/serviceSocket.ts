@@ -180,7 +180,6 @@ export class SocketSessionService {
         time = 0 
         userSession.setStatus(true)
       }
-      console.log({connectedSockets, time, status: userSession.status})
       if (!connectedSockets) {
         if (userSession.status === true) {
           userSession.setStatus(false);
