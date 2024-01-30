@@ -30,8 +30,6 @@ export default class SessionRepository {
       payload.tenant_id,
     );
     if (lastSession && lastSession.exited_at === null) {
-    console.log('atualizou sessão existente');
-
       await this.prisma.user_Session_Hist.update({
         where: {
           id: lastSession.id,
@@ -46,10 +44,8 @@ export default class SessionRepository {
     } else if (
       lastSession &&
       lastSession.exited_at !== null &&
-      moment(moment().utc()).diff(lastSession.exited_at, 'seconds') < 60
+      moment(moment().utc()).diff(lastSession.exited_at, 'minutes') < 60
     ) {
-    console.log('removeu exited at',  moment(moment().utc()).diff(lastSession.exited_at, 'seconds'));
-
       await this.prisma.user_Session_Hist.update({
         where: {
           id: lastSession.id,
@@ -62,8 +58,6 @@ export default class SessionRepository {
         },
       });
     } else {
-    console.log('criou nova sessão');
-
       await this.prisma.user_Session_Hist.create({
         data: {
           tenant_id: payload.tenant_id,

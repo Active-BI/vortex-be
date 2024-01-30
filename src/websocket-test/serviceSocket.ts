@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import * as moment from "moment";
-import { Socket,Server } from 'socket.io';
+import * as moment from 'moment';
+import { Socket, Server } from 'socket.io';
 
 interface Isession {
-    tenant_id: string
-    email: string
+  tenant_id: string;
+  email: string;
 }
 
 export class UserSession {
@@ -17,35 +17,39 @@ export class UserSession {
   tenant_id: string;
   init_session: moment.Moment;
 
-  constructor(sessionId: string, name: string, tenant_id: string, socket: Socket) {
+  constructor(
+    sessionId: string,
+    name: string,
+    tenant_id: string,
+    socket: Socket,
+  ) {
     this.sessionId = sessionId;
     this.name = name;
     this.status = true;
     this.tenant_id = tenant_id;
     this.sockets = new Map<string, Socket>();
-    this.init_session = moment().utc()
-    this.last_update = moment().utc()
+    this.init_session = moment().utc();
+    this.last_update = moment().utc();
     this.setSocket(socket);
   }
   setSocket(socket: Socket): boolean {
-    let socketsList:  Map<string, Socket> =  new Map<string, Socket>()
+    let socketsList: Map<string, Socket> = new Map<string, Socket>();
     socketsList.set(socket.id, socket);
-    this.last_update = moment().utc()
-    this.sockets.forEach((socket) => { 
+    this.last_update = moment().utc();
+    this.sockets.forEach((socket) => {
       if (socket.connected) {
         socketsList.set(socket.id, socket);
       }
-    }
-    );
-    this.sockets = socketsList
+    });
+    this.sockets = socketsList;
     return true;
   }
   hasSocket(socketId: string): boolean {
     return this.sockets.has(socketId);
   }
   setStatus(status: boolean) {
-      this.status = status;
-      this.last_update = moment().utc()
+    this.status = status;
+    this.last_update = moment().utc();
   }
   getSocket(socketId: string): Socket {
     return this.sockets.get(socketId);
@@ -57,7 +61,7 @@ export class UserSession {
     this.sockets.forEach((socket) => socket.emit('logout'));
     this.sockets.clear();
   }
-  
+
   listUserSockets(Sockets = false): {
     name: string;
     tenant_id: string;
@@ -84,28 +88,33 @@ export class UserSession {
 
 @Injectable()
 export class SocketSessionService {
-  constructor(private eventEmitter: EventEmitter2) {
-
-  }
+  constructor(private eventEmitter: EventEmitter2) {}
   private server: Server;
   sendEvent(name, data: Isession) {
-    this.eventEmitter.emit(
-      name,
-      {
-        payload: data,
-      },
-    );
+    this.eventEmitter.emit(name, {
+      payload: data,
+    });
   }
   userSessions = new Map<string, UserSession>();
 
-  addUserSession(socket: Socket, sessionId: string, userName: string,tenant_id: string) {
+  addUserSession(
+    socket: Socket,
+    sessionId: string,
+    userName: string,
+    tenant_id: string,
+  ) {
     const userSession = this.getUserSession(sessionId);
     if (userSession) {
       userSession.setSocket(socket);
       this.userSessions.set(sessionId, userSession);
       return;
     }
-    const newUserSession = new UserSession(sessionId, userName, tenant_id, socket);
+    const newUserSession = new UserSession(
+      sessionId,
+      userName,
+      tenant_id,
+      socket,
+    );
     this.userSessions.set(sessionId, newUserSession);
   }
 
@@ -134,28 +143,37 @@ export class SocketSessionService {
       const connectedSockets = Array.from(userSession['sockets'].values()).some(
         (socket) => socket.connected,
       );
-      const lastUpdate =  moment(moment().utc()).diff(userSession.last_update, 'seconds') 
-      if(connectedSockets && lastUpdate < 10 && userSession.status === false) {
-        userSession.setStatus(true)
+      const lastUpdate = moment(moment().utc()).diff(
+        userSession.last_update,
+        'minutes',
+      );
+      if (connectedSockets && lastUpdate < 60 && userSession.status === false) {
+        userSession.setStatus(true);
         this.sendEvent('create.session', {
           tenant_id: userSession.tenant_id,
           email: userSession.sessionId,
-        })
+        });
       }
-      if(!connectedSockets || lastUpdate > 10 && userSession.status === true) {
-        userSession.setStatus(false)
+      if (
+        !connectedSockets ||
+        (lastUpdate > 60 && userSession.status === true)
+      ) {
+        userSession.setStatus(false);
         this.sendEvent('close.session', {
           tenant_id: userSession.tenant_id,
           email: userSession.sessionId,
-        })
+        });
       }
-      const timeInitSession = moment(moment().utc()).diff(userSession.init_session, 'hours')
+      const timeInitSession = moment(moment().utc()).diff(
+        userSession.init_session,
+        'hours',
+      );
       if (timeInitSession > 24) {
-        this.removeUserSession(id)
+        this.removeUserSession(id);
         this.sendEvent('close.session', {
           tenant_id: userSession.tenant_id,
           email: userSession.sessionId,
-        })
+        });
       }
     }
   }
@@ -165,43 +183,44 @@ export class SocketSessionService {
       const connectedSockets = Array.from(userSession['sockets'].values()).some(
         (socket) => socket.connected,
       );
-      const timeInitSession = moment(moment().utc()).diff(userSession.init_session, 'hours')
+      const timeInitSession = moment(moment().utc()).diff(
+        userSession.init_session,
+        'hours',
+      );
       if (timeInitSession > 24) {
-        this.removeUserSession(id)
+        this.removeUserSession(id);
         this.sendEvent('close.session', {
           tenant_id: userSession.tenant_id,
           email: userSession.sessionId,
-        })
+        });
+        return
       }
       let time;
-      if ( userSession.status === false && !connectedSockets) {
-        time =  moment(moment().utc()).diff(userSession.last_update, 'seconds')
+      if (userSession.status === false && !connectedSockets) {
+        time = moment(moment().utc()).diff(userSession.last_update, 'minutes');
       } else {
-        time = 0 
-        userSession.setStatus(true)
+        time = 0;
+        userSession.setStatus(true);
       }
       if (!connectedSockets) {
         if (userSession.status === true) {
           userSession.setStatus(false);
         }
-        if (time > 5) {
-          userSession.removeAllSockets()
-        }
-          // se passar de 1 minuto e a conexão se mater fechada um evento é enviado
-          if (time > 20) {
-            // send event to close a connection
-            this.sendEvent('close.session', {
-              tenant_id: userSession.tenant_id,
-              email: userSession.sessionId,
-            })
+        // se passar de 60 minutos e a conexão se mater fechada um evento é enviado
+        if (time > 60) {
+          // send event to close a connection
+          this.sendEvent('close.session', {
+            tenant_id: userSession.tenant_id,
+            email: userSession.sessionId,
+          });
         }
       } else {
         if (userSession.status === false) {
           this.sendEvent('create.session', {
             tenant_id: userSession.tenant_id,
             email: userSession.sessionId,
-          })
-            userSession.setStatus(true);
+          });
+          userSession.setStatus(true);
         }
       }
     }
@@ -212,12 +231,12 @@ export class SocketSessionService {
     if (existUserSession) {
       const userSession = existUserSession;
       if (userSession.status === true) {
-          // send event to close a connection
-          this.sendEvent('close.session', {
-            tenant_id: userSession.tenant_id,
-            email: userSession.sessionId,
-          })
-        }
+        // send event to close a connection
+        this.sendEvent('close.session', {
+          tenant_id: userSession.tenant_id,
+          email: userSession.sessionId,
+        });
+      }
       userSession.removeAllSockets();
 
       this.userSessions.delete(sessionId);
