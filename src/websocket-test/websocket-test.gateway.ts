@@ -6,10 +6,10 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { SocketSessionService, UserSession } from './serviceSocket';
+import { Isession, SocketSessionService, UserSession } from './serviceSocket';
 import { Server, Socket } from 'socket.io';
 import { EventEmitter2 } from '@nestjs/event-emitter';
- 
+
 export interface userToken {
   userId: string;
   name: string;
@@ -18,10 +18,6 @@ export interface userToken {
   status: boolean;
   role_id: string;
   role: string;
-}
-interface Isession {
-  tenant_id: string
-  email: string
 }
 
 @WebSocketGateway({
@@ -35,20 +31,17 @@ export class WebsocketTestGateway
   @WebSocketServer()
   private server: Server;
   sendEvent(name, data: Isession) {
-    this.eventEmitter.emit(
-      name,
-      {
-        payload: data,
-      },
-    );
+    this.eventEmitter.emit(name, {
+      payload: data,
+    });
   }
   constructor(
     private socketService: SocketSessionService,
-    private eventEmitter: EventEmitter2
+    private eventEmitter: EventEmitter2,
   ) {
     setInterval(() => {
       this.deactivateSockets();
-    }, 4000)
+    }, 4000);
   }
   afterInit(server: any) {}
   handleConnection(client: any, ...args: any[]) {
@@ -61,26 +54,26 @@ export class WebsocketTestGateway
   async deactivateSockets() {
     this.socketService.deactivateSockets();
     this.server.emit('refresh-conn');
-
   }
   async checkSocketConnections() {
     this.socketService.SessionIsActive();
     this.server.emit('refresh-conn');
-
   }
   @SubscribeMessage('login')
   handleEvent(client: Socket, message) {
     const { sessionId, userName, tenant_id } = JSON.parse(message);
-    const userByEmail = this.socketService.getUserSession(sessionId);
-    if (userByEmail) {
-      userByEmail.setSocket(client);
+    const userSession = this.socketService.getUserSession(sessionId);
+    if (userSession) {
+      userSession.setSocket(client);
+      this.socketService.sendEvent('create.session', {
+        email: sessionId,
+        tenant_id,
+        info: userSession.info
+  
+      });
       return;
     }
     this.socketService.addUserSession(client, sessionId, userName, tenant_id);
-    this.socketService.sendEvent('create.session',{
-      email: sessionId,
-      tenant_id,
-    })
     this.server.emit('refresh-conn');
   }
 
@@ -92,23 +85,24 @@ export class WebsocketTestGateway
       this.server.emit('refresh-conn');
     }
   }
-  @SubscribeMessage('alive') 
+  @SubscribeMessage('alive')
   async alive(client: Socket, message: any): Promise<void> {
-    const sessionEmail= message;
-    console.log({sessionEmail})
-    const userByEmail = this.socketService.getUserSession(sessionEmail);
+    console.log(client.handshake.address)
+    const { sessionId, userAgent, platform } = JSON.parse(message);
+    const userByEmail = this.socketService.getUserSession(sessionId);
     if (!userByEmail) {
+      console.log(userByEmail, 'Alive');
       client.emit('logout');
+    }
+    if (userByEmail) {
+      userByEmail.setSocket(client);
+      userByEmail.setPlatform({userAgent, platform, ip: client.handshake.address });
+      userByEmail.setStatus(true);
+    }
   }
-  if (userByEmail) {
-    console.log('entrou')
-    userByEmail.setSocket(client);
-    userByEmail.setStatus(true)
-}
-}
   @SubscribeMessage('user-check')
   async userCheck(client: Socket, message: any): Promise<void> {
-    const sessionEmail= message;
+    const sessionEmail = message;
 
     const userByEmail = this.socketService.getUserSession(sessionEmail);
     if (userByEmail) {
@@ -116,7 +110,8 @@ export class WebsocketTestGateway
       this.sendEvent('create.session', {
         tenant_id: userByEmail.tenant_id,
         email: userByEmail.sessionId,
-      })
+        info: userByEmail.info
+      });
       this.checkSocketConnections();
     } else {
       client.emit('logout');

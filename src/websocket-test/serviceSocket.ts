@@ -3,10 +3,12 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import * as moment from 'moment';
 import { Socket, Server } from 'socket.io';
 
-interface Isession {
+export interface Isession {
   tenant_id: string;
   email: string;
+  info?: Iinfo
 }
+interface Iinfo { userAgent:string, platform: string, ip: string}
 
 export class UserSession {
   sessionId: string;
@@ -16,7 +18,7 @@ export class UserSession {
   last_update: moment.Moment;
   tenant_id: string;
   init_session: moment.Moment;
-
+  info:Iinfo = { userAgent: '', platform: '', ip: ''}
   constructor(
     sessionId: string,
     name: string,
@@ -25,6 +27,7 @@ export class UserSession {
   ) {
     this.sessionId = sessionId;
     this.name = name;
+
     this.status = true;
     this.tenant_id = tenant_id;
     this.sockets = new Map<string, Socket>();
@@ -51,6 +54,11 @@ export class UserSession {
     this.status = status;
     this.last_update = moment().utc();
   }
+  setPlatform({ userAgent, platform, ip }) {
+    this.info['platform'] = platform ? platform : this.info['platform']
+    this.info['userAgent'] = userAgent ? userAgent : this.info['userAgent']
+    this.info['ip'] = ip ? ip : this.info['ip']
+  }
   getSocket(socketId: string): Socket {
     return this.sockets.get(socketId);
   }
@@ -67,6 +75,7 @@ export class UserSession {
     tenant_id: string;
     status: boolean;
     sessionId: string;
+    info: Iinfo;
     lastSocket: Socket | string;
     sockets: string[] | Map<string, Socket>;
   } {
@@ -79,6 +88,7 @@ export class UserSession {
       name: this.name,
       status: this.status,
       tenant_id: this.tenant_id,
+      info: this.info,
       sessionId: this.sessionId,
       lastSocket: Sockets ? this.getSocket(sockets[-1]) : sockets[-1],
       sockets: Sockets ? this.sockets : sockets,
@@ -152,6 +162,7 @@ export class SocketSessionService {
         this.sendEvent('create.session', {
           tenant_id: userSession.tenant_id,
           email: userSession.sessionId,
+          info: userSession.info
         });
       }
       if (
@@ -219,6 +230,8 @@ export class SocketSessionService {
           this.sendEvent('create.session', {
             tenant_id: userSession.tenant_id,
             email: userSession.sessionId,
+            info: userSession.info
+
           });
           userSession.setStatus(true);
         }
