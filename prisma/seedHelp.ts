@@ -313,7 +313,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             id: 'a420c591-776d-4e42-ae25-885df7279923',
             type: 'basic',
             page_type: screenTypes.PAGE,
-            title: 'Conexões',
+            title: 'Usuários Ativos',
             formated_title: 'conexoes',
             restrict: false,
             link: 'administrador/conexoes',

@@ -14,6 +14,8 @@ import { PageService } from 'src/admin/pages/page.service';
 import { Update_Page_Group } from '../groups/groups.controller';
 import { Page } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
+import { PrismaService } from 'src/services/prisma.service';
+import { randomUUID } from 'crypto';
 
 @ApiTags('Master/pages')
 @Controller('master/pages')
@@ -21,6 +23,7 @@ export class PagesMasterController {
   constructor(
     private readonly pagesMasterService: PagesMasterService,
     private pageService: PageService,
+    private prisma: PrismaService
   ) {}
 
   @Get('by-tenant/:tenant_id')
@@ -32,6 +35,11 @@ export class PagesMasterController {
   @Roles('Master')
   async findAllByTenantAndUser(@Param('tenant_id') tenant_id) {
     return await this.pagesMasterService.findAllByTenantAndUser(tenant_id);
+  }
+  @Post('user/:tenant_id')
+  @Roles('Master')
+  async ByByTenantAndUser(@Param('tenant_id') tenant_id,  @Body() body) {
+    return await this.pagesMasterService.postTenantAndUser(body,tenant_id);
   }
 
   @Get('')
