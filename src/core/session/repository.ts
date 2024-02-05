@@ -30,6 +30,7 @@ export default class SessionRepository {
       payload.tenant_id,
     );
     if (lastSession && lastSession.exited_at === null) {
+      console.log('Atualizando sessão')
       await this.prisma.user_Session_Hist.update({
         where: {
           id: lastSession.id,
@@ -46,6 +47,8 @@ export default class SessionRepository {
       lastSession.exited_at !== null &&
       moment(moment().utc()).diff(lastSession.exited_at, 'minutes') < 60
     ) {
+      console.log('Atualizando sessão')
+
       await this.prisma.user_Session_Hist.update({
         where: {
           id: lastSession.id,
@@ -58,6 +61,8 @@ export default class SessionRepository {
         },
       });
     } else {
+      console.log('Criando sessão')
+      
       await this.prisma.user_Session_Hist.create({
         data: {
           tenant_id: payload.tenant_id,

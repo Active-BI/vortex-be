@@ -87,11 +87,12 @@ export class WebsocketTestGateway
   }
   @SubscribeMessage('alive')
   async alive(client: Socket, message: any): Promise<void> {
-    console.log(client.handshake.address)
     const { sessionId, userAgent, platform } = JSON.parse(message);
     const userByEmail = this.socketService.getUserSession(sessionId);
+    console.log(userByEmail, 'Alive');
     if (!userByEmail) {
-      console.log(userByEmail, 'Alive');
+    console.log(userByEmail, 'Alive');
+
       client.emit('logout');
     }
     if (userByEmail) {

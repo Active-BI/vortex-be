@@ -155,9 +155,13 @@ export class SocketSessionService {
       );
       const lastUpdate = moment(moment().utc()).diff(
         userSession.last_update,
+        'seconds',
+      );
+      const lastUpdateMin = moment(moment().utc()).diff(
+        userSession.last_update,
         'minutes',
       );
-      if (connectedSockets && lastUpdate < 60 && userSession.status === false) {
+      if (connectedSockets && lastUpdate < 15 && userSession.status === false) {
         userSession.setStatus(true);
         this.sendEvent('create.session', {
           tenant_id: userSession.tenant_id,
@@ -167,7 +171,7 @@ export class SocketSessionService {
       }
       if (
         !connectedSockets ||
-        (lastUpdate > 60 && userSession.status === true)
+        (lastUpdateMin > 60 && userSession.status === true)
       ) {
         userSession.setStatus(false);
         this.sendEvent('close.session', {
