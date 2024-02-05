@@ -76,7 +76,7 @@ export class UserController {
     );
   }
   @Delete(':id')
-  @Roles('Admin')
+  @Roles('Admin', 'Master')
   @ApiResponse({ type: 'void' })
   async deleteUser(@Param('id') id) {
     await this.userService.deleteUser(id);
