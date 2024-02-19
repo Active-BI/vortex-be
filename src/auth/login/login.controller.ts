@@ -29,8 +29,8 @@ export class LoginController {
       const user = await this.loginService.getUserAuth({
         email: userData.email,
       });
-      const validPin = await this.loginService.verifyPin(req.token, body.pin);
-      if (!validPin) throw new Error('Pin inválido');
+      // const validPin = await this.loginService.verifyPin(req.token, body.pin);
+      // if (!validPin) throw new Error('Pin inválido');
       const token = await this.loginService.generateToken(user);
 
       const userRoutes = await this.pageService.getAllPagesByUser(
@@ -90,7 +90,6 @@ export class LoginController {
   @Get('test-cors')
   @ApiBody({ type: CreateLoginDto })
   async testCors(@Body() body: CreateLoginDto, @Req() Req) {
-    console.log(Req);
     return 'ok';
   }
 }

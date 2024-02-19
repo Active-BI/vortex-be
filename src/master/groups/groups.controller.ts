@@ -43,7 +43,6 @@ export class GroupsController {
   @Roles('Master')
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateGroupDto: Update_Page_Group) {
-    console.log(updateGroupDto);
     return this.groupsService.update(id, updateGroupDto);
   }
 

@@ -79,7 +79,6 @@ export default class SessionRepository {
   }: {
     payload: { email: string; tenant_id: string };
   }) {
-        console.log(payload);
     const lastSession = await this.findLastAccess(
       payload.email,
       payload.tenant_id,
@@ -93,7 +92,6 @@ export default class SessionRepository {
           exited_at: new Date().toISOString(),
         },
       });
-      console.log(lastSession.id, 'MESSAGEM DO EVENTO DE ENCERRAMENTO');
     }
   }
 }

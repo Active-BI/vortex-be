@@ -62,7 +62,6 @@ export class PbiReportController {
       method: 'GET',
       headers,
     }).then((res) => {
-      console.log(res.status)
       if (!res.ok) throw res;
 
       return res.json();
@@ -172,7 +171,6 @@ export class PbiReportController {
   ): Promise<any> {
     const { userId, tenant_id } = req.tokenData;
     const userPage = await this.getPageType(group, type, tenant_id, userId);
-    console.log(userPage.Tenant_Page.Page.table_name);
     const data = await this.prisma[
       (userPage.Tenant_Page.Page.table_name + '_table') as 'funcionarios_table'
     ].findMany({
@@ -349,8 +347,6 @@ export class PbiReportController {
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/reports/${userPage.Tenant_Page.Page.report_id}/ExportTo`;
     // header é o objeto onde está o accessToken
     const headers = await this.msalService.getRequestHeader(role_name);
-    console.log({ headers });
-
     const result: any = await fetch(reportInGroupApi, {
       method: 'POST',
       body: {
@@ -359,7 +355,6 @@ export class PbiReportController {
       headers,
     } as any).then((res) => {
       if (!res.ok) throw res;
-      console.log(res);
       return res.json();
     });
     const reportDetails = new PowerBiReportDetails(
