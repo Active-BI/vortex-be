@@ -69,7 +69,6 @@ model User_Session_Hist {
   id             String      @id @default(uuid())
   email        String
   tenant_id String
-  inf     Json?
   created_at DateTime @default(now())
   exited_at DateTime?
   updated_at DateTime? @updatedAt

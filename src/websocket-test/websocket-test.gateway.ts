@@ -68,8 +68,6 @@ export class WebsocketTestGateway
       this.socketService.sendEvent('create.session', {
         email: sessionId,
         tenant_id,
-        info: userSession.info
-  
       });
       return;
     }
@@ -94,7 +92,6 @@ export class WebsocketTestGateway
     }
     if (userByEmail) {
       userByEmail.setSocket(client);
-      userByEmail.setPlatform({userAgent, platform, ip: client.handshake.address });
       userByEmail.setStatus(true);
     }
   }
@@ -108,7 +105,6 @@ export class WebsocketTestGateway
       this.sendEvent('create.session', {
         tenant_id: userByEmail.tenant_id,
         email: userByEmail.sessionId,
-        info: userByEmail.info
       });
       this.checkSocketConnections();
     } else {
