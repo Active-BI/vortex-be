@@ -37,7 +37,7 @@ export class LoginController {
         user.User.id,
         user.User.tenant_id,
       );
-      return { token, tenant_id: user.User.tenant_id, user_email: user.User.contact_email, userRoutes };
+      return { token, tenant_id: user.User.tenant_id, tenant_image: user.User.Tenant.tenant_image, tenant_color: user.User.Tenant.tenant_color, user_email: user.User.contact_email, userRoutes };
     } catch (e) {
       throw new BadRequestException(e.message);
     }

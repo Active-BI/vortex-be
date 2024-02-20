@@ -14,6 +14,7 @@ export class UserAuthService {
       include: {
         User: {
           include: {
+            Tenant: true,
             Rls: true,
           },
         },

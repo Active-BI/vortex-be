@@ -77,6 +77,7 @@ export class WebsocketTestGateway
 
   @SubscribeMessage('disconnect-session')
   async disconnectUser(client: Socket, emailToDisconnect: any): Promise<void> {
+    console.log(emailToDisconnect)
     const user: boolean =
       this.socketService.removeUserSession(emailToDisconnect);
     if (user) {

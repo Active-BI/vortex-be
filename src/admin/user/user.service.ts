@@ -82,7 +82,7 @@ export class UserService {
       contact_email: userEmail,
     });
     await this.smtpService.renderMessage(
-      message_book.request_new_tenant.accept_new_tennat(token),
+      message_book.auth.request_new_sign_up(token,userEmail),
       [userEmail],
     );
   }
