@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Req,
   UnauthorizedException,
@@ -87,9 +88,21 @@ export class LoginController {
   }
 
   @BypassAuth()
-  @Get('test-cors')
-  @ApiBody({ type: CreateLoginDto })
-  async testCors(@Body() body: CreateLoginDto, @Req() Req) {
-    return 'ok';
+  @Get('reset-pass/:email')
+  async ResetPass(@Param('email') email) {
+    try {
+      await this.loginService.resetPass(email);
+    } catch (e) {
+      throw new UnauthorizedException(e.message);
+    }
+  }
+  @BypassAuth()
+  @Post('set-new-pass')
+  async SetNewPass(@Body() payload) {
+    try {
+      await this.loginService.setNewPass(payload);
+    } catch (e) {
+      throw new UnauthorizedException(e.message);
+    }
   }
 }

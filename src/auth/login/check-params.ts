@@ -50,7 +50,8 @@ export class ValidateLoginMiddleware implements NestMiddleware {
     if (
       req.method === 'POST' &&
       !req.path.includes('register') &&
-      !req.path.includes('tfa')
+      !req.path.includes('tfa') && 
+      !req.path.includes('set-new-pass')
     ) {
       try {
         const schema = Joi.object({

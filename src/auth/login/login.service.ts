@@ -4,7 +4,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { TempToken, Token } from 'src/helpers/token';
+import { ResetPassTempToken, TempToken, Token } from 'src/helpers/token';
 import * as bcrypt from 'bcrypt';
 import { CreateLoginDto } from './Swagger';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
@@ -14,6 +14,7 @@ import { PagesMasterService } from 'src/master/pages/pages.service';
 import { UserService } from 'src/admin/user/user.service';
 import { SmtpService } from 'src/services/smtp.service';
 import { message_book } from 'src/services/email_book';
+import { randomUUID } from 'crypto';
 var speakeasy = require('speakeasy');
 
 @Injectable()
@@ -151,5 +152,47 @@ export class LoginService {
 
     const passwordHash = bcrypt.hashSync(login.password, 10);
     this.userAuthService.update({ ...user, password_hash: passwordHash });
+  }
+
+  async resetPass(email) {
+    let user = await this.userAuthService.getUserAuth(email);
+
+    if (!user) throw new Error('Email não cadastrado');
+    const { User, ...args } = user;
+    const secretToReset = randomUUID();
+    const userResp = { ...args, reset_pass: secretToReset } as User_Auth;
+
+    await this.userAuthService.update(userResp);
+
+    const tokenObj = new ResetPassTempToken(email, secretToReset);
+    var token = await this.jwtStrategy.signConfirmRequest(tokenObj);
+    const link = `${process.env['FRONT_BASE_URL']}/#/auth/reset-password/${token}`;
+
+    await this.smtpService.renderMessage(
+      message_book.auth.email_to_reset_pass(link),
+      [email],
+    );
+  }
+
+  async setNewPass({ password, token }) {
+    const decodedToken: { email: string; reset_pass: string } =
+    await this.jwtStrategy.validate(token);
+    let { User, ...userAuth } = await this.userAuthService.getUserAuth(
+      decodedToken.email,
+    );
+
+    if (userAuth.reset_pass !== decodedToken.reset_pass) {
+      throw new UnauthorizedException('Link já utilidado');
+    }
+    const password_hash = bcrypt.hashSync(password, 10);
+
+    const userResp = {
+      ...userAuth,
+      reset_pass: '',
+      password_hash,
+    } as User_Auth;
+
+    await this.userAuthService.update(userResp);
+    return;
   }
 }

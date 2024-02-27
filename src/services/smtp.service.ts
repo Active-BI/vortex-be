@@ -34,9 +34,7 @@ export class SmtpService {
         text: '', // plain text body
         html: content,
       });
-      console.log({ content, subject }, "SUCESSO")
     } catch (e) {
-      console.log(e, "ERRRRRRRRRRRRRR")
       throw new BadRequestException('Email não encontrado');
     }
   }
