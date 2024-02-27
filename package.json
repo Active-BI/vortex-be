@@ -49,6 +49,7 @@
     "bcrypt": "^5.1.1",
     "dotenv": "^16.3.1",
     "dotenv-cli": "^7.3.0",
+    "exceljs": "^4.4.0",
     "express-session": "^1.17.3",
     "faker": "^6.6.6",
     "joi": "^17.9.2",

@@ -63,8 +63,8 @@ model User_Auth {
   last_access              DateTime?
   user_id                  String    @unique
   User                     User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
 }
+
 model User_Session_Hist {
   id             String      @id @default(uuid())
   email        String
@@ -75,6 +75,7 @@ model User_Session_Hist {
   User User @relation(fields: [email], references: [contact_email],  onDelete: Cascade)
   Tenant Tenant @relation(fields: [tenant_id], references: [id])
 }
+
 model User {
   id             String      @id @default(uuid())
   name           String

@@ -87,7 +87,7 @@ export class LoginService {
   }
 
   async verifyPin(token, pin) {
-    const decodedToken: any = await this.jwtStrategy.validate(token);
+    const decodedToken: any = await this.jwtStrategy.verifyTempToken(token);
     const user = await this.userAuthService.getUserAuth(decodedToken.email);
     var verified = speakeasy.totp.verify({
       secret: user.secret,

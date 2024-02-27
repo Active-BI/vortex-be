@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
+import { generateBuffer } from 'src/services/templates';
+
 
 @Injectable()
 export class PageService {
@@ -104,6 +106,7 @@ export class PageService {
             select: {
               User: {
                 select: {
+                  User_Session_Hist: true,
                   name:true,
                   contact_email:true,
                   id:true,
@@ -152,5 +155,8 @@ export class PageService {
         },
       })
     ).sort((a, b) => a.Page.title.localeCompare(b.Page.title));
+  }
+  async exportToExcel(data) {
+    return generateBuffer(data)
   }
 }
