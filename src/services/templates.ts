@@ -49,10 +49,12 @@ export function RHTemplate(type) {
   return buffer;
 }
 
-export function generateBuffer(headers, data) {
+export function generateBuffer(content: {sheet, header, data}[]) {
   const workbook = XLSX.utils.book_new();
-  const worksheet = XLSX.utils.aoa_to_sheet([headers, ...data]);
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'base');
+  content.forEach(element => {
+    const worksheet = XLSX.utils.aoa_to_sheet([element.header, ...element.data]);
+    XLSX.utils.book_append_sheet(workbook, worksheet, element.sheet);
+  });
   const buffer = XLSX.write(workbook, { type: 'buffer' });
   return buffer;
 }

@@ -97,6 +97,6 @@ export class FilesService {
     const sheetData = data.map((item) => Object.values(item));
     const headers = Object.keys(data[0]);
 
-    return generateBuffer(headers, sheetData);
+    // return generateBuffer(headers, sheetData);
   }
 }

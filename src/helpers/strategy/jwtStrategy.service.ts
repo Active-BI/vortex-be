@@ -46,14 +46,23 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       },
     );
   }
-  async signTempToken(paylaod: TempToken | ResetPassTempToken) {
+  async signTempToken(payload: TempToken | ResetPassTempToken) {
     return this.jwtService.sign(
-      { ...paylaod },
+      { ...payload },
       {
         secret: process.env['JWT_TEMP_SECRET'],
         expiresIn: '5m',
       },
     );
+  }
+  async verifyTempToken(payload: string) {
+    try {
+      return await this.jwtService.verifyAsync(payload, {
+        secret: process.env['JWT_TEMP_SECRET'],
+      });
+    } catch (e) {
+      throw new ForbiddenException('Token inválido');
+    }
   }
 
   async validate(payload) {
