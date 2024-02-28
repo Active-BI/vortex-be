@@ -15,6 +15,7 @@ import { UserService } from 'src/admin/user/user.service';
 import { SmtpService } from 'src/services/smtp.service';
 import { message_book } from 'src/services/email_book';
 import { randomUUID } from 'crypto';
+import { PrismaService } from 'src/services/prisma.service';
 var speakeasy = require('speakeasy');
 
 @Injectable()
@@ -25,6 +26,7 @@ export class LoginService {
     private userService: UserService,
     private pagesMasterService: PagesMasterService,
     private smtpService: SmtpService,
+    private prisma: PrismaService
   ) {}
   async generateTotp(user: User_Auth) {
     var secret = speakeasy.generateSecret({ length: 10 });
@@ -85,6 +87,13 @@ export class LoginService {
     const user = await this.userAuthService.getUserAuth(login.email);
     if (!user) throw new BadRequestException('Usuário não existe');
     return user;
+  }
+  async getPageImage() {
+    return await this.prisma.tenant.findFirst({
+      where: {
+        id: '3a4dc251-deea-4d2b-b6fb-8a067944b94e'
+      }
+    })
   }
 
   async verifyPin(token, pin) {

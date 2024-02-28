@@ -38,11 +38,15 @@ export class LoginController {
         user.User.id,
         user.User.tenant_id,
       );
-      return { token, tenant_id: user.User.tenant_id, tenant_image: user.User.Tenant.tenant_image, tenant_color: user.User.Tenant.tenant_color, user_email: user.User.contact_email, userRoutes };
+      console.log(user.User.Tenant)
+      return { token, tenant_id: user.User.tenant_id,
+        app_image: user.User.Tenant.app_image,
+         tenant_image: user.User.Tenant.tenant_image, tenant_color: user.User.Tenant.tenant_color, user_email: user.User.contact_email, userRoutes };
     } catch (e) {
       throw new BadRequestException(e.message);
     }
   }
+
   @BypassAuth()
   @Post()
   @ApiResponse({ type: Token })
@@ -77,6 +81,7 @@ export class LoginController {
       throw new UnauthorizedException(e.message);
     }
   }
+   
   @Get('routes')
   async GetRoutes(@Req() req) {
     const userData = req.tokenData;
@@ -86,7 +91,14 @@ export class LoginController {
     const userRoutes = await this.pageService.getAllPagesByUser(user.User.id, user.User.tenant_id,);
     return { userRoutes };
   }
+  @BypassAuth()
+  @Get('app/image')
+  async AppImage() {
+    const tenant = await this.loginService.getPageImage()
+    console.log(tenant)
 
+    return  {app_image: tenant.app_image, tenant_image: tenant.tenant_image }
+  }
   @BypassAuth()
   @Get('reset-pass/:email')
   async ResetPass(@Param('email') email) {

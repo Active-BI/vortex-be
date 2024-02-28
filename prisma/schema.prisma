@@ -28,6 +28,7 @@ model Tenant {
   tenant_image         String?
   company_description String?
   company_segment      String?
+  app_image             String?
   User                 User[]
   restrict             Boolean?               @default(false)
   Request_admin_access Request_admin_access[]

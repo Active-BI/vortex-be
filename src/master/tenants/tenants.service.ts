@@ -14,6 +14,7 @@ export class TenantsService {
         tenant_name: createTenantDto.tenant_name,
         tenant_color: createTenantDto.tenant_color,
         tenant_image: createTenantDto.tenant_image,
+        app_image: createTenantDto.app_image,
         tenant_cnpj: createTenantDto.tenant_cnpj,
         company_segment: createTenantDto.company_segment,
         company_size: createTenantDto.company_size,
@@ -105,6 +106,7 @@ export class TenantsService {
         company_uf: updateTenantDto.company_uf,
         company_description: updateTenantDto.company_description,
         tenant_cnpj: updateTenantDto.tenant_cnpj,
+        app_image: updateTenantDto.app_image
       },
     });
   }
