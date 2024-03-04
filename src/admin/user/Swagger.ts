@@ -27,8 +27,6 @@ export class TenantClass implements Tenant {
   @ApiProperty()
   tenant_image: string;
   @ApiProperty()
-  app_image: string;
-  @ApiProperty()
   tenant_color: string;
   @ApiProperty()
   tenant_cnpj: string;

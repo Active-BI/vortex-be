@@ -14,7 +14,6 @@ export class TenantsService {
         tenant_name: createTenantDto.tenant_name,
         tenant_color: createTenantDto.tenant_color,
         tenant_image: createTenantDto.tenant_image,
-        app_image: createTenantDto.app_image,
         tenant_cnpj: createTenantDto.tenant_cnpj,
         company_segment: createTenantDto.company_segment,
         company_size: createTenantDto.company_size,
@@ -71,29 +70,29 @@ export class TenantsService {
         },
       },
     });
-
-    (updateTenantDto.dashboard as string[]).forEach(async (e) => {
-      if (
-        (
-          await this.prisma.tenant_Page.findMany({
-            where: {
+      (updateTenantDto.dashboard as string[]).forEach(async (e) => {
+        if (
+          (
+            await this.prisma.tenant_Page.findMany({
+              where: {
+                tenant_id: id,
+              },
+            })
+          )
+            .map((d) => d.page_id)
+            .includes(e)
+        ) {
+          return;
+        } else {
+          await this.prisma.tenant_Page.createMany({
+            data: {
+              page_id: e,
               tenant_id: id,
             },
-          })
-        )
-          .map((d) => d.page_id)
-          .includes(e)
-      ) {
-        return;
-      } else {
-        await this.prisma.tenant_Page.createMany({
-          data: {
-            page_id: e,
-            tenant_id: id,
-          },
-        });
-      }
-    });
+          });
+        }
+      });
+
     return await this.prisma.tenant.update({
       where: { id: id },
       data: {
@@ -106,7 +105,6 @@ export class TenantsService {
         company_uf: updateTenantDto.company_uf,
         company_description: updateTenantDto.company_description,
         tenant_cnpj: updateTenantDto.tenant_cnpj,
-        app_image: updateTenantDto.app_image
       },
     });
   }

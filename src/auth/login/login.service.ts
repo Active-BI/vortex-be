@@ -89,9 +89,9 @@ export class LoginService {
     return user;
   }
   async getPageImage() {
-    return await this.prisma.tenant.findFirst({
+    return await this.prisma.app.findFirst({
       where: {
-        id: '3a4dc251-deea-4d2b-b6fb-8a067944b94e'
+        id: 'd25bd198-782b-486f-a9b2-d8a288ab3673'
       }
     })
   }

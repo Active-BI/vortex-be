@@ -38,9 +38,8 @@ export class LoginController {
         user.User.id,
         user.User.tenant_id,
       );
-      console.log(user.User.Tenant)
       return { token, tenant_id: user.User.tenant_id,
-        app_image: user.User.Tenant.app_image,
+        app_image: user.User.Tenant.tenant_image,
          tenant_image: user.User.Tenant.tenant_image, tenant_color: user.User.Tenant.tenant_color, user_email: user.User.contact_email, userRoutes };
     } catch (e) {
       throw new BadRequestException(e.message);
@@ -70,7 +69,7 @@ export class LoginController {
     }
   }
 
-  @BypassAuth()
+  // @BypassAuth()
   @Post('register')
   @ApiBody({ type: CreateLoginDto })
   async Register(@Body() body: CreateLoginDto) {
@@ -91,14 +90,14 @@ export class LoginController {
     const userRoutes = await this.pageService.getAllPagesByUser(user.User.id, user.User.tenant_id,);
     return { userRoutes };
   }
+
   @BypassAuth()
   @Get('app/image')
   async AppImage() {
-    const tenant = await this.loginService.getPageImage()
-    console.log(tenant)
-
-    return  {app_image: tenant.app_image, tenant_image: tenant.tenant_image }
+    const app = await this.loginService.getPageImage()
+    return  {app_image: app.bg_image, tenant_image: app.logo, bg_color: app.bg_color }
   }
+
   @BypassAuth()
   @Get('reset-pass/:email')
   async ResetPass(@Param('email') email) {
@@ -108,6 +107,7 @@ export class LoginController {
       throw new UnauthorizedException(e.message);
     }
   }
+
   @BypassAuth()
   @Post('set-new-pass')
   async SetNewPass(@Body() payload) {

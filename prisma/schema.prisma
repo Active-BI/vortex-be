@@ -28,7 +28,6 @@ model Tenant {
   tenant_image         String?
   company_description String?
   company_segment      String?
-  app_image             String?
   User                 User[]
   restrict             Boolean?               @default(false)
   Request_admin_access Request_admin_access[]
@@ -36,7 +35,12 @@ model Tenant {
   Office               Office[]
   User_Session_Hist    User_Session_Hist[]
 }
-
+model app {
+  id String @unique @id @default(uuid())
+  logo String
+  bg_image String
+  bg_color String
+}
 model Request_admin_access {
   id                  String   @id @default(uuid())
   createdAt           DateTime @default(now())

@@ -43,6 +43,8 @@ import { SocketController } from './admin/socket/socket.controller';
 import { SocketService } from './admin/socket/socket.service';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import SessionRepository from './core/session/repository';
+import { AppConfigController } from './master/app-config/app-config.controller';
+import { AppConfigService } from './master/app-config/app-config.service';
 
 @Module({
   controllers: [
@@ -59,9 +61,11 @@ import SessionRepository from './core/session/repository';
     PagesMasterController,
     GroupsController,
     OfficeController,
-    SocketController
+    SocketController,
+    AppConfigController,
   ],
   providers: [
+    AppConfigService,
     PrismaService,
     AppService,
     JwtStrategy,
