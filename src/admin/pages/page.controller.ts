@@ -65,7 +65,7 @@ export class PageController {
     const acessos = conections.map(u => ([u.name, u.log.length,u.contact_email, u.log[u.log.length - 1]?.created_at]))
     const buffer = await this.pageService.exportToExcel([
       { sheet: 'permissões', header: ['Relatório', 'Nome', "Email",  ], data: result },
-      { sheet: 'acessos', header: ['Nome', "Email", 'Total de Acessos', 'Data último acesso'], data: acessos },
+      { sheet: 'acessos', header: ['Nome', 'Total de Acessos',  "Email", 'Data último acesso'], data: acessos },
     ]);
     res.setHeader(
       'Content-Type',
