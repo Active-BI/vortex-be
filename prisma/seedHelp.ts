@@ -121,7 +121,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           tenant_name: 'Master',
           tenant_color: '#ffffff',
           tenant_cnpj: '000000000-00000',
-          restrict: false,
+          restrict: true,
           active: true,
         },
       ],

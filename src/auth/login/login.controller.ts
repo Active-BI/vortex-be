@@ -70,6 +70,7 @@ export class LoginController {
   }
 
   // @BypassAuth()
+  @BypassAuth()
   @Post('register')
   @ApiBody({ type: CreateLoginDto })
   async Register(@Body() body: CreateLoginDto) {
