@@ -45,6 +45,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import SessionRepository from './core/session/repository';
 import { AppConfigController } from './master/app-config/app-config.controller';
 import { AppConfigService } from './master/app-config/app-config.service';
+import { TreinamentosModule } from './admin/treinamentos/treinamentos.module';
 
 @Module({
   controllers: [
@@ -103,6 +104,7 @@ import { AppConfigService } from './master/app-config/app-config.service';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    TreinamentosModule,
   ],
 })
 export class AppModule implements NestModule {
