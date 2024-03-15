@@ -5,7 +5,7 @@ export const message_book = {
       content: `<!DOCTYPE html>
     <html>
       <head>
-        <title>Active PME - Seu cadastro foi aceito</title>
+        <title>Active Portal do Cliente - Seu cadastro foi aceito</title>
     
       </head>
       <body>
@@ -15,7 +15,7 @@ export const message_book = {
           <p style="margin-bottom: 20px; font-size: 16px; color: #ffffff; font-family: Arial, sans-serif;">Nossos aprovadores avaliaram seus dados e configuraram um Ambiente só seu!!!</p>
     
           <h2 style="margin-top: 0; font-size: 24px; color: #ffffff; font-family: Arial, sans-serif;">Conclua seu cadastro</h2>
-          <p style="margin-bottom: 20px; font-size: 16px; color: #ffffff; font-family: Arial, sans-serif;">Crie sua senha de acesso do Active PME</p>
+          <p style="margin-bottom: 20px; font-size: 16px; color: #ffffff; font-family: Arial, sans-serif;">Crie sua senha de acesso do Active Portal do Cliente</p>
           <p style="margin: 0;">
             <a href="${process.env['FRONT_BASE_URL']}/#/auth/sign-up/${token}"
               style="display: inline-block; padding: 20px 20px; background-color: #ffffff; color: #0f172a; font-size: 16px; text-decoration: none; font-family: Arial, sans-serif;"
@@ -58,7 +58,7 @@ export const message_book = {
       content: `<!DOCTYPE html>
     <html>
       <head>
-        <title>Active PME - Seu acesso foi solicitado</title>
+        <title>Active Portal do Cliente - Seu acesso foi solicitado</title>
     
       </head>
       <body>
@@ -67,7 +67,7 @@ export const message_book = {
         <td align="center" valign="middle" style="padding: 20px;">
           <p style="margin-bottom: 20px; font-size: 16px; color: #ffffff; font-family: Arial, sans-serif;">${requestAccess}</p>
     
-          <h2 style="margin-top: 0; font-size: 24px; color: #ffffff; font-family: Arial, sans-serif;">Esse usuário solicitou seu ingresso no Active PME</h2>
+          <h2 style="margin-top: 0; font-size: 24px; color: #ffffff; font-family: Arial, sans-serif;">Esse usuário solicitou seu ingresso no Active Portal do Cliente</h2>
           <p style="margin-bottom: 20px; font-size: 16px; color: #ffffff; font-family: Arial, sans-serif;">Conclua agora mesmo seu cadastro!</p>
           <p style="margin: 0;">
             <a href="${process.env['FRONT_BASE_URL']}/#/auth/sign-up/${token}"
