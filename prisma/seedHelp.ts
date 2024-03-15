@@ -88,9 +88,9 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
   await prisma.page.deleteMany();
   await prisma.user_Auth.deleteMany();
   await prisma.user.deleteMany();
+  await prisma.office.deleteMany()
   await prisma.tenant.deleteMany();
   await prisma.rls.deleteMany();
-  await prisma.request_admin_access.deleteMany();
   await prisma.app.deleteMany()
 
   
@@ -466,9 +466,6 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
           // },
 
         ],
-      });
-      await prisma.request_admin_access.createMany({
-        data: userRequests,
       });
     });
 };

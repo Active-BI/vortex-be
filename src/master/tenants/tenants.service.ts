@@ -110,6 +110,9 @@ export class TenantsService {
   }
 
   async remove(id: string) {
+    await this.prisma.office.deleteMany({
+       where: { tenant_id: id },
+     });
     await this.prisma.tenant.delete({
        where: {
          id: id,

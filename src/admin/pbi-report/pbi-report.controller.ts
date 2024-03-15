@@ -187,7 +187,7 @@ export class PbiReportController {
     @Param('group') group,
     @Req() req,
   ): Promise<any> {
-    const { userId, tenant_id, role_name } = req.tokenData;
+    const { userId, tenant_id, tenant_name, role_name } = req.tokenData;
     const userPage = await this.getPageType(group, type, tenant_id, userId);
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/reports/${userPage.Tenant_Page.Page.report_id}`;
 
@@ -220,7 +220,7 @@ export class PbiReportController {
         userPage.Tenant_Page.Page.report_id,
         datasetIds,
         userPage.Tenant_Page.Page.group_id,
-        user,
+        tenant_name,
         headers,
       );
     return reportEmbedConfig;
@@ -231,20 +231,20 @@ export class PbiReportController {
     reportId,
     datasetIds,
     targetWorkspaceId,
-    user,
+    tenant_name,
     header,
   ) {
     const formData = {
       accessLevel: 'View',
     };
-    const listReportRls = ['8dd5b75b-03f5-41ab-8d6c-6a69c8934d88'];
+    const listReportRls = ['0cafa534-6e24-45e3-8ffe-ae39d98c7695'];
     const shoudPassRls = listReportRls.find((report) => report === reportId);
 
     if (shoudPassRls) {
       formData['identities'] = [
         {
-          username: user.contact_email,
-          roles: [user.role_name],
+          username: tenant_name,
+          roles: ["DEFAULT"],
           reports: [reportId],
           datasets: [datasetIds[0]],
         },
