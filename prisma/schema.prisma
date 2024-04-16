@@ -30,7 +30,6 @@ model Tenant {
   company_segment      String?
   User                 User[]
   restrict             Boolean?               @default(false)
-  // Request_admin_access Request_admin_access[]
   Tenant_Page          Tenant_Page[]
   Office               Office[]
   User_Session_Hist    User_Session_Hist[]
@@ -41,22 +40,6 @@ model app {
   bg_image String
   bg_color String
 }
-// model Request_admin_access {
-//   id                  String   @id @default(uuid())
-//   createdAt           DateTime @default(now())
-//   company_description String
-//   company_name        String
-//   company_cnpj        String
-//   company_uf          String?
-//   company_size        String?
-//   company_segment     String?
-//   email               String
-//   name                String
-//   tenant_id           String?
-//   Tenant              Tenant?  @relation(fields: [tenant_id], references: [id])
-//   blocked             Boolean  @default(false)
-//   accept              Boolean  @default(false)
-// }
 
 model User_Auth {
   id                       String    @id @default(uuid())
@@ -167,6 +150,12 @@ model Page {
   page_group_id          String
   Page_Group             Page_Group    @relation(fields: [page_group_id], references: [id], onDelete: Cascade)
   Tenant_Page            Tenant_Page[]
+}
+
+model projeto_cliente {
+  id  String @id @default(uuid())
+  cliente String?
+  projeto String?
 }
 
 model funcionarios_table {
