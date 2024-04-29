@@ -6,12 +6,15 @@ import { json as expressJson } from 'express';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
+
   });
   app.setGlobalPrefix('api');
+  // app.enableCors({
+  //   origin: '*',
+  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  //   credentials: true,
+  // });
   app.enableCors({
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
   });
   app.use(expressJson({ limit: '50mb' }));
   ConfigSwagger(app);

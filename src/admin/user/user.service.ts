@@ -57,6 +57,7 @@ export class UserService {
         contact_email: user.email,
         personal_email: user.email,
         office_id: user.office_id,
+        projects: user.projects,
         tenant_id,
         rls_id: user.rls_id,
       },

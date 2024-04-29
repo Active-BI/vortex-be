@@ -10,7 +10,14 @@ import {
 import { TenantsService } from './tenants.service';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
 import { Tenant } from '@prisma/client';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiProperty, ApiTags } from '@nestjs/swagger';
+
+export class ProjetosDto {
+  @ApiProperty()
+  cliente: string
+  @ApiProperty()
+  projeto: string
+}
 
 @ApiTags('Tenants')
 @Controller('tenants')
@@ -22,6 +29,18 @@ export class TenantsController {
   create(@Body() createTenant: Tenant) {
     return this.tenantsService.create(createTenant);
   }
+
+  @Roles('Master')
+  @Post('projects')
+  uploadProjects(@Body() createTenant: ProjetosDto[]) {
+    return this.tenantsService.upload(createTenant);
+  }
+  @Roles('Master', 'Admin')
+  @Get('projects/:cliente')
+  getProjects(@Param('cliente') cliente: string) {
+    return this.tenantsService.getProjects(cliente);
+  }
+
 
   @Get()
   @Roles('Master')

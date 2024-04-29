@@ -78,6 +78,8 @@ export class UserResponse implements User {
   @ApiProperty()
   office_id: string;
   @ApiProperty()
+  projects: string[];
+  @ApiProperty()
   Rls: RlsClass;
   @ApiProperty()
   User_Auth: UserAuthClass;

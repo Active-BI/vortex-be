@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
+import { ProjetosDto } from './tenants.controller';
 
 @Injectable()
 export class TenantsService {
@@ -44,8 +45,20 @@ export class TenantsService {
     return await this.prisma.tenant.findFirstOrThrow({ where: { id } });
   }
 
-
-
+  async upload(projetos: ProjetosDto[]) {
+    await this.prisma.projeto_cliente.deleteMany()
+    await this.prisma.projeto_cliente.createMany({
+      data: projetos
+    })
+  }
+  async getProjects(cliente: string) {
+    const clientes = await this.prisma.projeto_cliente.findMany({
+      where: {
+        cliente: cliente
+      },
+    })
+    return clientes
+  }
   async update(id: string, updateTenantDto: any) {
     await this.prisma.user_Page.deleteMany({
       where: {

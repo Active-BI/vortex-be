@@ -12,7 +12,7 @@ export class PageService {
    * @param user_id
    * @param tenant_id
    */
-  async setPageUser(tenantPage, user_id, tenant_id) {
+  async setPageUser(tenantPage, user_id, tenant_id, projects) {
     const tenantDash = await this.prisma.tenant_Page.findMany({
       where: {
         tenant_id,
@@ -33,6 +33,17 @@ export class PageService {
         user_id,
       })),
     });
+    if (!projects) {
+      return
+    }
+    await this.prisma.user.update({
+      where: {
+        id: user_id
+      },
+      data: {
+        projects
+      }
+    })
   }
 
   /**

@@ -28,9 +28,9 @@ export class PageController {
   }
   @Post('/:userid')
   async setPageToUser(@Req() req, @Body() body, @Param('userid') userid) {
-    const { PageUserList } = body;
+    const { PageUserList, projetos } = body;
     const { tenant_id } = req.tokenData;
-    await this.pageService.setPageUser(PageUserList, userid, tenant_id);
+    await this.pageService.setPageUser(PageUserList, userid, tenant_id,projetos);
   }
 
   @Get('/user/user-by-page')

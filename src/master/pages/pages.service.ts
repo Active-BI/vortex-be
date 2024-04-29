@@ -77,6 +77,26 @@ export class PagesMasterService {
       },
     });
   }
+
+  async findAllTenantPageInArray(tennatPageArr, tenant_id) {
+    return (
+      await this.prisma.tenant_Page.findMany({
+        where: {
+          tenant_id,
+          AND: {
+            Page: {
+              restrict: false,
+              id: {
+                in: tennatPageArr
+              }
+            },
+          },
+        },
+      })
+    ).map((d) => d.id);
+  }
+
+
   async findAllTenantPage(tenant_id: string) {
     return (
       await this.prisma.tenant_Page.findMany({
@@ -146,7 +166,7 @@ export class PagesMasterService {
     await this.userService.acceptRequestAccess(body.email, uuid);
 
     const { user_id } = await this.userService.createUser(
-      { description: '', email: body.email, name: body.name , id: uuid, rls_id: roles[1].id },
+      { description: '', email: body.email, name: body.name , id: uuid, rls_id: roles[1].id, projects: body.projetos },
       tenant_id,
     );
 
@@ -192,6 +212,7 @@ export class PagesMasterService {
         contact_email: true,
         id: true,
         Rls: true,
+        projects: true,
         Tenant: true,
         User_Auth: {
           select: {
