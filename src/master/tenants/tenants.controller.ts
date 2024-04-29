@@ -35,7 +35,7 @@ export class TenantsController {
   uploadProjects(@Body() createTenant: ProjetosDto[]) {
     return this.tenantsService.upload(createTenant);
   }
-  @Roles('Master')
+  @Roles('Master', 'Admin')
   @Get('projects/:cliente')
   getProjects(@Param('cliente') cliente: string) {
     return this.tenantsService.getProjects(cliente);

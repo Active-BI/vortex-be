@@ -33,7 +33,9 @@ export class PageService {
         user_id,
       })),
     });
-
+    if (!projects) {
+      return
+    }
     await this.prisma.user.update({
       where: {
         id: user_id
