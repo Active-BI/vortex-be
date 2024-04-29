@@ -62,7 +62,14 @@ export class PagesMasterController {
       await this.pagesMasterService.findAllTenantPage(tenant_id);
     await this.pageService.setPageUser(getTenantDashBoards, userid, tenant_id);
   }
-
+  @Roles('Master')
+  @Patch('/:userid')
+  async PatchDashboardUser(@Req() req, @Body() body, @Param('userid') userid) {
+    const { tenant_id,DashboardUserList } = body;
+    const getTenantDashBoards =
+      await this.pagesMasterService.findAllTenantPageInArray(DashboardUserList,tenant_id);
+    await this.pageService.setPageUser(getTenantDashBoards, userid, tenant_id);
+  }
   @Roles('Master')
   @Post('')
   async postPage(@Body() body: pageAndRoles) {

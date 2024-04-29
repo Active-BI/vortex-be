@@ -77,6 +77,26 @@ export class PagesMasterService {
       },
     });
   }
+
+  async findAllTenantPageInArray(tennatPageArr, tenant_id) {
+    return (
+      await this.prisma.tenant_Page.findMany({
+        where: {
+          tenant_id,
+          AND: {
+            Page: {
+              restrict: false,
+              id: {
+                in: tennatPageArr
+              }
+            },
+          },
+        },
+      })
+    ).map((d) => d.id);
+  }
+
+
   async findAllTenantPage(tenant_id: string) {
     return (
       await this.prisma.tenant_Page.findMany({
