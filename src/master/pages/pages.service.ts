@@ -166,17 +166,10 @@ export class PagesMasterService {
     await this.userService.acceptRequestAccess(body.email, uuid);
 
     const { user_id } = await this.userService.createUser(
-      { description: '', email: body.email, name: body.name , id: uuid, rls_id: roles[1].id },
+      { description: '', email: body.email, name: body.name , id: uuid, rls_id: roles[1].id, projects: body.projetos },
       tenant_id,
     );
-    await this.prisma.user.update({
-      where: {
-        id: user_id
-      },
-      data: {
-        projects: body.projetos
-      }
-    })
+
     const tenantsDisponiveis = await this.prisma.tenant_Page.findMany({
       where: { tenant_id },
     });

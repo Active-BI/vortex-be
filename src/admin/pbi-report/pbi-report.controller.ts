@@ -220,7 +220,7 @@ export class PbiReportController {
         userPage.Tenant_Page.Page.report_id,
         datasetIds,
         userPage.Tenant_Page.Page.group_id,
-        tenant_name,
+        user,
         headers,
       );
     return reportEmbedConfig;
@@ -231,7 +231,7 @@ export class PbiReportController {
     reportId,
     datasetIds,
     targetWorkspaceId,
-    tenant_name,
+    user,
     header,
   ) {
     const formData = {
@@ -243,7 +243,7 @@ export class PbiReportController {
     if (shoudPassRls) {
       formData['identities'] = [
         {
-          username: tenant_name,
+          username: user.contact_email,
           roles: ["DEFAULT"],
           reports: [reportId],
           datasets: [datasetIds[0]],
