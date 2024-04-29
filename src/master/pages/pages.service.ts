@@ -169,7 +169,14 @@ export class PagesMasterService {
       { description: '', email: body.email, name: body.name , id: uuid, rls_id: roles[1].id },
       tenant_id,
     );
-
+    await this.prisma.user.update({
+      where: {
+        id: user_id
+      },
+      data: {
+        projects: body.projetos
+      }
+    })
     const tenantsDisponiveis = await this.prisma.tenant_Page.findMany({
       where: { tenant_id },
     });
@@ -212,6 +219,7 @@ export class PagesMasterService {
         contact_email: true,
         id: true,
         Rls: true,
+        projects: true,
         Tenant: true,
         User_Auth: {
           select: {

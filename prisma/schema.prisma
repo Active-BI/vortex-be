@@ -75,6 +75,7 @@ model User {
   rls_id         String
   Rls            Rls         @relation(fields: [rls_id], references: [id], onDelete: Cascade)
   User_Auth      User_Auth?
+  projects        String[]
   User_Page      User_Page[]
   User_Session_Hist User_Session_Hist[]
   office_id       String?
