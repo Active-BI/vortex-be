@@ -312,6 +312,16 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             page_group_id: 'bf296f83-5997-4349-97d6-12df34fd4da6',
           },
           {
+            id: '3f59592f-88b9-4c7e-8478-c1a776e257f0',
+            type: 'basic',
+            page_type: screenTypes.PAGE,
+            title: 'Documentos',
+            formated_title: 'documentos',
+            restrict: false,
+            link: 'administrador/documentos',
+            page_group_id: 'bf296f83-5997-4349-97d6-12df34fd4da6',
+          },
+          {
             id: '4f59592f-88b9-4c7e-8478-c1a776e257f9',
             type: 'basic',
             page_type: screenTypes.PAGE,

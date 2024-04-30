@@ -46,14 +46,10 @@ export class TenantsService {
   }
 
   async upload(projetos: ProjetosDto[]) {
-    // await this.prisma.projeto_cliente.deleteMany()
-    await Promise.all(projetos.map(async (projeto) => {
-      await this.prisma.projeto_cliente.upsert({
-        where: { id: projeto.id }, // Verifica se o produto existe
-        create: { ...projeto },      // Dados para criação (novo produto)
-        update: { cliente: projeto.cliente, projeto: projeto.projeto }, // Dados para atualização
+    await this.prisma.projeto_cliente.deleteMany()
+      await this.prisma.projeto_cliente.createMany({
+        data:projetos // Dados para atualização
       });
-    }));
   }
   async getProjects(cliente: string) {
     const clientes = await this.prisma.projeto_cliente.findMany({
