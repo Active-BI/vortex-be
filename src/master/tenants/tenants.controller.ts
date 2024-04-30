@@ -14,6 +14,8 @@ import { ApiProperty, ApiTags } from '@nestjs/swagger';
 
 export class ProjetosDto {
   @ApiProperty()
+  id: string
+  @ApiProperty()
   cliente: string
   @ApiProperty()
   projeto: string
@@ -40,7 +42,6 @@ export class TenantsController {
   getProjects(@Param('cliente') cliente: string) {
     return this.tenantsService.getProjects(cliente);
   }
-
 
   @Get()
   @Roles('Master')
