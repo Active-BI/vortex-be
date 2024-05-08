@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, BadRequestException, Req, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, BadRequestException, Req, UploadedFiles, UseInterceptors, Res, NotFoundException } from '@nestjs/common';
 import { DocumentsService } from './documents.service';
 import { UpdateDocumentDto } from './dto/update-document.dto';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
@@ -34,16 +34,28 @@ export class DocumentsController {
   async getfiles(@Param('clienteName') nomeCliente) {
     return await this.documentsService.getfiles(nomeCliente);
   }
-  @Roles('Master')
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.documentsService.findOne(+id);
-  }
 
   @Roles('Master')
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDocumentDto: UpdateDocumentDto) {
-    return this.documentsService.update(+id, updateDocumentDto);
+  @Get('/download/:id')
+  async downloadByIdObservation(@Param('id') id: string, @Res() res) {
+    try {
+      const arquivo =
+        await this.documentsService.findFileById(id);
+      if (!arquivo) {
+        throw new NotFoundException('Nenhum arquivo encontrado para este ID');
+      }
+      res.set({
+        'Content-Type': 'application/json',
+        'Content-Disposition':  `attachment; filename="${arquivo.name}.${arquivo.file_format}"`,
+      });
+      res.send(arquivo.file);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new BadRequestException('Arquivo não encontrado')
+      } else {
+        throw new BadRequestException(error)
+      }
+    }
   }
 
   @Roles('Master')

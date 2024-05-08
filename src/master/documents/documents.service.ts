@@ -49,7 +49,14 @@ export class DocumentsService {
       }
     })
   }
+  async findFileById(id) {
+    return await this.prisma.tenant_files.findUnique({
+      where: {
+        id
+      }
+    })
 
+  }
   async clientProjectFilters() {
     const tenants = await this.prisma.tenant.findMany({
       where: {
@@ -65,13 +72,7 @@ export class DocumentsService {
     }))
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} document`;
-  }
 
-  update(id: number, updateDocumentDto: UpdateDocumentDto) {
-    return `This action updates a #${id} document`;
-  }
 
   async remove(id: string) {
     await this.prisma.tenant_files.delete({
