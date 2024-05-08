@@ -1,8 +1,6 @@
-import { faker } from '@faker-js/faker';
 import { PrismaClient } from '@prisma/client';
-import { randomUUID } from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
-import { insertRoutes } from './tabelas';
+// import { insertRoutes } from './tabelas';
 
 const ROLES = {
   User: 'ca21241b-a37d-4e6f-bbb6-26643d3cdd99',
@@ -27,58 +25,6 @@ const TENANTS = {
   TENANT1: 'd6c5a0ad-9723-421d-ba63-897aa9f59c19',
   MASTER: '3a4dc251-deea-4d2b-b6fb-8a067944b94e',
 };
-const tenantIds = [TENANTS.MASTER];
-const totalRows = 250;
-const data = [];
-// Gerar e inserir 100 registros com o tenant_id fornecido
-const userRequests = [];
-
-for (let i = 0; i < 5; i++) {
-  userRequests.push({
-    id: uuidv4(),
-    createdAt: faker.date.past(),
-    company_description: faker.company.name(),
-    company_name: faker.company.name(),
-    company_cnpj: '000000000000' + i,
-    email: faker.internet.email(),
-    name: faker.person.fullName(),
-    blocked: false,
-    accept: false,
-  });
-}
-
-for (let i = 0; i < totalRows; i++) {
-  let desligado = faker.datatype.boolean();
-  data.push({
-    tenant_id: faker.helpers.arrayElement(tenantIds),
-    nomeEmpresa: faker.helpers.arrayElement(['Active BI', 'Outra Empresa']),
-    matricula: randomUUID(),
-    nome: faker.person.fullName(),
-    cargos: faker.person.jobTitle(),
-    dataAdmissao: faker.date.past(),
-    area: faker.commerce.department(),
-    salario: parseFloat(faker.finance.amount(2000, 10000, 2)),
-    sexo: faker.helpers.arrayElement(['Masculino', 'Feminino']),
-    cutis: faker.helpers.arrayElement(['Branco', 'Negro', 'Pardo', 'Amarelo']),
-    dataNascimento: faker.date.between({
-      from: '1950-01-01',
-      to: '2000-12-31',
-    }),
-    email: faker.internet.email(),
-    vinculoEmpregaticio: faker.helpers.arrayElement([
-      'CLT',
-      'PJ',
-      'Freelance',
-      'Prazo Determinado (Lei 9.601)',
-    ]),
-    situacaoEmpregado: faker.helpers.arrayElement(['Ativo', 'Inativo']),
-    grauInstrucao: faker.helpers.arrayElement(['Ensino Médio', 'Superior']),
-    pcd: desligado ? 'sim' : 'não',
-    desligado: desligado ? 'sim' : 'não',
-    dataDesligamento: desligado ? faker.date.past() : null,
-    motivoDesligamento: desligado ? faker.lorem.paragraph(2) : null,
-  });
-}
 
 export const EmployeeSeed = async (prisma: PrismaClient) => {
   await prisma.page_Role.deleteMany();
@@ -129,7 +75,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
   };
   await setup()
     .then(async () => {
-      await insertRoutes(prisma);
+      // await insertRoutes(prisma);
     })
     .then(async () => {
       const userAdmin = '18da15ab-ae39-4b1c-98e9-0e0859556396';
@@ -319,10 +265,10 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             formated_title: 'documentos',
             restrict: true,
             link: '/master/gestao/documentos',
-            page_group_id: 'bf296f83-5997-4349-97d6-12df34fd4da6',
+            page_group_id: '3457d477-62c8-4596-8e30-71f9095064e2',
           },
           {
-            id: '9f59592f-88b9-4c7e-8478-c1a776e257f0',
+            id: '9f59592f-88b9-4c7e-8478-c1a776e257T1',
             type: 'basic',
             page_type: screenTypes.PAGE,
             title: 'Documentos',
@@ -393,11 +339,11 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             page_id: '744b86c7-e6ac-43cf-ad65-1106081d1507',
             tenant_id: TENANTS.MASTER,
           },
-          // {
-          //   id: '7b344198-02e8-411b-b801-f6641d1395d1',
-          //   page_id: '4351cd1c-ff08-4025-b862-5fa9c5938330',
-          //   tenant_id: TENANTS.MASTER,
-          // },
+          {
+            id: '7b344198-02e8-411b-b801-f6641d1395d1',
+            page_id: '9f59592f-88b9-4c7e-8478-c1a776e257T1',
+            tenant_id: TENANTS.TENANT1,
+          },
           {
             id: '5c96a436-c455-49e1-a12d-42bf5e86edf6',
             page_id: '9a7dc980-cc5f-4060-a111-e006d62e5f18',

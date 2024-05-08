@@ -32,7 +32,6 @@
   "dependencies": {
     "@azure/identity": "^3.3.0",
     "@azure/msal-node": "^2.0.2",
-    "@faker-js/faker": "^8.0.2",
     "@microsoft/microsoft-graph-client": "^3.0.5",
     "@nestjs/common": "^10.2.1",
     "@nestjs/config": "^3.0.0",
@@ -52,7 +51,6 @@
     "dotenv-cli": "^7.3.0",
     "exceljs": "^4.4.0",
     "express-session": "^1.17.3",
-    "faker": "^6.6.6",
     "joi": "^17.9.2",
     "moment": "^2.29.4",
     "nodemailer": "^6.9.4",

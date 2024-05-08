@@ -24,18 +24,18 @@ export class DocumentsController {
     }
   }
 
-  @Roles('Master')
+  @Roles('Master', 'Admin')
   @Get('client-project-filter')
   clientProjectFilters() {
     return this.documentsService.clientProjectFilters();
   }
-  @Roles('Master')
+  @Roles('Master', 'Admin')
   @Get('files/:clienteName')
   async getfiles(@Param('clienteName') nomeCliente) {
     return await this.documentsService.getfiles(nomeCliente);
   }
 
-  @Roles('Master')
+  @Roles('Master', 'Admin')
   @Get('/download/:id')
   async downloadByIdObservation(@Param('id') id: string, @Res() res) {
     try {
