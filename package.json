@@ -10,6 +10,7 @@
   },
   "scripts": {
     "migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev",
+    "generate:dev": "dotenv -e .env.development -- npx prisma generate dev",
     "migrate:dev-co": "dotenv -e .env.development -- npx prisma migrate dev --create-only",
     "migrate:prod": "dotenv -e .env -- npx prisma migrate deploy",
     "seed:prod": "dotenv -e .env -- npx prisma db seed",
@@ -74,6 +75,7 @@
     "@types/express": "^4.17.17",
     "@types/express-session": "^1.17.7",
     "@types/jest": "29.5.4",
+    "@types/multer": "^1.4.11",
     "@types/node": "20.5.4",
     "@types/nodemailer": "^6.4.9",
     "@types/passport-local": "^1.0.35",

@@ -46,7 +46,8 @@ import SessionRepository from './core/session/repository';
 import { AppConfigController } from './master/app-config/app-config.controller';
 import { AppConfigService } from './master/app-config/app-config.service';
 import { TreinamentosModule } from './admin/treinamentos/treinamentos.module';
-
+import { DocumentsModule } from './master/documents/documents.module';
+ 
 @Module({
   controllers: [
     AppController,
@@ -105,7 +106,8 @@ import { TreinamentosModule } from './admin/treinamentos/treinamentos.module';
       isGlobal: true,
     }),
     TreinamentosModule,
-  ],
+    DocumentsModule,
+   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
