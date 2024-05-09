@@ -65,9 +65,7 @@ export const message_book = {
       <table align="center" width="300" height="300" cellpadding="0" cellspacing="0" style="border-collapse: collapse; background-color: #0f172a;">
       <tr>
         <td align="center" valign="middle" style="padding: 20px;">
-          <p style="margin-bottom: 20px; font-size: 16px; color: #ffffff; font-family: Arial, sans-serif;">${requestAccess}</p>
-    
-          <h2 style="margin-top: 0; font-size: 24px; color: #ffffff; font-family: Arial, sans-serif;">Esse usuário solicitou seu ingresso no Active Portal do Cliente</h2>
+          <h2 style="margin-top: 0; font-size: 24px; color: #ffffff; font-family: Arial, sans-serif;">Seu ingresso foi solicitado no Portal do Cliente - ActiveBi</h2>
           <p style="margin-bottom: 20px; font-size: 16px; color: #ffffff; font-family: Arial, sans-serif;">Conclua agora mesmo seu cadastro!</p>
           <p style="margin: 0;">
             <a href="${process.env['FRONT_BASE_URL']}/#/auth/sign-up/${token}"
