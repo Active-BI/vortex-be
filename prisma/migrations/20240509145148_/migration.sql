@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "Tenant_files" (
-    "id" UUID NOT NULL DEFAULT public.uuid_generate_v4(),
+    "id" UUID NOT NULL,
     "created_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_by" VARCHAR(255),
     "updated_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
