@@ -48,6 +48,43 @@ import { AppConfigService } from './master/app-config/app-config.service';
 import { TreinamentosModule } from './admin/treinamentos/treinamentos.module';
 import { DocumentsModule } from './master/documents/documents.module';
  
+
+let providers: any = [
+  AppConfigService,
+  PrismaService,
+  AppService,
+  JwtStrategy,
+  JwtService,
+  { provide: APP_GUARD, useClass: JwtGuard },
+  {
+    provide: APP_GUARD,
+    useClass: RolesGuard,
+  },
+  RoleGuard,
+  JwtGuard,
+  LoginService,
+  UserAuthService,
+  UserService,
+  PbiReportService,
+  MsalService,
+  PageService,
+  TemplateHandlerService,
+  TenantsService,
+  MasterRequestService,
+  PagesMasterService,
+  RequestAccessService,
+  SmtpService,
+  FilesService,
+  GroupsService,
+  OfficeService,
+  SocketSessionService,
+  SocketService,
+  SessionRepository
+]
+
+if (process.env['NODE_ENV'] === 'prod') {
+  providers = [...providers, WebsocketTestGateway]
+}
 @Module({
   controllers: [
     AppController,
@@ -66,39 +103,7 @@ import { DocumentsModule } from './master/documents/documents.module';
     SocketController,
     AppConfigController,
   ],
-  providers: [
-    AppConfigService,
-    PrismaService,
-    AppService,
-    JwtStrategy,
-    JwtService,
-    { provide: APP_GUARD, useClass: JwtGuard },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
-    RoleGuard,
-    JwtGuard,
-    LoginService,
-    UserAuthService,
-    UserService,
-    PbiReportService,
-    MsalService,
-    PageService,
-    TemplateHandlerService,
-    TenantsService,
-    MasterRequestService,
-    PagesMasterService,
-    RequestAccessService,
-    SmtpService,
-    FilesService,
-    GroupsService,
-    OfficeService,
-    WebsocketTestGateway,
-    SocketSessionService,
-    SocketService,
-    SessionRepository
-  ],
+  providers,
   exports: [JwtStrategy],
   imports: [
     EventEmitterModule.forRoot(),
