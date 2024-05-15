@@ -67,9 +67,7 @@ export class UserResponse implements User {
   name: string;
   @ApiProperty()
   born_date: Date;
-  @ApiProperty()
-  personal_email: string;
-  @ApiProperty()
+  @ApiProperty()  
   contact_email: string;
   @ApiProperty()
   tenant_id: string;
@@ -81,10 +79,10 @@ export class UserResponse implements User {
   projects: string[];
   @ApiProperty()
   Rls: RlsClass;
+  // @ApiProperty()
+  // User_Auth: any;
   @ApiProperty()
-  User_Auth: UserAuthClass;
-  @ApiProperty()
-  Tenant: TenantClass;
+  Tenant: any;
 }
 export class CreateUserBody {
   @ApiProperty()

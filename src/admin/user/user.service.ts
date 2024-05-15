@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { UserAuthService } from 'src/auth/user_auth/user_auth.service';
-import { EditUserBody, UserResponse } from './Swagger';
+import { EditUserBody, UserResponse } from './DTOS';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
 import { SmtpService } from 'src/services/smtp.service';
 import { message_book } from 'src/services/email_book';
@@ -21,8 +21,11 @@ export class UserService {
       },
       include: {
         Rls: true,
-        User_Auth: true,
-        Tenant: true,
+        Tenant: {
+          select: {
+            tenant_name: true,
+          }
+        },
       },
     });
   }
@@ -36,12 +39,16 @@ export class UserService {
       },
       include: {
         Rls: true,
-        User_Auth: true,
-        Tenant: true,
+        Tenant: {
+          select: {
+            tenant_name: true,
+          }
+        },
         User_Page: true,
       },
     });
   }
+
   async UpdateUSer(user: EditUserBody): Promise<UserResponse> {
     const userUpdate = await this.prisma.user.update({
       where: { id: user.id },
@@ -49,13 +56,13 @@ export class UserService {
     });
     return await this.findById(user.id, userUpdate.tenant_id);
   }
+
   async createUser(user, tenant_id: string): Promise<{ user_id: string }> {
     await this.prisma.user.create({
       data: {
         id: user.id,
         name: user.name,
         contact_email: user.email,
-        personal_email: user.email,
         office_id: user.office_id,
         projects: user.projects,
         tenant_id,
@@ -66,6 +73,7 @@ export class UserService {
 
     return { user_id: user.id };
   }
+
   async createTransportEmail(userEmail, userId, author_contact_email) {
     const token = await this.jwtStrategy.signRegisterToken({
       userId,
@@ -94,15 +102,15 @@ export class UserService {
           {
             contact_email: email,
           },
-          {
-            personal_email: email,
-          },
         ],
       },
       include: {
         Rls: true,
-        User_Auth: true,
-        Tenant: true,
+        Tenant: {
+          select: {
+            tenant_name: true,
+          }
+        },
         User_Page: true,
       },
     });

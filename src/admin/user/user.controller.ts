@@ -9,18 +9,22 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateUserBody, EditUserBody, UserResponse } from './Swagger';
+import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateUserBody, EditUserBody, UserResponse } from './DTOS';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
 import { randomUUID } from 'crypto';
 
 @ApiTags('User')
+@ApiBearerAuth('JWT')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
   @Roles('Admin')
+  @ApiCreatedResponse({
+    description: 'Installment created successfully',
+  })
   @ApiResponse({ type: [UserResponse] })
   async findAll(@Req() req) {
     const { tenant_id } = req.tokenData;
