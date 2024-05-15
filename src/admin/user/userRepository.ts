@@ -2,6 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { EditUserBody, UserResponse } from './DTOS';
 
+export interface ICreateUser {
+  id: string
+  name: string
+  email: string,
+  office_id: string
+  projects: string[]
+  rls_id: string
+}
+
 const include = {
     Rls: true,
     Tenant: {
@@ -59,7 +68,8 @@ export class UserRepository {
     });
   }
 
-  async createUser(user, tenant_id: string): Promise<void> {
+  async createUser(user: ICreateUser, tenant_id: string): Promise<void> {
+
     await this.prisma.user.create({
       data: {
         id: user.id,

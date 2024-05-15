@@ -5,7 +5,8 @@ import { EditUserBody, UserResponse } from './DTOS';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
 import { SmtpService } from 'src/services/smtp.service';
 import { message_book } from 'src/services/email_book';
-import { UserRepository } from './userRepository';
+import { ICreateUser, UserRepository } from './userRepository';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class UserService {
@@ -29,11 +30,21 @@ export class UserService {
     return await this.findById(user.id, user.tenant_id);
   }
 
-  async createUser(user, tenant_id: string): Promise<{ user_id: string }> {
+  async createUser(user: ICreateUser, tenant_id: string): Promise<ICreateUser> {
+    const uuid = randomUUID();
+    user['id'] = uuid
+
     await this.userRepository.createUser(user, tenant_id)
     await this.userAuthService.createAuthUser(user.email, user.id);
 
-    return { user_id: user.id };
+
+    await this.createTransportEmail(
+      user.email,
+      user.id,
+      user.email,
+    );
+
+    return user
   }
 
   async createTransportEmail(userEmail, userId, author_contact_email) {
