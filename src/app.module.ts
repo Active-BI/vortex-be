@@ -47,6 +47,7 @@ import { AppConfigController } from './master/app-config/app-config.controller';
 import { AppConfigService } from './master/app-config/app-config.service';
 import { TreinamentosModule } from './admin/treinamentos/treinamentos.module';
 import { DocumentsModule } from './master/documents/documents.module';
+import { UserRepository } from './admin/user/userRepository';
  
 
 let providers: any = [
@@ -79,7 +80,8 @@ let providers: any = [
   OfficeService,
   SocketSessionService,
   SocketService,
-  SessionRepository
+  SessionRepository,
+  UserRepository
 ]
 
 if (process.env['NODE_ENV'] === 'prod') {
