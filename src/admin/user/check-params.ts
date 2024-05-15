@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { NextFunction, Request } from 'express';
-import { CreateUserBody } from './DTOS';
+import { CreateUserBody } from './dto/DTOS';
 import { UserService } from './user.service';
 import { UserAuthService } from 'src/auth/user_auth/user_auth.service';
 import * as Joi from 'joi';

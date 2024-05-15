@@ -12,11 +12,9 @@ import { ValidateProjectsMiddleware } from './master/tenants/projectsMiddleware'
 export function MiddlewareResolver(consumer: MiddlewareConsumer) {
   consumer.apply(TokenValidationMiddleware).forRoutes('*');
   consumer.apply(ValidateLoginMiddleware).forRoutes(LoginController);
-  consumer.apply(ValidateUserAdminMiddleware).forRoutes(UserController);
   consumer
     .apply(ValidateAdminRequestMiddleware)
     .forRoutes(MasterRequestController);
 
   consumer.apply(ValidateProjectsMiddleware).forRoutes(TenantsController);
-
 }

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Rls, Tenant, User, User_Auth } from '@prisma/client';
+import { IsArray, IsNotEmpty, IsString, isNotEmpty } from 'class-validator';
 
 export class CreateUserResponse {
   @ApiProperty({})
@@ -19,7 +20,7 @@ export class TenantClass implements Tenant {
   @ApiProperty()
   company_segment: string;
   @ApiProperty()
-  company_description
+  company_description;
   @ApiProperty()
   id: string;
   @ApiProperty()
@@ -39,7 +40,6 @@ export class TenantClass implements Tenant {
   @ApiProperty()
   restrict: boolean;
 }
-
 
 class UserAuthClass implements User_Auth {
   @ApiProperty()
@@ -67,7 +67,7 @@ export class UserResponse implements User {
   name: string;
   @ApiProperty()
   born_date: Date;
-  @ApiProperty()  
+  @ApiProperty()
   contact_email: string;
   @ApiProperty()
   tenant_id: string;
@@ -86,20 +86,40 @@ export class UserResponse implements User {
 }
 export class CreateUserBody {
   @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   name: string;
+
   @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   email: string;
+
   @ApiProperty()
-  profession: string;
+  @IsString()
+  @IsNotEmpty()
+  office_id: string;
+
   @ApiProperty()
-  description: string;
-  @ApiProperty()
-  tenant_id: string;
-  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
   rls_id: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsArray()
+  projects: string[];
+
+  // @ApiProperty()
+  // profession: string;
+  // @ApiProperty()
+  // description: string;
+  // @ApiProperty()
+  // tenant_id: string;
 }
 export class EditUserBody extends CreateUserBody {
   @ApiProperty()
+  @IsNotEmpty()
   id: string;
 }
 export class Token {

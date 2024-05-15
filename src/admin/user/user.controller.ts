@@ -9,8 +9,14 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateUserBody, EditUserBody, UserResponse } from './DTOS';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { CreateUserBody, EditUserBody, UserResponse } from './dto/DTOS';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
 import { randomUUID } from 'crypto';
 
