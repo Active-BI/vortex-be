@@ -1,3 +1,4 @@
+import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
 import { Rls, Tenant, User, User_Auth } from '@prisma/client';
 import { IsArray, IsNotEmpty, IsString, MinLength } from 'class-validator';
@@ -59,6 +60,10 @@ class UserAuthClass implements User_Auth {
   @ApiProperty()
   user_id: string;
 }
+class TenantName {
+  @ApiProperty()
+  tenant_name: string;
+}
 
 export class UserResponse implements User {
   @ApiProperty()
@@ -82,8 +87,9 @@ export class UserResponse implements User {
   // @ApiProperty()
   // User_Auth: any;
   @ApiProperty()
-  Tenant: any;
+  Tenant: TenantName;
 }
+
 export class CreateUserBody {
   @ApiProperty()
   @IsString()
@@ -119,7 +125,9 @@ export class CreateUserBody {
   @IsNotEmpty()
   tenant_id: string;
 }
-export class EditUserBody extends CreateUserBody {
+export class EditUserBody extends PartialType(
+  OmitType(CreateUserBody, ['email'] as const),
+) {
   @ApiProperty()
   @IsNotEmpty()
   id: string;
