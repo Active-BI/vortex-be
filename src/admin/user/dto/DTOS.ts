@@ -115,8 +115,9 @@ export class CreateUserBody {
   // profession: string;
   // @ApiProperty()
   // description: string;
-  // @ApiProperty()
-  // tenant_id: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  tenant_id: string;
 }
 export class EditUserBody extends CreateUserBody {
   @ApiProperty()

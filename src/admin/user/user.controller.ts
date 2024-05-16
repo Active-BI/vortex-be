@@ -58,21 +58,9 @@ export class UserController {
   @ApiBody({ type: CreateUserBody })
   @ApiResponse({ type: UserResponse })
   async postUser(@Req() req, @Body() body: CreateUserBody) {
-    const { tenant_id, contact_email } = req.tokenData;
+    const { tenant_id } = req.tokenData;
 
-    const uuid = randomUUID();
-    const createUser = await this.userService.createUser(
-      { id: uuid, ...body, projects: body.projects },
-      tenant_id,
-    );
-
-    await this.userService.createTransportEmail(
-      body.email,
-      createUser.user_id,
-      contact_email,
-    );
-
-    return createUser;
+    await this.userService.createUser(body, tenant_id);
   }
   @Post('resend')
   @Roles('Admin', 'Master')
