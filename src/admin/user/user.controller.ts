@@ -55,9 +55,9 @@ export class UserController {
 
   @Post()
   @Roles('Admin')
-  @ApiBody({ type: UserResponse })
-  @ApiResponse({ type: CreateUserBody })
-  async postUser(@Req() req, @Body() body) {
+  @ApiBody({ type: CreateUserBody })
+  @ApiResponse({ type: UserResponse })
+  async postUser(@Req() req, @Body() body: CreateUserBody) {
     const { tenant_id, contact_email } = req.tokenData;
 
     const uuid = randomUUID();

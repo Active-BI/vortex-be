@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Rls, Tenant, User, User_Auth } from '@prisma/client';
-import { IsArray, IsNotEmpty, IsString, isNotEmpty } from 'class-validator';
+import { IsArray, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class CreateUserResponse {
   @ApiProperty({})
@@ -87,6 +87,7 @@ export class UserResponse implements User {
 export class CreateUserBody {
   @ApiProperty()
   @IsString()
+  @MinLength(3)
   @IsNotEmpty()
   name: string;
 
