@@ -3,7 +3,7 @@ import { PrismaService } from 'src/services/prisma.service';
 import { EditUserBody, UserResponse } from './dto/DTOS';
 
 export interface ICreateUser {
-  id: string;
+  id?: string;
   name: string;
   email: string;
   office_id: string;
