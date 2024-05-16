@@ -1,17 +1,17 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, OmitType } from '@nestjs/swagger';
+import { CreateUserBody } from './CreateUserDto';
 import { IsArray, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
-export class CreateUserBody {
+export class EditUserBody {
+  @ApiProperty()
+  @IsNotEmpty()
+  id: string;
+
   @ApiProperty()
   @IsString()
   @MinLength(3)
   @IsNotEmpty()
   name: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  email: string;
 
   @ApiProperty()
   @IsString()
@@ -28,7 +28,8 @@ export class CreateUserBody {
   @IsArray()
   projects: string[];
 
-  @ApiProperty()
-  @IsNotEmpty()
-  tenant_id: string;
+  // @ApiProperty()
+  // profession: string;
+  // @ApiProperty()
+  // description: string;
 }

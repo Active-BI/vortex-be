@@ -16,9 +16,11 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CreateUserBody, EditUserBody, UserResponse } from './dto/DTOS';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
 import { randomUUID } from 'crypto';
+import { EditUserBody } from './dto/EditUserDto';
+import { CreateUserBody } from './dto/CreateUserDto';
+import { UserResponse } from './dto/UserResponseDto';
 
 @ApiTags('User')
 @ApiBearerAuth('JWT')
@@ -50,7 +52,9 @@ export class UserController {
   @ApiResponse({ type: UserResponse })
   @ApiBody({ type: EditUserBody })
   async editUser(@Req() req, @Body() Body: EditUserBody) {
-    return await this.userService.UpdateUSer(Body);
+    const { tenant_id } = req.tokenData;
+
+    return await this.userService.UpdateUSer(Body, tenant_id);
   }
 
   @Post()

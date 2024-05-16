@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
-import { EditUserBody, UserResponse } from './dto/DTOS';
+import { EditUserBody } from './dto/EditUserDto';
+import { UserResponse } from './dto/UserResponseDto';
 
 export interface ICreateUser {
   id?: string;
@@ -13,6 +14,7 @@ export interface ICreateUser {
 
 const include = {
   Rls: true,
+  User_Auth: { select: { last_access: true } },
   Tenant: {
     select: {
       tenant_name: true,
