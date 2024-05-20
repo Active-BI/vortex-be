@@ -100,6 +100,17 @@ export class RoutesResponse {
   userRoutes: UserRoute[];
 }
 
+export class AppImageResponse {
+  @ApiProperty()
+  app_image: string;
+
+  @ApiProperty()
+  tentant_image: string;
+
+  @ApiProperty()
+  bg_color: string;
+}
+
 export class Token {
   @ApiProperty({
     required: true,

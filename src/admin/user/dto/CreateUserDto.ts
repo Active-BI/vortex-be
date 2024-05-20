@@ -30,5 +30,5 @@ export class CreateUserBody {
 
   @ApiProperty()
   @IsNotEmpty()
-  tenant_id: string;
+  tenant_id?: string;
 }

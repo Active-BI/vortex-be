@@ -11,7 +11,13 @@ import {
 import { LoginService } from './login.service';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BypassAuth } from 'src/helpers/strategy/jwtGuard.service';
-import { RoutesResponse, TfaResponse, Token, UserRoute } from './Swagger';
+import {
+  AppImageResponse,
+  RoutesResponse,
+  TfaResponse,
+  Token,
+  UserRoute,
+} from './Swagger';
 import { PageService } from 'src/admin/pages/page.service';
 import { CreateLoginDto } from './DTOs/CreateLoginDto';
 import { TfaDto } from './DTOs/TfaDto';
@@ -106,6 +112,7 @@ export class LoginController {
   }
 
   @BypassAuth()
+  @ApiResponse({ type: AppImageResponse })
   @Get('app/image')
   async AppImage() {
     const app = await this.loginService.getPageImage();
