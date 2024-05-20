@@ -165,17 +165,18 @@ export class PagesMasterService {
 
     await this.userService.acceptRequestAccess(body.email, uuid);
 
-    const { user_id } = await this.userService.createUser(
-      { description: '', email: body.email, name: body.name , id: uuid, rls_id: roles[1].id, projects: body.projetos },
+    const { id } = await this.userService.createUser(
+      { email: body.email, name: body.name , id: uuid, rls_id: roles[1].id, projects: body.projetos,office_id: body.office_id },
       tenant_id,
     );
 
     const tenantsDisponiveis = await this.prisma.tenant_Page.findMany({
       where: { tenant_id },
     });
+
     await this.prisma.user_Page.createMany({
       data: tenantsDisponiveis.map((td) => ({
-        user_id,
+        user_id: id,
         tenant_page_id: td.id,
       })),
     });

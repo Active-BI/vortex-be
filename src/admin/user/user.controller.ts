@@ -9,18 +9,30 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateUserBody, EditUserBody, UserResponse } from './Swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
 import { randomUUID } from 'crypto';
+import { EditUserBody } from './dto/EditUserDto';
+import { CreateUserBody } from './dto/CreateUserDto';
+import { UserResponse } from './dto/UserResponseDto';
 
 @ApiTags('User')
+@ApiBearerAuth('JWT')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
   @Roles('Admin')
+  @ApiCreatedResponse({
+    description: 'Installment created successfully',
+  })
   @ApiResponse({ type: [UserResponse] })
   async findAll(@Req() req) {
     const { tenant_id } = req.tokenData;
@@ -40,29 +52,19 @@ export class UserController {
   @ApiResponse({ type: UserResponse })
   @ApiBody({ type: EditUserBody })
   async editUser(@Req() req, @Body() Body: EditUserBody) {
-    return await this.userService.UpdateUSer(Body);
+    const { tenant_id } = req.tokenData;
+
+    return await this.userService.UpdateUSer(Body, tenant_id);
   }
 
   @Post()
   @Roles('Admin')
-  @ApiBody({ type: UserResponse })
-  @ApiResponse({ type: CreateUserBody })
-  async postUser(@Req() req, @Body() body) {
-    const { tenant_id, contact_email } = req.tokenData;
+  @ApiBody({ type: CreateUserBody })
+  @ApiResponse({ type: UserResponse })
+  async postUser(@Req() req, @Body() body: CreateUserBody) {
+    const { tenant_id } = req.tokenData;
 
-    const uuid = randomUUID();
-    const createUser = await this.userService.createUser(
-      { id: uuid, ...body, projects: body.projects },
-      tenant_id,
-    );
-
-    await this.userService.createTransportEmail(
-      body.email,
-      createUser.user_id,
-      contact_email,
-    );
-
-    return createUser;
+    await this.userService.createUser(body, tenant_id);
   }
   @Post('resend')
   @Roles('Admin', 'Master')

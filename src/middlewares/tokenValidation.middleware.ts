@@ -9,7 +9,7 @@ export class TokenValidationMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     const token = req.headers.authorization?.split(' ')[1]; // Obtenha o token da requisição (ajuste conforme sua implementação)
     if (token && token !== null && token !== 'null') {
-      const decodedToken = this.tokenService.validate(token);
+      const decodedToken =await this.tokenService.validate(token);
 
       if (!decodedToken) {
         res.status(401).json({ message: 'Token inválido' });

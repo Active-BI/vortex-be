@@ -8,7 +8,6 @@ export class Token {
   name: string;
   tenant_id: string;
   tenant_name: string;
-  personal_email: string;
   contact_email: string;
   role_id: string;
   role_name: string;
@@ -16,12 +15,11 @@ export class Token {
   role_value: number;
   dashboardUser: any[];
   constructor(
-    { id, name, contact_email, personal_email, Rls, tenant_id, Tenant,projects },
+    { id, name, contact_email, Rls, tenant_id, Tenant,projects },
     dashboardUser,
   ) {
     this.userId = id;
     this.name = name;
-    this.personal_email = personal_email;
     this.contact_email = contact_email;
     this.role_id = Rls.id;
     this.role_name = Rls.name;

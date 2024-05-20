@@ -1,71 +1,51 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { UserAuthService } from 'src/auth/user_auth/user_auth.service';
-import { EditUserBody, UserResponse } from './Swagger';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
 import { SmtpService } from 'src/services/smtp.service';
 import { message_book } from 'src/services/email_book';
+import { ICreateUser, UserRepository } from './userRepository';
+import { randomUUID } from 'crypto';
+import { EditUserBody } from './dto/EditUserDto';
+import { UserResponse } from './dto/UserResponseDto';
 
 @Injectable()
 export class UserService {
   constructor(
-    private prisma: PrismaService,
+    private userRepository: UserRepository,
     private jwtStrategy: JwtStrategy,
     private userAuthService: UserAuthService,
     private smtpService: SmtpService,
   ) {}
   async findAll(tenant_id: string): Promise<UserResponse[]> {
-    return await this.prisma.user.findMany({
-      where: {
-        tenant_id,
-      },
-      include: {
-        Rls: true,
-        User_Auth: true,
-        Tenant: true,
-      },
-    });
+    return await this.userRepository.findAll(tenant_id);
   }
+
   async findById(userId, tenant_id: string): Promise<UserResponse> {
-    return await this.prisma.user.findFirst({
-      where: {
-        id: userId,
-        AND: {
-          tenant_id,
-        },
-      },
-      include: {
-        Rls: true,
-        User_Auth: true,
-        Tenant: true,
-        User_Page: true,
-      },
-    });
+    return await this.userRepository.findById(userId, tenant_id);
   }
-  async UpdateUSer(user: EditUserBody): Promise<UserResponse> {
-    const userUpdate = await this.prisma.user.update({
-      where: { id: user.id },
-      data: user,
-    });
-    return await this.findById(user.id, userUpdate.tenant_id);
+
+  async UpdateUSer(
+    user: EditUserBody,
+    tenant_id: string,
+  ): Promise<UserResponse> {
+    await this.userRepository.UpdateUSer(user);
+
+    return await this.findById(user.id, tenant_id);
   }
-  async createUser(user, tenant_id: string): Promise<{ user_id: string }> {
-    await this.prisma.user.create({
-      data: {
-        id: user.id,
-        name: user.name,
-        contact_email: user.email,
-        personal_email: user.email,
-        office_id: user.office_id,
-        projects: user.projects,
-        tenant_id,
-        rls_id: user.rls_id,
-      },
-    });
+
+  async createUser(user: ICreateUser, tenant_id: string): Promise<ICreateUser> {
+    const uuid = randomUUID();
+    user['id'] = uuid;
+
+    await this.userRepository.createUser(user, tenant_id);
     await this.userAuthService.createAuthUser(user.email, user.id);
 
-    return { user_id: user.id };
+    await this.createTransportEmail(user.email, user.id, user.email);
+
+    return user;
   }
+
   async createTransportEmail(userEmail, userId, author_contact_email) {
     const token = await this.jwtStrategy.signRegisterToken({
       userId,
@@ -83,46 +63,15 @@ export class UserService {
       contact_email: userEmail,
     });
     await this.smtpService.renderMessage(
-      message_book.auth.request_new_sign_up(token,userEmail),
+      message_book.auth.request_new_sign_up(token, userEmail),
       [userEmail],
     );
   }
   async getUser(email: string): Promise<UserResponse> {
-    return this.prisma.user.findFirst({
-      where: {
-        OR: [
-          {
-            contact_email: email,
-          },
-          {
-            personal_email: email,
-          },
-        ],
-      },
-      include: {
-        Rls: true,
-        User_Auth: true,
-        Tenant: true,
-        User_Page: true,
-      },
-    });
+    return await this.userRepository.getUser(email);
   }
 
   async deleteUser(id: string) {
-    await this.prisma.user_Auth.deleteMany({
-      where: {
-        user_id: id,
-      },
-    });
-    await this.prisma.user_Page.deleteMany({
-      where: {
-        user_id: id,
-      },
-    });
-    await this.prisma.user.deleteMany({
-      where: {
-        id: id,
-      },
-    });
+    await await this.userRepository.deleteUser(id);
   }
 }

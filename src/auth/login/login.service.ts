@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { ResetPassTempToken, TempToken, Token } from 'src/helpers/token';
 import * as bcrypt from 'bcrypt';
-import { CreateLoginDto } from './Swagger';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
 import { UserAuthService } from '../user_auth/user_auth.service';
 import { User_Auth } from '@prisma/client';
@@ -16,6 +15,7 @@ import { SmtpService } from 'src/services/smtp.service';
 import { message_book } from 'src/services/email_book';
 import { randomUUID } from 'crypto';
 import { PrismaService } from 'src/services/prisma.service';
+import { CreateLoginDto } from './DTOs/CreateLoginDto';
 var speakeasy = require('speakeasy');
 
 @Injectable()
@@ -26,7 +26,7 @@ export class LoginService {
     private userService: UserService,
     private pagesMasterService: PagesMasterService,
     private smtpService: SmtpService,
-    private prisma: PrismaService
+    private prisma: PrismaService,
   ) {}
   async generateTotp(user: User_Auth) {
     var secret = speakeasy.generateSecret({ length: 10 });
@@ -91,9 +91,9 @@ export class LoginService {
   async getPageImage() {
     return await this.prisma.app.findFirst({
       where: {
-        id: 'd25bd198-782b-486f-a9b2-d8a288ab3673'
-      }
-    })
+        id: 'd25bd198-782b-486f-a9b2-d8a288ab3673',
+      },
+    });
   }
 
   async verifyPin(token, pin) {
@@ -185,7 +185,7 @@ export class LoginService {
 
   async setNewPass({ password, token }) {
     const decodedToken: { email: string; reset_pass: string } =
-    await this.jwtStrategy.validate(token);
+      await this.jwtStrategy.validate(token);
     let { User, ...userAuth } = await this.userAuthService.getUserAuth(
       decodedToken.email,
     );

@@ -11,8 +11,16 @@ import {
 import { LoginService } from './login.service';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BypassAuth } from 'src/helpers/strategy/jwtGuard.service';
-import { CreateLoginDto, Token } from './Swagger';
+import {
+  AppImageResponse,
+  RoutesResponse,
+  TfaResponse,
+  Token,
+  UserRoute,
+} from './Swagger';
 import { PageService } from 'src/admin/pages/page.service';
+import { CreateLoginDto } from './DTOs/CreateLoginDto';
+import { TfaDto } from './DTOs/TfaDto';
 
 @ApiTags('Login')
 @Controller('login')
@@ -24,7 +32,9 @@ export class LoginController {
 
   // @BypassAuth()
   @Post('tfa')
-  async TFA(@Body() body, @Req() req) {
+  @ApiResponse({ type: TfaResponse })
+  @ApiBody({ type: TfaDto })
+  async TFA(@Body() body: TfaDto, @Req() req) {
     try {
       const userData = req.tokenData;
       const user = await this.loginService.getUserAuth({
@@ -38,9 +48,15 @@ export class LoginController {
         user.User.id,
         user.User.tenant_id,
       );
-      return { token, tenant_id: user.User.tenant_id,
+      return {
+        token,
+        tenant_id: user.User.tenant_id,
         app_image: user.User.Tenant.tenant_image,
-         tenant_image: user.User.Tenant.tenant_image, tenant_color: user.User.Tenant.tenant_color, user_email: user.User.contact_email, userRoutes };
+        tenant_image: user.User.Tenant.tenant_image,
+        tenant_color: user.User.Tenant.tenant_color,
+        user_email: user.User.contact_email,
+        userRoutes,
+      };
     } catch (e) {
       throw new BadRequestException(e.message);
     }
@@ -69,7 +85,6 @@ export class LoginController {
     }
   }
 
-  // @BypassAuth()
   @BypassAuth()
   @Post('register')
   @ApiBody({ type: CreateLoginDto })
@@ -81,22 +96,31 @@ export class LoginController {
       throw new UnauthorizedException(e.message);
     }
   }
-   
+
   @Get('routes')
+  @ApiResponse({ type: RoutesResponse })
   async GetRoutes(@Req() req) {
     const userData = req.tokenData;
     const user = await this.loginService.getUserAuth({
       email: userData.contact_email,
     });
-    const userRoutes = await this.pageService.getAllPagesByUser(user.User.id, user.User.tenant_id,);
+    const userRoutes = await this.pageService.getAllPagesByUser(
+      user.User.id,
+      user.User.tenant_id,
+    );
     return { userRoutes };
   }
 
   @BypassAuth()
+  @ApiResponse({ type: AppImageResponse })
   @Get('app/image')
   async AppImage() {
-    const app = await this.loginService.getPageImage()
-    return  {app_image: app.bg_image, tenant_image: app.logo, bg_color: app.bg_color }
+    const app = await this.loginService.getPageImage();
+    return {
+      app_image: app.bg_image,
+      tenant_image: app.logo,
+      bg_color: app.bg_color,
+    };
   }
 
   @BypassAuth()
