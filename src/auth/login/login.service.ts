@@ -16,6 +16,7 @@ import { message_book } from 'src/services/email_book';
 import { randomUUID } from 'crypto';
 import { PrismaService } from 'src/services/prisma.service';
 import { CreateLoginDto } from './DTOs/CreateLoginDto';
+import { PageService } from 'src/admin/pages/page.service';
 var speakeasy = require('speakeasy');
 
 @Injectable()
@@ -27,6 +28,8 @@ export class LoginService {
     private pagesMasterService: PagesMasterService,
     private smtpService: SmtpService,
     private prisma: PrismaService,
+    //
+    private pageService: PageService,
   ) {}
   async generateTotp(user: User_Auth) {
     var secret = speakeasy.generateSecret({ length: 10 });
@@ -65,6 +68,7 @@ export class LoginService {
     await this.generateTotp(user_auth);
     return await this.generateTempToken(user_auth);
   }
+
   async generateTempToken(user: User_Auth) {
     const tokenObj = new TempToken(user.normalized_contact_email.toLowerCase());
     var token = await this.jwtStrategy.signTempToken(tokenObj);
@@ -203,5 +207,51 @@ export class LoginService {
 
     await this.userAuthService.update(userResp);
     return;
+  }
+
+  async verifyTFA(userData, _token, body) {
+    try {
+      const user = await this.getUserAuth({
+        email: userData.email,
+      });
+      const validPin = await this.verifyPin(_token, body.pin);
+      if (!validPin) throw new Error('Pin inválido');
+      const token = await this.generateToken(user);
+
+      const userRoutes = await this.pageService.getAllPagesByUser(
+        user.User.id,
+        user.User.tenant_id,
+      );
+      return {
+        token,
+        tenant_id: user.User.tenant_id,
+        app_image: user.User.Tenant.tenant_image,
+        tenant_image: user.User.Tenant.tenant_image,
+        tenant_color: user.User.Tenant.tenant_color,
+        user_email: user.User.contact_email,
+        userRoutes,
+      };
+    } catch (e) {
+      throw new BadRequestException(e.message);
+    }
+  }
+
+  async login(body: CreateLoginDto) {
+    try {
+      const user_auth = await this.getUserAuth(body);
+      if (user_auth.User.Rls.name === 'Master') {
+        const token = await this.checkPassMaster(body);
+        const userRoutes = await this.pageService.getAllPagesByUser(
+          user_auth.User.id,
+          user_auth.User.tenant_id,
+        );
+        return { token, userRoutes, pass: true };
+      }
+      const token = await this.TFA(body);
+
+      return { token };
+    } catch (e) {
+      throw new UnauthorizedException(e.message);
+    }
   }
 }
