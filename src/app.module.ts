@@ -9,7 +9,6 @@ import { LoginService } from './auth/login/login.service';
 import { LoginController } from './auth/login/login.controller';
 import { RoleGuard } from './helpers/strategy/jwtCheckRole.service';
 import { ConfigModule } from '@nestjs/config';
-import { UserAuthController } from './auth/user_auth/user_auth.controller';
 import { UserAuthService } from './auth/auth_service/user_auth.service';
 import { PrismaService } from 'src/services/prisma.service';
 import { MiddlewareResolver } from './middlwareResolve';
@@ -26,8 +25,6 @@ import { TenantsController } from './master/tenants/tenants.controller';
 import { RolesGuard } from './helpers/roleDecorator/roles.guard';
 import { PagesMasterService } from './master/pages/pages.service';
 import { PagesMasterController } from './master/pages/pages.controller';
-import { RequestAccessController } from './auth/request-access/request-access.controller';
-import { RequestAccessService } from './auth/request-access/request-access.service';
 import { MasterRequestService } from './master/master-request/admin-request.service';
 import { MasterRequestController } from './master/master-request/admin-request.controller';
 import { SmtpService } from './services/smtp.service';
@@ -73,7 +70,6 @@ let providers: any = [
   TenantsService,
   MasterRequestService,
   PagesMasterService,
-  RequestAccessService,
   SmtpService,
   FilesService,
   GroupsService,
@@ -92,13 +88,11 @@ if (process.env['NODE_ENV'] === 'prod') {
   controllers: [
     AppController,
     LoginController,
-    UserAuthController,
     UserController,
     PbiReportController,
     PageController,
     TenantsController,
     MasterRequestController,
-    RequestAccessController,
     FilesController,
     PagesMasterController,
     GroupsController,
