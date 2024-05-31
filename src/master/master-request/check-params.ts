@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { NextFunction, Request } from 'express';
-import { UserAuthService } from 'src/auth/user_auth/user_auth.service';
+import { UserAuthService } from 'src/auth/auth_service/user_auth.service';
 import * as Joi from 'joi';
 
 interface Requestb extends Request {

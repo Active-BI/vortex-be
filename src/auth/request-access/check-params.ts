@@ -4,7 +4,7 @@ import {
   NestMiddleware,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserAuthService } from '../user_auth/user_auth.service';
+import { UserAuthService } from '../auth_service/user_auth.service';
 import { NextFunction, Request } from 'express';
 import * as Joi from 'joi';
 

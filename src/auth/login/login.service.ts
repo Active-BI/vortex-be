@@ -7,16 +7,16 @@ import {
 import { ResetPassTempToken, TempToken, Token } from 'src/helpers/token';
 import * as bcrypt from 'bcrypt';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
-import { UserAuthService } from '../user_auth/user_auth.service';
+//import { UserAuthService } from '../user_auth/user_auth.service';
 import { User_Auth } from '@prisma/client';
 import { PagesMasterService } from 'src/master/pages/pages.service';
 import { UserService } from 'src/admin/user/user.service';
 import { SmtpService } from 'src/services/smtp.service';
 import { message_book } from 'src/services/email_book';
 import { randomUUID } from 'crypto';
-import { PrismaService } from 'src/services/prisma.service';
 import { CreateLoginDto } from './DTOs/CreateLoginDto';
 import { PageService } from 'src/admin/pages/page.service';
+import { UserAuthService } from '../auth_service/user_auth.service';
 var speakeasy = require('speakeasy');
 
 @Injectable()
@@ -27,8 +27,9 @@ export class LoginService {
     private userService: UserService,
     private pagesMasterService: PagesMasterService,
     private smtpService: SmtpService,
-    private prisma: PrismaService,
+
     //
+    // private loginRepository: LoginRepository,
     private pageService: PageService,
   ) {}
   async generateTotp(user: User_Auth) {
@@ -91,13 +92,6 @@ export class LoginService {
     const user = await this.userAuthService.getUserAuth(login.email);
     if (!user) throw new BadRequestException('Usuário não existe');
     return user;
-  }
-  async getPageImage() {
-    return await this.prisma.app.findFirst({
-      where: {
-        id: 'd25bd198-782b-486f-a9b2-d8a288ab3673',
-      },
-    });
   }
 
   async verifyPin(token, pin) {
@@ -209,31 +203,39 @@ export class LoginService {
     return;
   }
 
-  async verifyTFA(userData, _token, body) {
+  async verifyTFA(user, _token, pin) {
     try {
-      const user = await this.getUserAuth({
-        email: userData.email,
-      });
-      const validPin = await this.verifyPin(_token, body.pin);
+      const validPin = await this.verifyPin(_token, pin);
       if (!validPin) throw new Error('Pin inválido');
-      const token = await this.generateToken(user);
-
-      const userRoutes = await this.pageService.getAllPagesByUser(
-        user.User.id,
-        user.User.tenant_id,
-      );
-      return {
-        token,
-        tenant_id: user.User.tenant_id,
-        app_image: user.User.Tenant.tenant_image,
-        tenant_image: user.User.Tenant.tenant_image,
-        tenant_color: user.User.Tenant.tenant_color,
-        user_email: user.User.contact_email,
-        userRoutes,
-      };
+      return await this.generateToken(user);
     } catch (e) {
       throw new BadRequestException(e.message);
     }
+    //
+  }
+
+  async loginTFA(email, _token, pin) {
+    const user = await this.getUserAuth({
+      email,
+    });
+    const token = await this.verifyTFA(user, _token, pin);
+    return await this.userGetConfig(user, token);
+  }
+
+  async userGetConfig(user, token) {
+    const userRoutes = await this.pageService.getAllPagesByUser(
+      user.User.id,
+      user.User.tenant_id,
+    );
+    return {
+      token,
+      tenant_id: user.User.tenant_id,
+      app_image: user.User.Tenant.tenant_image,
+      tenant_image: user.User.Tenant.tenant_image,
+      tenant_color: user.User.Tenant.tenant_color,
+      user_email: user.User.contact_email,
+      userRoutes,
+    };
   }
 
   async login(body: CreateLoginDto) {

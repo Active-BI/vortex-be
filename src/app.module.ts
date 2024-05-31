@@ -10,7 +10,7 @@ import { LoginController } from './auth/login/login.controller';
 import { RoleGuard } from './helpers/strategy/jwtCheckRole.service';
 import { ConfigModule } from '@nestjs/config';
 import { UserAuthController } from './auth/user_auth/user_auth.controller';
-import { UserAuthService } from './auth/user_auth/user_auth.service';
+import { UserAuthService } from './auth/auth_service/user_auth.service';
 import { PrismaService } from 'src/services/prisma.service';
 import { MiddlewareResolver } from './middlwareResolve';
 import { UserService } from './admin/user/user.service';
@@ -48,7 +48,6 @@ import { AppConfigService } from './master/app-config/app-config.service';
 import { TreinamentosModule } from './admin/treinamentos/treinamentos.module';
 import { DocumentsModule } from './master/documents/documents.module';
 import { UserRepository } from './admin/user/userRepository';
- 
 
 let providers: any = [
   AppConfigService,
@@ -81,11 +80,11 @@ let providers: any = [
   SocketSessionService,
   SocketService,
   SessionRepository,
-  UserRepository
-]
+  UserRepository,
+];
 
 if (process.env['NODE_ENV'] === 'prod') {
-  providers = [...providers, WebsocketTestGateway]
+  providers = [...providers, WebsocketTestGateway];
 }
 @Module({
   controllers: [
@@ -114,7 +113,7 @@ if (process.env['NODE_ENV'] === 'prod') {
     }),
     TreinamentosModule,
     DocumentsModule,
-   ],
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
-import { UserAuthService } from 'src/auth/user_auth/user_auth.service';
+import { UserAuthService } from 'src/auth/auth_service/user_auth.service';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
 import { SmtpService } from 'src/services/smtp.service';
 import { message_book } from 'src/services/email_book';
