@@ -25,11 +25,7 @@ import { TenantsController } from './master/tenants/tenants.controller';
 import { RolesGuard } from './helpers/roleDecorator/roles.guard';
 import { PagesMasterService } from './master/pages/pages.service';
 import { PagesMasterController } from './master/pages/pages.controller';
-import { MasterRequestService } from './master/master-request/admin-request.service';
-import { MasterRequestController } from './master/master-request/admin-request.controller';
 import { SmtpService } from './services/smtp.service';
-import { FilesService } from './admin/files/files.service';
-import { FilesController } from './admin/files/files.controller';
 import { GroupsController } from './master/groups/groups.controller';
 import { GroupsService } from './master/groups/groups.service';
 import { OfficeController } from './admin/office/office.controller';
@@ -68,10 +64,8 @@ let providers: any = [
   PageService,
   TemplateHandlerService,
   TenantsService,
-  MasterRequestService,
   PagesMasterService,
   SmtpService,
-  FilesService,
   GroupsService,
   OfficeService,
   SocketSessionService,
@@ -92,8 +86,6 @@ if (process.env['NODE_ENV'] === 'prod') {
     PbiReportController,
     PageController,
     TenantsController,
-    MasterRequestController,
-    FilesController,
     PagesMasterController,
     GroupsController,
     OfficeController,

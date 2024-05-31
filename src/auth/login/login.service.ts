@@ -16,6 +16,7 @@ import { CreateLoginDto } from './DTOs/CreateLoginDto';
 import { PageService } from 'src/admin/pages/page.service';
 import { UserAuthService } from '../auth_service/user_auth.service';
 import { TfaService } from '../auth_service/tfa.service';
+import { PrismaService } from 'src/services/prisma.service';
 var speakeasy = require('speakeasy');
 
 @Injectable()
@@ -27,6 +28,7 @@ export class LoginService {
     private smtpService: SmtpService,
     private tfaService: TfaService,
     private pageService: PageService,
+    private prisma: PrismaService,
   ) {}
   async getUserAuth(login) {
     const user = await this.userAuthService.getUserAuth(login.email);
@@ -149,5 +151,13 @@ export class LoginService {
     } catch (e) {
       throw new UnauthorizedException(e.message);
     }
+  }
+
+  async getPageImage() {
+    return await this.prisma.app.findFirst({
+      where: {
+        id: 'd25bd198-782b-486f-a9b2-d8a288ab3673',
+      },
+    });
   }
 }
