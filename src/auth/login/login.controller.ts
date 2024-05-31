@@ -21,6 +21,7 @@ import {
 import { PageService } from 'src/admin/pages/page.service';
 import { CreateLoginDto } from './DTOs/CreateLoginDto';
 import { TfaDto } from './DTOs/TfaDto';
+import { TfaService } from '../auth_service/tfa.service';
 
 @ApiTags('Login')
 @Controller('login')
@@ -28,6 +29,7 @@ export class LoginController {
   constructor(
     private readonly loginService: LoginService,
     private pageService: PageService,
+    private tfaService: TfaService,
   ) {}
 
   // @BypassAuth()
@@ -40,7 +42,7 @@ export class LoginController {
       token,
     } = req;
     const { pin } = body;
-    return await this.loginService.loginTFA(email, token, pin);
+    return await this.tfaService.loginTFA(email, token, pin);
   }
 
   @BypassAuth()

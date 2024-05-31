@@ -48,6 +48,7 @@ import { AppConfigService } from './master/app-config/app-config.service';
 import { TreinamentosModule } from './admin/treinamentos/treinamentos.module';
 import { DocumentsModule } from './master/documents/documents.module';
 import { UserRepository } from './admin/user/userRepository';
+import { TfaService } from './auth/auth_service/tfa.service';
 
 let providers: any = [
   AppConfigService,
@@ -81,6 +82,7 @@ let providers: any = [
   SocketService,
   SessionRepository,
   UserRepository,
+  TfaService,
 ];
 
 if (process.env['NODE_ENV'] === 'prod') {
