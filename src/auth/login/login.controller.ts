@@ -22,6 +22,7 @@ import { PageService } from 'src/admin/pages/page.service';
 import { CreateLoginDto } from './DTOs/CreateLoginDto';
 import { TfaDto } from './DTOs/TfaDto';
 import { TfaService } from '../auth_service/tfa.service';
+import { SetNewPassDto } from './DTOs/SetNewPassDto';
 
 @ApiTags('Login')
 @Controller('login')
@@ -91,7 +92,8 @@ export class LoginController {
 
   @BypassAuth()
   @Post('set-new-pass')
-  async SetNewPass(@Body() payload) {
+  @ApiBody({type: SetNewPassDto})
+  async SetNewPass(@Body() payload: SetNewPassDto) {
     try {
       await this.loginService.setNewPass(payload);
     } catch (e) {

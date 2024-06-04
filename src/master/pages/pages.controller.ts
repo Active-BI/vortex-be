@@ -23,7 +23,6 @@ export class PagesMasterController {
   constructor(
     private readonly pagesMasterService: PagesMasterService,
     private pageService: PageService,
-    private prisma: PrismaService
   ) {}
 
   @Get('by-tenant/:tenant_id')
@@ -38,8 +37,8 @@ export class PagesMasterController {
   }
   @Post('user/:tenant_id')
   @Roles('Master')
-  async ByByTenantAndUser(@Param('tenant_id') tenant_id,  @Body() body) {
-    return await this.pagesMasterService.postTenantAndUser(body,tenant_id);
+  async ByByTenantAndUser(@Param('tenant_id') tenant_id, @Body() body) {
+    return await this.pagesMasterService.postTenantAndUser(body, tenant_id);
   }
 
   @Get('')
@@ -60,14 +59,28 @@ export class PagesMasterController {
     const { tenant_id, projetos } = body;
     const getTenantDashBoards =
       await this.pagesMasterService.findAllTenantPage(tenant_id);
-    await this.pageService.setPageUser(getTenantDashBoards, userid, tenant_id,projetos);
+    await this.pageService.setPageUser(
+      getTenantDashBoards,
+      userid,
+      tenant_id,
+      projetos,
+    );
   }
   @Roles('Master')
   @Patch('/:userid')
   async PatchDashboardUser(@Req() req, @Body() body, @Param('userid') userid) {
-    const { tenant_id,DashboardUserList, projetos } = body;
-    const getTenantDashBoards = await this.pagesMasterService.findAllTenantPageInArray(DashboardUserList,tenant_id);
-    await this.pageService.setPageUser(getTenantDashBoards, userid, tenant_id,projetos);
+    const { tenant_id, DashboardUserList, projetos } = body;
+    const getTenantDashBoards =
+      await this.pagesMasterService.findAllTenantPageInArray(
+        DashboardUserList,
+        tenant_id,
+      );
+    await this.pageService.setPageUser(
+      getTenantDashBoards,
+      userid,
+      tenant_id,
+      projetos,
+    );
   }
   @Roles('Master')
   @Post('')
