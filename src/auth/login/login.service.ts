@@ -7,15 +7,16 @@ import {
 import { ResetPassTempToken, TempToken, Token } from 'src/helpers/token';
 import * as bcrypt from 'bcrypt';
 import { JwtStrategy } from 'src/helpers/strategy/jwtStrategy.service';
-import { UserAuthService } from '../user_auth/user_auth.service';
 import { User_Auth } from '@prisma/client';
 import { PagesMasterService } from 'src/master/pages/pages.service';
-import { UserService } from 'src/admin/user/user.service';
 import { SmtpService } from 'src/services/smtp.service';
 import { message_book } from 'src/services/email_book';
 import { randomUUID } from 'crypto';
-import { PrismaService } from 'src/services/prisma.service';
 import { CreateLoginDto } from './DTOs/CreateLoginDto';
+import { PageService } from 'src/admin/pages/page.service';
+import { UserAuthService } from '../auth_service/user_auth.service';
+import { TfaService } from '../auth_service/tfa.service';
+import { PrismaService } from 'src/services/prisma.service';
 var speakeasy = require('speakeasy');
 
 @Injectable()
@@ -23,90 +24,18 @@ export class LoginService {
   constructor(
     private jwtStrategy: JwtStrategy,
     private userAuthService: UserAuthService,
-    private userService: UserService,
     private pagesMasterService: PagesMasterService,
     private smtpService: SmtpService,
+    private tfaService: TfaService,
+    private pageService: PageService,
     private prisma: PrismaService,
   ) {}
-  async generateTotp(user: User_Auth) {
-    var secret = speakeasy.generateSecret({ length: 10 });
-
-    let userUpdate: User_Auth = { ...user, secret: secret.base32 };
-
-    await this.userAuthService.update(userUpdate);
-
-    const totp = speakeasy.totp({
-      secret: secret.base32,
-      encoding: 'base32',
-      period: 300,
-      window: 10,
-    });
-    await this.smtpService.renderMessage(
-      message_book.auth.security_login(totp),
-      [userUpdate.normalized_contact_email.toLocaleLowerCase()],
-    );
-    return totp;
-  }
-
-  async TFA(login: CreateLoginDto) {
-    const user_auth = await this.getUserAuth(login);
-
-    const isHash = await bcrypt.compare(
-      login.password,
-      user_auth.password_hash,
-    );
-
-    if (!isHash) throw new ForbiddenException('Senha inválida');
-
-    delete user_auth.User;
-
-    if (!isHash) throw new ForbiddenException('Senha inválida');
-
-    await this.generateTotp(user_auth);
-    return await this.generateTempToken(user_auth);
-  }
-  async generateTempToken(user: User_Auth) {
-    const tokenObj = new TempToken(user.normalized_contact_email.toLowerCase());
-    var token = await this.jwtStrategy.signTempToken(tokenObj);
-
-    return token;
-  }
-  async generateToken(user: User_Auth) {
-    const userToToken = await this.userService.getUser(
-      user.normalized_contact_email.toLowerCase(),
-    );
-    const tokenObj = new Token(userToToken, []);
-
-    var token = await this.jwtStrategy.signToken(tokenObj);
-
-    await this.setLastAccess(user);
-
-    return token;
-  }
   async getUserAuth(login) {
     const user = await this.userAuthService.getUserAuth(login.email);
     if (!user) throw new BadRequestException('Usuário não existe');
     return user;
   }
-  async getPageImage() {
-    return await this.prisma.app.findFirst({
-      where: {
-        id: 'd25bd198-782b-486f-a9b2-d8a288ab3673',
-      },
-    });
-  }
 
-  async verifyPin(token, pin) {
-    const decodedToken: any = await this.jwtStrategy.verifyTempToken(token);
-    const user = await this.userAuthService.getUserAuth(decodedToken.email);
-    var verified = speakeasy.totp.verify({
-      secret: user.secret,
-      encoding: 'base32',
-      token: pin,
-      window: 10,
-    });
-    return verified;
-  }
   async checkPass(login: CreateLoginDto) {
     const user_auth = await this.getUserAuth(login);
 
@@ -203,5 +132,32 @@ export class LoginService {
 
     await this.userAuthService.update(userResp);
     return;
+  }
+
+  async login(body: CreateLoginDto) {
+    try {
+      const user_auth = await this.getUserAuth(body);
+      if (user_auth.User.Rls.name === 'Master') {
+        const token = await this.checkPassMaster(body);
+        const userRoutes = await this.pageService.getAllPagesByUser(
+          user_auth.User.id,
+          user_auth.User.tenant_id,
+        );
+        return { token, userRoutes, pass: true };
+      }
+      const token = await this.tfaService.TFA(body);
+
+      return { token };
+    } catch (e) {
+      throw new UnauthorizedException(e.message);
+    }
+  }
+
+  async getPageImage() {
+    return await this.prisma.app.findFirst({
+      where: {
+        id: 'd25bd198-782b-486f-a9b2-d8a288ab3673',
+      },
+    });
   }
 }

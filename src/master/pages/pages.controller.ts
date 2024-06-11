@@ -11,11 +11,11 @@ import {
 import { PagesMasterService, pageAndRoles } from './pages.service';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
 import { PageService } from 'src/admin/pages/page.service';
-import { Update_Page_Group } from '../groups/groups.controller';
-import { Page } from '@prisma/client';
-import { ApiTags } from '@nestjs/swagger';
-import { PrismaService } from 'src/services/prisma.service';
-import { randomUUID } from 'crypto';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PageResponse } from './dto/page.dto';
+import { CreatePageUserDto, UserTenantResponse } from './dto/user.page.dto';
+import { ByTenantPageResponse } from './dto/by-tenant.dto';
+import { UpdatePagesDto } from './dto/patch.pages.dto';
 
 @ApiTags('Master/pages')
 @Controller('master/pages')
@@ -23,27 +23,30 @@ export class PagesMasterController {
   constructor(
     private readonly pagesMasterService: PagesMasterService,
     private pageService: PageService,
-    private prisma: PrismaService
   ) {}
 
   @Get('by-tenant/:tenant_id')
   @Roles('Master')
+  @ApiResponse({ type: ByTenantPageResponse })
   async findAllByTenant(@Param('tenant_id') tenant_id) {
     return await this.pagesMasterService.findAllByTenant(tenant_id);
   }
   @Get('user/:tenant_id')
   @Roles('Master')
+  @ApiResponse({ type: UserTenantResponse })
   async findAllByTenantAndUser(@Param('tenant_id') tenant_id) {
     return await this.pagesMasterService.findAllByTenantAndUser(tenant_id);
   }
   @Post('user/:tenant_id')
   @Roles('Master')
-  async ByByTenantAndUser(@Param('tenant_id') tenant_id,  @Body() body) {
-    return await this.pagesMasterService.postTenantAndUser(body,tenant_id);
+  @ApiBody({ type: CreatePageUserDto })
+  async ByByTenantAndUser(@Param('tenant_id') tenant_id, @Body() body) {
+    return await this.pagesMasterService.postTenantAndUser(body, tenant_id);
   }
 
   @Get('')
   @Roles('Master')
+  @ApiResponse({ type: PageResponse })
   async findAll() {
     return await this.pagesMasterService.findAll();
   }
@@ -60,14 +63,28 @@ export class PagesMasterController {
     const { tenant_id, projetos } = body;
     const getTenantDashBoards =
       await this.pagesMasterService.findAllTenantPage(tenant_id);
-    await this.pageService.setPageUser(getTenantDashBoards, userid, tenant_id,projetos);
+    await this.pageService.setPageUser(
+      getTenantDashBoards,
+      userid,
+      tenant_id,
+      projetos,
+    );
   }
   @Roles('Master')
   @Patch('/:userid')
   async PatchDashboardUser(@Req() req, @Body() body, @Param('userid') userid) {
-    const { tenant_id,DashboardUserList, projetos } = body;
-    const getTenantDashBoards = await this.pagesMasterService.findAllTenantPageInArray(DashboardUserList,tenant_id);
-    await this.pageService.setPageUser(getTenantDashBoards, userid, tenant_id,projetos);
+    const { tenant_id, DashboardUserList, projetos } = body;
+    const getTenantDashBoards =
+      await this.pagesMasterService.findAllTenantPageInArray(
+        DashboardUserList,
+        tenant_id,
+      );
+    await this.pageService.setPageUser(
+      getTenantDashBoards,
+      userid,
+      tenant_id,
+      projetos,
+    );
   }
   @Roles('Master')
   @Post('')
@@ -77,6 +94,7 @@ export class PagesMasterController {
 
   @Roles('Master')
   @Patch(':id')
+  @ApiBody({ type: UpdatePagesDto }) //?
   update(@Param('id') id: string, @Body() updateGroupDto: pageAndRoles) {
     return this.pagesMasterService.update(id, updateGroupDto);
   }

@@ -21,6 +21,8 @@ import {
 import { PageService } from 'src/admin/pages/page.service';
 import { CreateLoginDto } from './DTOs/CreateLoginDto';
 import { TfaDto } from './DTOs/TfaDto';
+import { TfaService } from '../auth_service/tfa.service';
+import { SetNewPassDto } from './DTOs/SetNewPassDto';
 
 @ApiTags('Login')
 @Controller('login')
@@ -28,6 +30,7 @@ export class LoginController {
   constructor(
     private readonly loginService: LoginService,
     private pageService: PageService,
+    private tfaService: TfaService,
   ) {}
 
   // @BypassAuth()
@@ -35,31 +38,12 @@ export class LoginController {
   @ApiResponse({ type: TfaResponse })
   @ApiBody({ type: TfaDto })
   async TFA(@Body() body: TfaDto, @Req() req) {
-    try {
-      const userData = req.tokenData;
-      const user = await this.loginService.getUserAuth({
-        email: userData.email,
-      });
-      const validPin = await this.loginService.verifyPin(req.token, body.pin);
-      if (!validPin) throw new Error('Pin inválido');
-      const token = await this.loginService.generateToken(user);
-
-      const userRoutes = await this.pageService.getAllPagesByUser(
-        user.User.id,
-        user.User.tenant_id,
-      );
-      return {
-        token,
-        tenant_id: user.User.tenant_id,
-        app_image: user.User.Tenant.tenant_image,
-        tenant_image: user.User.Tenant.tenant_image,
-        tenant_color: user.User.Tenant.tenant_color,
-        user_email: user.User.contact_email,
-        userRoutes,
-      };
-    } catch (e) {
-      throw new BadRequestException(e.message);
-    }
+    const {
+      tokenData: { email },
+      token,
+    } = req;
+    const { pin } = body;
+    return await this.tfaService.loginTFA(email, token, pin);
   }
 
   @BypassAuth()
@@ -67,22 +51,7 @@ export class LoginController {
   @ApiResponse({ type: Token })
   @ApiBody({ type: CreateLoginDto })
   async Login(@Body() body: CreateLoginDto) {
-    try {
-      const user_auth = await this.loginService.getUserAuth(body);
-      if (user_auth.User.Rls.name === 'Master') {
-        const token = await this.loginService.checkPassMaster(body);
-        const userRoutes = await this.pageService.getAllPagesByUser(
-          user_auth.User.id,
-          user_auth.User.tenant_id,
-        );
-        return { token, userRoutes, pass: true };
-      }
-      const token = await this.loginService.TFA(body);
-
-      return { token };
-    } catch (e) {
-      throw new UnauthorizedException(e.message);
-    }
+    return await this.loginService.login(body);
   }
 
   @BypassAuth()
@@ -112,18 +81,6 @@ export class LoginController {
   }
 
   @BypassAuth()
-  @ApiResponse({ type: AppImageResponse })
-  @Get('app/image')
-  async AppImage() {
-    const app = await this.loginService.getPageImage();
-    return {
-      app_image: app.bg_image,
-      tenant_image: app.logo,
-      bg_color: app.bg_color,
-    };
-  }
-
-  @BypassAuth()
   @Get('reset-pass/:email')
   async ResetPass(@Param('email') email) {
     try {
@@ -135,11 +92,24 @@ export class LoginController {
 
   @BypassAuth()
   @Post('set-new-pass')
-  async SetNewPass(@Body() payload) {
+  @ApiBody({type: SetNewPassDto})
+  async SetNewPass(@Body() payload: SetNewPassDto) {
     try {
       await this.loginService.setNewPass(payload);
     } catch (e) {
       throw new UnauthorizedException(e.message);
     }
+  }
+
+  @BypassAuth()
+  @ApiResponse({ type: AppImageResponse })
+  @Get('app/image')
+  async AppImage() {
+    const app = await this.loginService.getPageImage();
+    return {
+      app_image: app.bg_image,
+      tenant_image: app.logo,
+      bg_color: app.bg_color,
+    };
   }
 }

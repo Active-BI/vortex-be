@@ -1,86 +1,46 @@
-import { Injectable } from '@nestjs/common';
-import { CreateDocumentDto } from './dto/create-document.dto';
-import { UpdateDocumentDto } from './dto/update-document.dto';
-import { PrismaService } from 'src/services/prisma.service';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { DomcumentsRepository } from './documents.repository';
 
 @Injectable()
 export class DocumentsService {
-  constructor(private prisma: PrismaService) {
+  constructor(private docsRepository: DomcumentsRepository) {}
 
+  async upload(body, tenant_id, files) {
+    try {
+      const projects = JSON.parse(body);
+      const file = await this.docsRepository.upload(
+        files as any,
+        tenant_id,
+        projects,
+      );
+      return file;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
-  async upload(arquivos: Express.Multer.File[], tenant_id: string, projects: string[]) {
-    return await Promise.all(arquivos.map(async arquivo => {
-      const novoArquivo = await this.prisma.tenant_files.create({
-        data: {
-          file: arquivo.buffer,
-          file_format: arquivo.originalname.split('.').pop(),
-          name: `${arquivo.originalname.split('.')[0]}`,
-          tenant_id,
-          projects
-        }
-      });
 
-      delete novoArquivo.file
-      return novoArquivo
-    }))
-  }
-  async getfiles(tenant_id) {
-    if (tenant_id === 'all') return await this.prisma.tenant_files.findMany({ 
-      select: {
-        id: true,
-        file_format: true,
-        name: true,
-        projects: true,
-        tenant_id: true,
-        created_at: true
-      }})
-
-    return await this.prisma.tenant_files.findMany({
-      where: {
-        tenant_id: tenant_id
-      },
-      select: {
-        id: true,
-        file_format: true,
-        name: true,
-        projects: true,
-        tenant_id: true,
-        created_at: true
-      }
-    })
-  }
   async findFileById(id) {
-    return await this.prisma.tenant_files.findUnique({
-      where: {
-        id
-      }
-    })
+    const arquivo = await this.docsRepository.findFileById(id);
+    if (!arquivo) {
+      throw new NotFoundException('Nenhum arquivo encontrado para este ID');
+    }
 
-  }
-  async clientProjectFilters() {
-    const tenants = await this.prisma.tenant.findMany({
-      where: {
-        restrict: false
-      },
-    })
-
-    const projects = await this.prisma.projeto_cliente.findMany()
-
-    return tenants.map(t => ({
-      ...t,
-      projects: projects.filter(p => p.cliente === t.tenant_name)
-    }))
+    return arquivo;
   }
 
+  async findManyTenantNotRestricted() {
+    return await this.docsRepository.clientProjectFilters();
+  }
 
+  async findManyTenantFiles(tenant_id) {
+    return await this.docsRepository.getfiles(tenant_id);
+  }
 
-  async remove(id: string) {
-    await this.prisma.tenant_files.delete({
-      where: {
-        id
-      }
-    })
-
-    return await this.getfiles('all')
+  async remove(id) {
+    return this.docsRepository.remove(id);
   }
 }

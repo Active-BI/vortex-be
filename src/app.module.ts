@@ -9,8 +9,7 @@ import { LoginService } from './auth/login/login.service';
 import { LoginController } from './auth/login/login.controller';
 import { RoleGuard } from './helpers/strategy/jwtCheckRole.service';
 import { ConfigModule } from '@nestjs/config';
-import { UserAuthController } from './auth/user_auth/user_auth.controller';
-import { UserAuthService } from './auth/user_auth/user_auth.service';
+import { UserAuthService } from './auth/auth_service/user_auth.service';
 import { PrismaService } from 'src/services/prisma.service';
 import { MiddlewareResolver } from './middlwareResolve';
 import { UserService } from './admin/user/user.service';
@@ -26,13 +25,7 @@ import { TenantsController } from './master/tenants/tenants.controller';
 import { RolesGuard } from './helpers/roleDecorator/roles.guard';
 import { PagesMasterService } from './master/pages/pages.service';
 import { PagesMasterController } from './master/pages/pages.controller';
-import { RequestAccessController } from './auth/request-access/request-access.controller';
-import { RequestAccessService } from './auth/request-access/request-access.service';
-import { MasterRequestService } from './master/master-request/admin-request.service';
-import { MasterRequestController } from './master/master-request/admin-request.controller';
 import { SmtpService } from './services/smtp.service';
-import { FilesService } from './admin/files/files.service';
-import { FilesController } from './admin/files/files.controller';
 import { GroupsController } from './master/groups/groups.controller';
 import { GroupsService } from './master/groups/groups.service';
 import { OfficeController } from './admin/office/office.controller';
@@ -48,7 +41,7 @@ import { AppConfigService } from './master/app-config/app-config.service';
 import { TreinamentosModule } from './admin/treinamentos/treinamentos.module';
 import { DocumentsModule } from './master/documents/documents.module';
 import { UserRepository } from './admin/user/userRepository';
- 
+import { TfaService } from './auth/auth_service/tfa.service';
 
 let providers: any = [
   AppConfigService,
@@ -71,34 +64,28 @@ let providers: any = [
   PageService,
   TemplateHandlerService,
   TenantsService,
-  MasterRequestService,
   PagesMasterService,
-  RequestAccessService,
   SmtpService,
-  FilesService,
   GroupsService,
   OfficeService,
   SocketSessionService,
   SocketService,
   SessionRepository,
-  UserRepository
-]
+  UserRepository,
+  TfaService,
+];
 
 if (process.env['NODE_ENV'] === 'prod') {
-  providers = [...providers, WebsocketTestGateway]
+  providers = [...providers, WebsocketTestGateway];
 }
 @Module({
   controllers: [
     AppController,
     LoginController,
-    UserAuthController,
     UserController,
     PbiReportController,
     PageController,
     TenantsController,
-    MasterRequestController,
-    RequestAccessController,
-    FilesController,
     PagesMasterController,
     GroupsController,
     OfficeController,
@@ -114,7 +101,7 @@ if (process.env['NODE_ENV'] === 'prod') {
     }),
     TreinamentosModule,
     DocumentsModule,
-   ],
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
