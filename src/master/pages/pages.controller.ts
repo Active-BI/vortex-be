@@ -93,7 +93,7 @@ export class PagesMasterController {
   }
 
   @Roles('Master')
-  @Patch(':id')
+  @Patch('edit-page/:id')
   @ApiBody({ type: UpdatePagesDto }) //?
   update(@Param('id') id: string, @Body() updateGroupDto: pageAndRoles) {
     return this.pagesMasterService.update(id, updateGroupDto);

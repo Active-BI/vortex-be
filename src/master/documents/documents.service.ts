@@ -10,6 +10,13 @@ export class DocumentsService {
   constructor(private docsRepository: DomcumentsRepository) {}
 
   async upload(body, tenant_id, files) {
+    const filesArr = files.map((file) => {
+      ({
+        file: file.buffer,
+        file_format: file.originalname.split('.').pop(),
+        name: `${file.originalname.split('.')[0]}`,
+      });
+    });
     try {
       const projects = JSON.parse(body);
       const file = await this.docsRepository.upload(
