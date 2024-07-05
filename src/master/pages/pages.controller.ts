@@ -37,12 +37,7 @@ export class PagesMasterController {
   async findAllByTenantAndUser(@Param('tenant_id') tenant_id) {
     return await this.pagesMasterService.findAllByTenantAndUser(tenant_id);
   }
-  @Post('user/:tenant_id')
-  @Roles('Master')
-  @ApiBody({ type: CreatePageUserDto })
-  async ByByTenantAndUser(@Param('tenant_id') tenant_id, @Body() body) {
-    return await this.pagesMasterService.postTenantAndUser(body, tenant_id);
-  }
+
 
   @Get('')
   @Roles('Master')

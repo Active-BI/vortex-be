@@ -28,7 +28,7 @@ export class CreateUserBody {
   @IsArray()
   projects: string[];
 
-  @ApiProperty()
-  @IsNotEmpty()
-  tenant_id?: string;
+  // @ApiProperty()
+  // @IsNotEmpty()
+  // tenant_id?: string;
 }

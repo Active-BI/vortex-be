@@ -2,7 +2,6 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Page } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma.service';
 import { randomUUID } from 'crypto';
-import { UserService } from 'src/admin/user/user.service';
 import { roles } from 'prisma/seedHelp';
 export interface pageAndRoles extends Page {
   roles: string[];
@@ -12,7 +11,7 @@ export class PagesMasterService {
   /**
    *
    */
-  constructor(private prisma: PrismaService, private userService: UserService) {}
+  constructor(private prisma: PrismaService) {}
   async findAll() {
     return (
       await this.prisma.page.findMany({
@@ -156,31 +155,7 @@ export class PagesMasterService {
       })
       .filter((e) => e.restrict === false);
   }
-  async postTenantAndUser(body, tenant_id) {
-    const alreadyExists = await this.userService.getUser(body.email);
-    if (alreadyExists) {
-      throw new BadRequestException('Email já está em uso');
-    }
-    let uuid = randomUUID();
 
-    await this.userService.acceptRequestAccess(body.email, uuid);
-
-    const { id } = await this.userService.createUser(
-      { email: body.email, name: body.name , id: uuid, rls_id: roles[1].id, projects: body.projetos,office_id: body.office_id },
-      tenant_id,
-    );
-
-    const tenantsDisponiveis = await this.prisma.tenant_Page.findMany({
-      where: { tenant_id },
-    });
-
-    await this.prisma.user_Page.createMany({
-      data: tenantsDisponiveis.map((td) => ({
-        user_id: id,
-        tenant_page_id: td.id,
-      })),
-    });
-  }
   async findAllByTenantAndUser(tenant_id) {
     const dashboardsByTenant = await this.prisma.tenant_Page.findMany({
       where: {

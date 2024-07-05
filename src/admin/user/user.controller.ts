@@ -21,6 +21,7 @@ import { randomUUID } from 'crypto';
 import { EditUserBody } from './dto/EditUserDto';
 import { CreateUserBody } from './dto/CreateUserDto';
 import { UserResponse } from './dto/UserResponseDto';
+import { CreatePageUserDto } from 'src/master/pages/dto/user.page.dto';
 
 @ApiTags('User')
 @ApiBearerAuth('JWT')
@@ -39,6 +40,13 @@ export class UserController {
     return await this.userService.findAll(tenant_id);
   }
 
+  // TODO: reapontar no frontend para essa URL
+  @Post('user/:tenant_id')
+  @Roles('Master')
+  @ApiBody({ type: CreatePageUserDto })
+  async ByByTenantAndUser(@Param('tenant_id') tenant_id, @Body() body) {
+    return await this.userService.postTenantAndUser(body, tenant_id);
+  }
   @Get(':id')
   @Roles('Admin')
   @ApiResponse({ type: UserResponse })
@@ -54,7 +62,7 @@ export class UserController {
   async editUser(@Req() req, @Body() Body: EditUserBody) {
     const { tenant_id } = req.tokenData;
 
-    return await this.userService.UpdateUSer(Body, tenant_id);
+    return await this.userService.UpdateUser(Body, tenant_id, req.tokenData);
   }
 
   @Post()

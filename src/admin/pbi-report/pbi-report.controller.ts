@@ -56,7 +56,6 @@ export class PbiReportController {
 
     // header é o objeto onde está o accessToken
     const headers = await this.msalService.getRequestHeader(role_name);
- 
 
     const result: any = await fetch(reportInGroupApi, {
       method: 'GET',
@@ -100,6 +99,7 @@ export class PbiReportController {
     const headers = await this.msalService.getRequestHeader(role_name);
 
     const getDataflows = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/dataflows`;
+    console.log(getDataflows);
     let dataFlowId: any = {};
     await fetch(getDataflows, {
       method: 'GET',
@@ -128,11 +128,13 @@ export class PbiReportController {
     });
   }
   @Get('refresh/:group/:type')
-  async refreshReport(
+  async refreshDataset(
     @Param('type') type,
     @Param('group') group,
     @Req() req,
   ): Promise<any> {
+    console.log(type, group);
+
     const { userId, tenant_id, role_name } = req.tokenData;
     const userPage = await this.getPageType(group, type, tenant_id, userId);
     const headers = await this.msalService.getRequestHeader(role_name);
@@ -147,21 +149,24 @@ export class PbiReportController {
     });
 
     const refreshDataset = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/datasets/${result.datasetId}/refreshes`;
+    console.log(userPage.Tenant_Page.Page.group_id);
+      await fetch(refreshDataset, {
+        method: 'POST',
+        headers,
+      }).then((res: any) => {
+        if (!res.ok) {
+          if (res.status === 429) console.log('limite re requisições atingido');
+          // throw new HttpException(
+          //   'Limite de atualizações atingido',
+          //   HttpStatus.TOO_MANY_REQUESTS,
+          // );
+          console.log('Falha ao atualizar relatório');
+          // throw new BadRequestException('Falha ao atualizar relatório');
+        }
+        console.log('FOI');
+        return res;
+      });
 
-    await fetch(refreshDataset, {
-      method: 'POST',
-      headers,
-    }).then((res: any) => {
-      if (!res.ok) {
-        if (res.status === 429)
-          throw new HttpException(
-            'Limite de atualizações atingido',
-            HttpStatus.TOO_MANY_REQUESTS,
-          );
-        throw new BadRequestException('Falha ao atualizar relatório');
-      }
-      return res;
-    });
   }
   @Get('data/:group/:type')
   async checkIfReportHasData(
@@ -244,7 +249,7 @@ export class PbiReportController {
       formData['identities'] = [
         {
           username: user.contact_email,
-          roles: ["DEFAULT"],
+          roles: ['DEFAULT'],
           reports: [reportId],
           datasets: [datasetIds[0]],
         },
