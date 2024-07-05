@@ -1,0 +1,30 @@
+version: "3.7"
+services:
+  app:
+    build: .
+    command: sh -c "${DOTENV_CONFIGURATION} && npm install && npm run start:dev"
+    depends_on:
+      - db
+    ports:
+      - "5002:5002"
+    volumes:
+      - .:/app
+    # networks:
+    #   - conn
+
+  db:
+    image: postgres:14-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+    # networks:
+    #   - conn
+    ports:
+      - "5432:5432"
+
+# networks:
+#   conn:
+#     driver: bridge
+#     name: conn
+
