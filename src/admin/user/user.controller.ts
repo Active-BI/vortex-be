@@ -40,7 +40,6 @@ export class UserController {
     return await this.userService.findAll(tenant_id);
   }
 
-  // TODO: reapontar no frontend para essa URL
   @Post('user/:tenant_id')
   @Roles('Master')
   @ApiBody({ type: CreatePageUserDto })
