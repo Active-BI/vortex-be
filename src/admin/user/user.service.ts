@@ -10,7 +10,6 @@ import { EditUserBody } from './dto/EditUserDto';
 import { UserResponse } from './dto/UserResponseDto';
 import { PagesMasterService } from 'src/master/pages/pages.service';
 import { roles } from 'prisma/seedHelp';
-import { async } from 'rxjs';
 import { PbiReportController } from '../pbi-report/pbi-report.controller';
 
 @Injectable()
@@ -22,7 +21,7 @@ export class UserService {
     private userAuthService: UserAuthService,
     private smtpService: SmtpService,
     private prisma: PrismaService,
-    private pbiReportController: PbiReportController
+    private pbiReportController: PbiReportController,
   ) {}
   async findAll(tenant_id: string): Promise<UserResponse[]> {
     return await this.userRepository.findAll(tenant_id);
@@ -35,16 +34,24 @@ export class UserService {
   async UpdateUser(
     user: EditUserBody,
     tenant_id: string,
-    tokenData: any
+    tokenData: any,
   ): Promise<UserResponse> {
     await this.userRepository.UpdateUSer(user);
 
-    const allReports = await (await this.pagesMasterService.findAllByTenant(tenant_id)).filter(p => p.page_type === 'report')
-    console.log(allReports)
+    const allReports = await (
+      await this.pagesMasterService.findAllByTenant(tenant_id)
+    ).filter((p) => p.page_type === 'report');
+    console.log(allReports);
     try {
-      await Promise.all([await allReports.forEach( async (report) => {
-        await this.pbiReportController.refreshDataset(report.formated_title, report.Page_Group.formated_title, {tokenData})
-      })])
+      await Promise.all([
+        await allReports.forEach(async (report) => {
+          await this.pbiReportController.refreshDataset(
+            report.formated_title,
+            report.Page_Group.formated_title,
+            { tokenData },
+          );
+        }),
+      ]);
     } catch (error) {
       console.log('Falha ao atualizar relatório');
     }
@@ -93,7 +100,7 @@ export class UserService {
     await await this.userRepository.deleteUser(id);
   }
 
-    async postTenantAndUser(body, tenant_id) {
+  async postTenantAndUser(body, tenant_id) {
     const alreadyExists = await this.getUser(body.email);
     if (alreadyExists) {
       throw new BadRequestException('Email já está em uso');
@@ -103,7 +110,14 @@ export class UserService {
     await this.acceptRequestAccess(body.email, uuid);
 
     const { id } = await this.createUser(
-      { email: body.email, name: body.name , id: uuid, rls_id: roles[1].id, projects: body.projetos,office_id: body.office_id },
+      {
+        email: body.email,
+        name: body.name,
+        id: uuid,
+        rls_id: roles[1].id,
+        projects: body.projetos,
+        office_id: body.office_id,
+      },
       tenant_id,
     );
 

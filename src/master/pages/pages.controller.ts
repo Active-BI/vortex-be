@@ -16,6 +16,7 @@ import { PageResponse } from './dto/page.dto';
 import { CreatePageUserDto, UserTenantResponse } from './dto/user.page.dto';
 import { ByTenantPageResponse } from './dto/by-tenant.dto';
 import { UpdatePagesDto } from './dto/patch.pages.dto';
+import { PbiReportController } from 'src/admin/pbi-report/pbi-report.controller';
 
 @ApiTags('Master/pages')
 @Controller('master/pages')
@@ -23,6 +24,7 @@ export class PagesMasterController {
   constructor(
     private readonly pagesMasterService: PagesMasterService,
     private pageService: PageService,
+    private pbiReportController: PbiReportController,
   ) {}
 
   @Get('by-tenant/:tenant_id')
@@ -37,7 +39,6 @@ export class PagesMasterController {
   async findAllByTenantAndUser(@Param('tenant_id') tenant_id) {
     return await this.pagesMasterService.findAllByTenantAndUser(tenant_id);
   }
-
 
   @Get('')
   @Roles('Master')
@@ -69,6 +70,28 @@ export class PagesMasterController {
   @Patch('/:userid')
   async PatchDashboardUser(@Req() req, @Body() body, @Param('userid') userid) {
     const { tenant_id, DashboardUserList, projetos } = body;
+
+    if (tenant_id) {
+      this.pagesMasterService.refreshDataSet(tenant_id, req.tokenData);
+      // const allReports = await (
+      //   await this.pagesMasterService.findAllByTenant(tenant_id)
+      // ).filter((p) => p.page_type === 'report');
+      // console.log(allReports);
+      // try {
+      //   await Promise.all([
+      //     await allReports.forEach(async (report) => {
+      //       await this.pbiReportController.refreshDataset(
+      //         report.formated_title,
+      //         report.Page_Group.formated_title,
+      //         { tokenData: req.tokenData },
+      //       );
+      //     }),
+      //   ]);
+      // } catch (error) {
+      //   console.log('Falha ao atualizar relatório');
+      // }
+    }
+
     const getTenantDashBoards =
       await this.pagesMasterService.findAllTenantPageInArray(
         DashboardUserList,

@@ -3,6 +3,7 @@ import { Page } from '@prisma/client';
 import { PrismaService } from 'src/services/prisma.service';
 import { randomUUID } from 'crypto';
 import { roles } from 'prisma/seedHelp';
+import { PbiReportController } from 'src/admin/pbi-report/pbi-report.controller';
 export interface pageAndRoles extends Page {
   roles: string[];
 }
@@ -11,7 +12,31 @@ export class PagesMasterService {
   /**
    *
    */
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private pbiReportController: PbiReportController,
+  ) {}
+
+  async refreshDataSet(tenant_id, tokenData) {
+    const allReports = await (
+      await this.findAllByTenant(tenant_id)
+    ).filter((p) => p.page_type === 'report');
+    console.log(allReports);
+    try {
+      await Promise.all([
+        await allReports.forEach(async (report) => {
+          await this.pbiReportController.refreshDataset(
+            report.formated_title,
+            report.Page_Group.formated_title,
+            { tokenData: tokenData },
+          );
+        }),
+      ]);
+    } catch (error) {
+      console.log('Falha ao atualizar relatório');
+    }
+  }
+
   async findAll() {
     return (
       await this.prisma.page.findMany({
@@ -86,15 +111,14 @@ export class PagesMasterService {
             Page: {
               restrict: false,
               id: {
-                in: tennatPageArr
-              }
+                in: tennatPageArr,
+              },
             },
           },
         },
       })
     ).map((d) => d.id);
   }
-
 
   async findAllTenantPage(tenant_id: string) {
     return (

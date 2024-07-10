@@ -2,10 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { ProjetosDto } from './tenants.controller';
+import { PagesMasterService } from '../pages/pages.service';
+import { PbiReportController } from 'src/admin/pbi-report/pbi-report.controller';
 
 @Injectable()
 export class TenantsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private pagesMasterService: PagesMasterService,
+    private pbiReportController: PbiReportController,
+  ) {}
   async create(createTenantDto: any) {
     const id = uuidv4();
     await this.prisma.tenant.create({
@@ -19,7 +25,7 @@ export class TenantsService {
         company_segment: createTenantDto.company_segment,
         company_size: createTenantDto.company_size,
         company_uf: createTenantDto.company_uf,
-        company_description: createTenantDto.company_description
+        company_description: createTenantDto.company_description,
       },
     });
     await this.prisma.tenant_Page.createMany({
@@ -46,19 +52,20 @@ export class TenantsService {
   }
 
   async upload(projetos: ProjetosDto[]) {
-    await this.prisma.projeto_cliente.deleteMany()
-      await this.prisma.projeto_cliente.createMany({
-        data:projetos // Dados para atualização
-      });
+    await this.prisma.projeto_cliente.deleteMany();
+    await this.prisma.projeto_cliente.createMany({
+      data: projetos, // Dados para atualização
+    });
   }
   async getProjects(cliente: string) {
     const clientes = await this.prisma.projeto_cliente.findMany({
       where: {
-        cliente: cliente
+        cliente: cliente,
       },
-    })
-    return clientes
+    });
+    return clientes;
   }
+
   async update(id: string, updateTenantDto: any) {
     await this.prisma.user_Page.deleteMany({
       where: {
@@ -83,28 +90,28 @@ export class TenantsService {
         },
       },
     });
-      (updateTenantDto.dashboard as string[]).forEach(async (e) => {
-        if (
-          (
-            await this.prisma.tenant_Page.findMany({
-              where: {
-                tenant_id: id,
-              },
-            })
-          )
-            .map((d) => d.page_id)
-            .includes(e)
-        ) {
-          return;
-        } else {
-          await this.prisma.tenant_Page.createMany({
-            data: {
-              page_id: e,
+    (updateTenantDto.dashboard as string[]).forEach(async (e) => {
+      if (
+        (
+          await this.prisma.tenant_Page.findMany({
+            where: {
               tenant_id: id,
             },
-          });
-        }
-      });
+          })
+        )
+          .map((d) => d.page_id)
+          .includes(e)
+      ) {
+        return;
+      } else {
+        await this.prisma.tenant_Page.createMany({
+          data: {
+            page_id: e,
+            tenant_id: id,
+          },
+        });
+      }
+    });
 
     return await this.prisma.tenant.update({
       where: { id: id },
@@ -124,20 +131,20 @@ export class TenantsService {
 
   async remove(id: string) {
     await this.prisma.office.deleteMany({
-       where: { tenant_id: id },
-     });
+      where: { tenant_id: id },
+    });
     await this.prisma.tenant.delete({
-       where: {
-         id: id,
-       },
-     });
-     // const pages = await this.prisma.tenant_Page.deleteMany({
-     //   where: {
-     //     tenant_id: id,
-     //   },
-     // });
-     // return await this.prisma.tenant.delete({
-     //   where: { id: id },
-     // });
-   }
+      where: {
+        id: id,
+      },
+    });
+    // const pages = await this.prisma.tenant_Page.deleteMany({
+    //   where: {
+    //     tenant_id: id,
+    //   },
+    // });
+    // return await this.prisma.tenant.delete({
+    //   where: { id: id },
+    // });
+  }
 }
