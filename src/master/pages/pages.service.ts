@@ -17,7 +17,9 @@ export class PagesMasterService {
     private pbiReportController: PbiReportController,
   ) {}
 
-  async refreshDataSet(tenant_id, tokenData) {
+  async refreshDataSet(tenant_id, tokenData, userId) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    console.log(user);
     const allReports = await (
       await this.findAllByTenant(tenant_id)
     ).filter((p) => p.page_type === 'report');
@@ -28,7 +30,13 @@ export class PagesMasterService {
           await this.pbiReportController.refreshDataset(
             report.formated_title,
             report.Page_Group.formated_title,
-            { tokenData: tokenData },
+            {
+              tokenData: {
+                ...tokenData,
+                userId: userId,
+                tenant_id: user.tenant_id,
+              },
+            },
           );
         }),
       ]);

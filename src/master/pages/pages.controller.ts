@@ -72,7 +72,7 @@ export class PagesMasterController {
     const { tenant_id, DashboardUserList, projetos } = body;
 
     if (tenant_id) {
-      this.pagesMasterService.refreshDataSet(tenant_id, req.tokenData);
+      this.pagesMasterService.refreshDataSet(tenant_id, req.tokenData, userid);
       // const allReports = await (
       //   await this.pagesMasterService.findAllByTenant(tenant_id)
       // ).filter((p) => p.page_type === 'report');

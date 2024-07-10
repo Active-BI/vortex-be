@@ -127,13 +127,14 @@ export class PbiReportController {
       return res;
     });
   }
+  @Get()
   @Get('refresh/:group/:type')
   async refreshDataset(
     @Param('type') type,
     @Param('group') group,
     @Req() req,
   ): Promise<any> {
-    console.log(type, group);
+    console.log('req: ', req);
 
     const { userId, tenant_id, role_name } = req.tokenData;
     const userPage = await this.getPageType(group, type, tenant_id, userId);
@@ -150,23 +151,22 @@ export class PbiReportController {
 
     const refreshDataset = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/datasets/${result.datasetId}/refreshes`;
     console.log(userPage.Tenant_Page.Page.group_id);
-      await fetch(refreshDataset, {
-        method: 'POST',
-        headers,
-      }).then((res: any) => {
-        if (!res.ok) {
-          if (res.status === 429) console.log('limite re requisições atingido');
-          // throw new HttpException(
-          //   'Limite de atualizações atingido',
-          //   HttpStatus.TOO_MANY_REQUESTS,
-          // );
-          console.log('Falha ao atualizar relatório');
-          // throw new BadRequestException('Falha ao atualizar relatório');
-        }
-        console.log('FOI');
-        return res;
-      });
-
+    await fetch(refreshDataset, {
+      method: 'POST',
+      headers,
+    }).then((res: any) => {
+      if (!res.ok) {
+        if (res.status === 429) console.log('limite re requisições atingido');
+        // throw new HttpException(
+        //   'Limite de atualizações atingido',
+        //   HttpStatus.TOO_MANY_REQUESTS,
+        // );
+        console.log('Falha ao atualizar relatório');
+        // throw new BadRequestException('Falha ao atualizar relatório');
+      }
+      console.log('FOI');
+      return res;
+    });
   }
   @Get('data/:group/:type')
   async checkIfReportHasData(
