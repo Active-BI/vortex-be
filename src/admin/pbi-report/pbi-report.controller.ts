@@ -16,30 +16,10 @@ import { PrismaService } from 'src/services/prisma.service';
 
 @Controller('pbi-report')
 export class PbiReportController {
-  async getPageType(group, type, tenant_id, userId) {
-    const userPage = await this.prisma.user_Page.findFirst({
-      where: {
-        user_id: userId,
-        Tenant_Page: {
-          tenant_id,
-          Page: {
-            AND: {
-              Page_Group: {
-                formated_title: group,
-              },
-              formated_title: type,
-            },
-          },
-        },
-      },
-      include: { Tenant_Page: { include: { Page: true } } },
-    });
 
-    if (!userPage) throw new BadRequestException('Report não encontrado');
-    return userPage;
-  }
   constructor(
     private msalService: MsalService,
+    private pbiReportService: PbiReportService,
     private prisma: PrismaService,
     private jwtService: JwtService,
   ) {}
@@ -51,7 +31,7 @@ export class PbiReportController {
     @Req() req,
   ): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
-    const userPage = await this.getPageType(group, type, tenant_id, userId);
+    const userPage = await this.pbiReportService.getPageType(group, type, tenant_id, userId);
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/dashboards/${userPage.Tenant_Page.Page.report_id}`;
 
     // header é o objeto onde está o accessToken
@@ -95,7 +75,7 @@ export class PbiReportController {
     @Req() req,
   ): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
-    const userPage = await this.getPageType(group, type, tenant_id, userId);
+    const userPage = await this.pbiReportService.getPageType(group, type, tenant_id, userId);
     const headers = await this.msalService.getRequestHeader(role_name);
 
     const getDataflows = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/dataflows`;
@@ -136,8 +116,14 @@ export class PbiReportController {
   ): Promise<any> {
     console.log('req: ', req);
 
-    const { userId, tenant_id, role_name } = req.tokenData;
-    const userPage = await this.getPageType(group, type, tenant_id, userId);
+    const { userId, tenant_id, role_name,tenant_name } = req.tokenData;
+    let userPage;
+    if (tenant_name === 'Master') {
+      userPage = await this.pbiReportService.getPageTypeMaster(group, type);
+    } else {
+      userPage = await this.pbiReportService.getPageType(group, type, tenant_id, userId);
+    }
+
     const headers = await this.msalService.getRequestHeader(role_name);
 
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/reports/${userPage.Tenant_Page.Page.report_id}`;
@@ -150,7 +136,6 @@ export class PbiReportController {
     });
 
     const refreshDataset = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/datasets/${result.datasetId}/refreshes`;
-    console.log(userPage.Tenant_Page.Page.group_id);
     await fetch(refreshDataset, {
       method: 'POST',
       headers,
@@ -175,7 +160,7 @@ export class PbiReportController {
     @Req() req,
   ): Promise<any> {
     const { userId, tenant_id } = req.tokenData;
-    const userPage = await this.getPageType(group, type, tenant_id, userId);
+    const userPage = await this.pbiReportService.getPageType(group, type, tenant_id, userId);
     const data = await this.prisma[
       (userPage.Tenant_Page.Page.table_name + '_table') as 'funcionarios_table'
     ].findMany({
@@ -193,7 +178,7 @@ export class PbiReportController {
     @Req() req,
   ): Promise<any> {
     const { userId, tenant_id, tenant_name, role_name } = req.tokenData;
-    const userPage = await this.getPageType(group, type, tenant_id, userId);
+    const userPage = await this.pbiReportService.getPageType(group, type, tenant_id, userId);
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/reports/${userPage.Tenant_Page.Page.report_id}`;
 
     // header é o objeto onde está o accessToken
@@ -348,7 +333,7 @@ export class PbiReportController {
     @Req() req,
   ): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
-    const userPage = await this.getPageType(group, type, tenant_id, userId);
+    const userPage = await this.pbiReportService.getPageType(group, type, tenant_id, userId);
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/reports/${userPage.Tenant_Page.Page.report_id}/ExportTo`;
     // header é o objeto onde está o accessToken
     const headers = await this.msalService.getRequestHeader(role_name);

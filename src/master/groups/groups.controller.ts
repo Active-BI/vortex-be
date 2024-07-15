@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { GroupsService } from './groups.service';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
 import { ApiTags } from '@nestjs/swagger';
+import { PbiReportService } from 'src/admin/pbi-report/pbi-report.service';
 export type Create_Page_Group = {
   title: string;
   icon: string;
@@ -20,7 +22,10 @@ export interface Update_Page_Group extends Create_Page_Group {
 @ApiTags('Master/Groups')
 @Controller('master/groups')
 export class GroupsController {
-  constructor(private readonly groupsService: GroupsService) {}
+  constructor(
+    private readonly groupsService: GroupsService,
+    private pbiReportService: PbiReportService,
+  ) {}
 
   @Roles('Master')
   @Post()
@@ -36,8 +41,26 @@ export class GroupsController {
 
   @Roles('Master')
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.groupsService.findOne(id);
+  async findOne(@Param('id') id: string, @Req() req) {
+    let group = await this.groupsService.findOne(id);
+
+    const pages = [];
+    for (const page of group.Page) {
+      if (page.page_type !== 'report') {
+        pages.push(page);
+      } else {
+        const group_title = page.link.split('/')[1];
+        const report_title = page.link.split('/')[2];
+        const datasetInf = await this.pbiReportService.getDatasetsInf(
+          report_title,
+          group_title,
+          req.tokenData,
+        );
+        pages.push({ ...page, datasetInf });
+      }
+    }
+    group.Page = pages;
+    return group;
   }
 
   @Roles('Master')
