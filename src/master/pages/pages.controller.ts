@@ -73,23 +73,6 @@ export class PagesMasterController {
 
     if (tenant_id) {
       this.pagesMasterService.refreshDataSet(tenant_id, req.tokenData, userid);
-      // const allReports = await (
-      //   await this.pagesMasterService.findAllByTenant(tenant_id)
-      // ).filter((p) => p.page_type === 'report');
-      // console.log(allReports);
-      // try {
-      //   await Promise.all([
-      //     await allReports.forEach(async (report) => {
-      //       await this.pbiReportController.refreshDataset(
-      //         report.formated_title,
-      //         report.Page_Group.formated_title,
-      //         { tokenData: req.tokenData },
-      //       );
-      //     }),
-      //   ]);
-      // } catch (error) {
-      //   console.log('Falha ao atualizar relatório');
-      // }
     }
 
     const getTenantDashBoards =
