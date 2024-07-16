@@ -154,13 +154,14 @@ export class PbiReportController {
       headers,
     }).then((res: any) => {
       if (!res.ok) {
-        if (res.status === 429) console.log('limite re requisições atingido');
-        // throw new HttpException(
-        //   'Limite de atualizações atingido',
-        //   HttpStatus.TOO_MANY_REQUESTS,
-        // );
-        console.log('Falha ao atualizar relatório');
-        // throw new BadRequestException('Falha ao atualizar relatório');
+        if (res.status === 429) {
+
+          throw new HttpException(
+            'Limite de atualizações atingido',
+            HttpStatus.TOO_MANY_REQUESTS,
+            );
+          }
+        throw new BadRequestException('Falha ao atualizar relatório');
       }
       console.log('FOI');
       return res;
