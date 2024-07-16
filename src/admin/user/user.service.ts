@@ -37,25 +37,6 @@ export class UserService {
     tokenData: any,
   ): Promise<UserResponse> {
     await this.userRepository.UpdateUSer(user);
-
-    const allReports = await (
-      await this.pagesMasterService.findAllByTenant(tenant_id)
-    ).filter((p) => p.page_type === 'report');
-    console.log(allReports);
-    try {
-      await Promise.all([
-        await allReports.forEach(async (report) => {
-          await this.pbiReportController.refreshDataset(
-            report.formated_title,
-            report.Page_Group.formated_title,
-            { tokenData },
-          );
-        }),
-      ]);
-    } catch (error) {
-      console.log('Falha ao atualizar relatório');
-    }
-
     return await this.findById(user.id, tenant_id);
   }
 
