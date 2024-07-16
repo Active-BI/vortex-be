@@ -32,8 +32,8 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
   await prisma.tenant_Page.deleteMany();
   await prisma.page_Group.deleteMany();
   await prisma.page.deleteMany();
-  await prisma.tenant.deleteMany();
   await prisma.tenant_files.deleteMany();
+  await prisma.tenant.deleteMany();
 
   await prisma.user_Auth.deleteMany();
   await prisma.user.deleteMany();
@@ -282,7 +282,7 @@ export const EmployeeSeed = async (prisma: PrismaClient) => {
             title: 'Relatórios',
             formated_title: 'relatorios',
             restrict: false,
-            link: 'administrador/telas',
+            link: 'administrador/relatorios',
             page_group_id: 'bf296f83-5997-4349-97d6-12df34fd4da6',
           },
           {
