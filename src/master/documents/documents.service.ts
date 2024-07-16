@@ -18,11 +18,14 @@ export class DocumentsService {
       });
     });
     try {
-      const projects = JSON.parse(body);
+      const projects = JSON.parse(body).projects;
+      const description = JSON.parse(body).description;
+
       const file = await this.docsRepository.upload(
         files as any,
         tenant_id,
         projects,
+        description
       );
       return file;
     } catch (error) {

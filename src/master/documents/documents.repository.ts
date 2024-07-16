@@ -8,6 +8,7 @@ export class DomcumentsRepository {
     arquivos: Express.Multer.File[],
     tenant_id: string,
     projects: string[],
+    description: string
   ) {
     return await Promise.all(
       arquivos.map(async (arquivo) => {
@@ -18,6 +19,7 @@ export class DomcumentsRepository {
             name: `${arquivo.originalname.split('.')[0]}`,
             tenant_id,
             projects,
+            description
           },
         });
 
@@ -33,6 +35,7 @@ export class DomcumentsRepository {
           id: true,
           file_format: true,
           name: true,
+          description: true,
           projects: true,
           tenant_id: true,
           created_at: true,
@@ -47,7 +50,8 @@ export class DomcumentsRepository {
         id: true,
         file_format: true,
         name: true,
-        projects: true,
+          description: true,
+          projects: true,
         tenant_id: true,
         created_at: true,
       },

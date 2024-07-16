@@ -11,15 +11,32 @@ import {
 import { PageService } from './page.service';
 import { ApiTags } from '@nestjs/swagger';
 import { SocketService } from '../socket/socket.service';
+import { PbiReportService } from '../pbi-report/pbi-report.service';
 
 @ApiTags('Page')
 @Controller('page')
 export class PageController {
-  constructor(private readonly pageService: PageService, private socketService: SocketService) {}
+  constructor(private readonly pageService: PageService, private socketService: SocketService, private pbiReportService: PbiReportService) {}
   @Get()
   async getAllPages(@Req() req) {
     const { tenant_id } = req.tokenData;
-    return await this.pageService.getAllPages(tenant_id);
+    const pages = await this.pageService.getAllPages(tenant_id);
+
+    const pagesWithDatasetInf = []
+    for (const page of pages) {
+      if (page.Page.page_type === 'report') {
+        const report_name = page.Page.link.split('/')[2];
+        const group_name = page.Page.link.split('/')[1];
+
+        const datasetInf = await this.pbiReportService.getDatasetsInf(report_name, group_name, req.tokenData);
+
+        pagesWithDatasetInf.push({ ...page, datasetInf });
+      } else {
+        pagesWithDatasetInf.push(page);
+      }
+    }
+
+    return pagesWithDatasetInf
   }
   @Get('/:userid')
   async getAllPagesByUser(@Req() req, @Param('userid') userid) {

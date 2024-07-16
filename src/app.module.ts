@@ -72,7 +72,7 @@ let providers: any = [
   SocketService,
   SessionRepository,
   UserRepository,
-  TfaService,
+  TfaService,PbiReportController
 ];
 
 if (process.env['NODE_ENV'] === 'prod') {

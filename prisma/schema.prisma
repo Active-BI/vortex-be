@@ -167,6 +167,7 @@ model Tenant_files {
   name           String    @db.VarChar(255)
   file           Bytes
   file_format    String    @db.VarChar
+  description   String?
   projects        String[]
   tenant_id          String
   Tenant Tenant @relation(fields: [tenant_id],references: [id])

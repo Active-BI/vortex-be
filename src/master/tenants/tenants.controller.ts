@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { TenantsService } from './tenants.service';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
@@ -14,11 +15,11 @@ import { ApiProperty, ApiTags } from '@nestjs/swagger';
 
 export class ProjetosDto {
   @ApiProperty()
-  id: string
+  id: string;
   @ApiProperty()
-  cliente: string
+  cliente: string;
   @ApiProperty()
-  projeto: string
+  projeto: string;
 }
 
 @ApiTags('Tenants')
