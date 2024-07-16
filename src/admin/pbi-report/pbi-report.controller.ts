@@ -16,7 +16,6 @@ import { PrismaService } from 'src/services/prisma.service';
 
 @Controller('pbi-report')
 export class PbiReportController {
-
   constructor(
     private msalService: MsalService,
     private pbiReportService: PbiReportService,
@@ -31,7 +30,12 @@ export class PbiReportController {
     @Req() req,
   ): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
-    const userPage = await this.pbiReportService.getPageType(group, type, tenant_id, userId);
+    const userPage = await this.pbiReportService.getPageType(
+      group,
+      type,
+      tenant_id,
+      userId,
+    );
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/dashboards/${userPage.Tenant_Page.Page.report_id}`;
 
     // header é o objeto onde está o accessToken
@@ -75,7 +79,12 @@ export class PbiReportController {
     @Req() req,
   ): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
-    const userPage = await this.pbiReportService.getPageType(group, type, tenant_id, userId);
+    const userPage = await this.pbiReportService.getPageType(
+      group,
+      type,
+      tenant_id,
+      userId,
+    );
     const headers = await this.msalService.getRequestHeader(role_name);
 
     const getDataflows = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/dataflows`;
@@ -107,7 +116,6 @@ export class PbiReportController {
       return res;
     });
   }
-  @Get()
   @Get('refresh/:group/:type')
   async refreshDataset(
     @Param('type') type,
@@ -116,12 +124,17 @@ export class PbiReportController {
   ): Promise<any> {
     console.log('req: ', req);
 
-    const { userId, tenant_id, role_name,tenant_name } = req.tokenData;
+    const { userId, tenant_id, role_name, tenant_name } = req.tokenData;
     let userPage;
     if (tenant_name === 'Master') {
       userPage = await this.pbiReportService.getPageTypeMaster(group, type);
     } else {
-      userPage = await this.pbiReportService.getPageType(group, type, tenant_id, userId);
+      userPage = await this.pbiReportService.getPageType(
+        group,
+        type,
+        tenant_id,
+        userId,
+      );
     }
 
     const headers = await this.msalService.getRequestHeader(role_name);
@@ -160,7 +173,12 @@ export class PbiReportController {
     @Req() req,
   ): Promise<any> {
     const { userId, tenant_id } = req.tokenData;
-    const userPage = await this.pbiReportService.getPageType(group, type, tenant_id, userId);
+    const userPage = await this.pbiReportService.getPageType(
+      group,
+      type,
+      tenant_id,
+      userId,
+    );
     const data = await this.prisma[
       (userPage.Tenant_Page.Page.table_name + '_table') as 'funcionarios_table'
     ].findMany({
@@ -178,7 +196,12 @@ export class PbiReportController {
     @Req() req,
   ): Promise<any> {
     const { userId, tenant_id, tenant_name, role_name } = req.tokenData;
-    const userPage = await this.pbiReportService.getPageType(group, type, tenant_id, userId);
+    const userPage = await this.pbiReportService.getPageType(
+      group,
+      type,
+      tenant_id,
+      userId,
+    );
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/reports/${userPage.Tenant_Page.Page.report_id}`;
 
     // header é o objeto onde está o accessToken
@@ -333,7 +356,12 @@ export class PbiReportController {
     @Req() req,
   ): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
-    const userPage = await this.pbiReportService.getPageType(group, type, tenant_id, userId);
+    const userPage = await this.pbiReportService.getPageType(
+      group,
+      type,
+      tenant_id,
+      userId,
+    );
     const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/reports/${userPage.Tenant_Page.Page.report_id}/ExportTo`;
     // header é o objeto onde está o accessToken
     const headers = await this.msalService.getRequestHeader(role_name);
