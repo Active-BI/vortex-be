@@ -143,7 +143,7 @@ export class LoginService {
           user_auth.User.id,
           user_auth.User.tenant_id,
         );
-        return { token, userRoutes, pass: true };
+        return { token, userRoutes, passThrough: true };
       }
       const token = await this.tfaService.TFA(body);
 

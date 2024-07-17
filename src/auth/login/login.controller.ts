@@ -33,7 +33,6 @@ export class LoginController {
     private tfaService: TfaService,
   ) {}
 
-  // @BypassAuth()
   @Post('tfa')
   @ApiResponse({ type: TfaResponse })
   @ApiBody({ type: TfaDto })
