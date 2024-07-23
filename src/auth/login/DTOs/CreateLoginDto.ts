@@ -11,7 +11,6 @@ export class CreateLoginDto {
     required: true,
   })
   @IsEmail()
-  @IsString()
   @IsNotEmpty()
   email: string;
 

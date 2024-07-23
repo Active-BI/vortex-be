@@ -19,7 +19,8 @@ export class TokenValidationMiddleware implements NestMiddleware {
     } else {
       if (
         !req.baseUrl.includes('login') &&
-        !req.baseUrl.includes('request-access')
+        !req.baseUrl.includes('request-access') &&
+        !req.baseUrl.includes('app-setup')
       ) {
         return res.status(401).json({ message: 'Token inválido' });
       }

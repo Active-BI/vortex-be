@@ -13,11 +13,9 @@ import { SmtpService } from 'src/services/smtp.service';
 import { message_book } from 'src/services/email_book';
 import { randomUUID } from 'crypto';
 import { CreateLoginDto } from './DTOs/CreateLoginDto';
-import { PageService } from 'src/admin/pages/page.service';
 import { UserAuthService } from '../auth_service/user_auth.service';
 import { TfaService } from '../auth_service/tfa.service';
 import { PrismaService } from 'src/services/prisma.service';
-var speakeasy = require('speakeasy');
 
 @Injectable()
 export class LoginService {
@@ -27,7 +25,6 @@ export class LoginService {
     private pagesMasterService: PagesMasterService,
     private smtpService: SmtpService,
     private tfaService: TfaService,
-    private pageService: PageService,
     private prisma: PrismaService,
   ) {}
   async getUserAuth(login) {
@@ -55,7 +52,8 @@ export class LoginService {
 
     return { token };
   }
-  async checkPassMaster(login: CreateLoginDto) {
+
+  async checkPassMasterAndReturnToken(login: CreateLoginDto) {
     const user_auth = await this.getUserAuth(login);
 
     const isHashTrue = await bcrypt.compare(
@@ -74,6 +72,7 @@ export class LoginService {
     await this.setLastAccess(user_auth as User_Auth);
     return token;
   }
+
   setLastAccess(user: User_Auth) {
     this.userAuthService.update({ ...user, last_access: new Date() });
   }
@@ -138,26 +137,15 @@ export class LoginService {
     try {
       const user_auth = await this.getUserAuth(body);
       if (user_auth.User.Rls.name === 'Master') {
-        const token = await this.checkPassMaster(body);
-        const userRoutes = await this.pageService.getAllPagesByUser(
-          user_auth.User.id,
-          user_auth.User.tenant_id,
-        );
-        return { token, userRoutes, passThrough: true };
+        const token = await this.checkPassMasterAndReturnToken(body);
+
+        return { token, passThrough: true };
       }
-      const token = await this.tfaService.TFA(body);
+      const token = await this.tfaService.CheckUserCredentialsToGenerateTFACodeAndTempToken(body);
 
       return { token };
     } catch (e) {
       throw new UnauthorizedException(e.message);
     }
-  }
-
-  async getPageImage() {
-    return await this.prisma.app.findFirst({
-      where: {
-        id: 'd25bd198-782b-486f-a9b2-d8a288ab3673',
-      },
-    });
   }
 }
