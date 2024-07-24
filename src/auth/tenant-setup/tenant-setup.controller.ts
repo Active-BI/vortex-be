@@ -27,9 +27,6 @@ export class TenantSetupController {
   async getUserRoutes(@Req() req) {
     const tenantId = req.tokenData.tenant_id;
     const userId = req.tokenData.userId;
-
-    console.log('tenantId', tenantId);
-    console.log('userId', userId);
     return await this.tenantSetupService.getUserRoutes(userId, tenantId);
   }
 }
