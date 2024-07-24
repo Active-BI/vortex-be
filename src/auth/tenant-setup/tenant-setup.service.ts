@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import e from 'express';
 import { PrismaService } from 'src/services/prisma.service';
 
 @Injectable()
@@ -28,5 +29,62 @@ export class TenantSetupService {
         tenant_image: true,
       },
     });
+  }
+
+async getPagesThatUserHasAccess(user_id: string) {
+  return (await this.prisma.page.findMany({
+    where: {
+      Tenant_Page: {
+        some: {
+          User_Page: {
+            some: {
+              user_id
+            }
+          }
+        }
+      }
+    },
+    select: {
+      id: true,
+      group_id: true
+    }
+  })).map(e => e.id)
+}
+
+async getGroupsThatTenantHasAccess(tenant_id: string) {
+  return await this.prisma.page_Group.findMany({
+    where: {
+      
+           Page: {
+            some: {
+              Tenant_Page: {
+                some: {
+                  tenant_id
+                }
+              },
+            }
+          }
+    },
+    select: {
+      formated_title: true,
+      icon: true,
+      restrict: true,
+      title: true,
+      id: true,
+      Page: true,
+    }
+  })
+  
+}
+  async getUserRoutes(user_id: string, tenant_id: string) {
+    const pageList = await this.getPagesThatUserHasAccess(user_id)
+    const groupList = await this.getGroupsThatTenantHasAccess(tenant_id)
+
+    return groupList.map(e => {
+      return {
+        ...e,
+        Page: e.Page.filter(p => pageList.includes(p.id))
+      }
+    })
   }
 }
