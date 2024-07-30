@@ -136,12 +136,13 @@ model Page {
   id                     String        @id @default(uuid())
   type                   String
   page_type            String?
-  formated_title         String?
+  formated_title         String?  
   title                  String
   descricao_painel       String?
   nome_responsavel        String?
   email_responsavel       String?
   link                   String?
+  web_page_link                   String?
   group_id               String?
   report_id              String?
   possui_dados_sensiveis Boolean?      @default(false)
