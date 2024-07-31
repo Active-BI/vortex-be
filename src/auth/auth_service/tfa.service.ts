@@ -83,7 +83,7 @@ export class TfaService {
     return verified;
   }
 
-  async TFA(login: CreateLoginDto) {
+  async CheckUserCredentialsToGenerateTFACodeAndTempToken(login: CreateLoginDto) {
     const user_auth = await this.getUserAuth(login);
 
     const isHash = await bcrypt.compare(
@@ -109,7 +109,6 @@ export class TfaService {
     } catch (e) {
       throw new BadRequestException(e.message);
     }
-    //
   }
 
   async loginTFA(email, _token, pin) {
@@ -121,18 +120,13 @@ export class TfaService {
   }
 
   async userGetConfig(user, token) {
-    const userRoutes = await this.pageService.getAllPagesByUser(
-      user.User.id,
-      user.User.tenant_id,
-    );
     return {
       token,
       tenant_id: user.User.tenant_id,
-      app_image: user.User.Tenant.tenant_image,
-      tenant_image: user.User.Tenant.tenant_image,
-      tenant_color: user.User.Tenant.tenant_color,
+      // app_image: user.User.Tenant.tenant_image,
+      // tenant_image: user.User.Tenant.tenant_image,
+      // tenant_color: user.User.Tenant.tenant_color,
       user_email: user.User.contact_email,
-      userRoutes,
     };
   }
 }

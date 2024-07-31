@@ -19,11 +19,9 @@ export class PagesMasterService {
 
   async refreshDataSet(tenant_id, tokenData, userId) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    console.log(user);
     const allReports = await (
       await this.findAllByTenant(tenant_id)
     ).filter((p) => p.page_type === 'report');
-    console.log(allReports);
     try {
       await Promise.all([
         await allReports.forEach(async (report) => {

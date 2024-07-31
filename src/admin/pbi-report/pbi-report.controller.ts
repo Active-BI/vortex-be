@@ -88,7 +88,6 @@ export class PbiReportController {
     const headers = await this.msalService.getRequestHeader(role_name);
 
     const getDataflows = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/dataflows`;
-    console.log(getDataflows);
     let dataFlowId: any = {};
     await fetch(getDataflows, {
       method: 'GET',
@@ -122,8 +121,6 @@ export class PbiReportController {
     @Param('group') group,
     @Req() req,
   ): Promise<any> {
-    console.log('req: ', req);
-
     const { userId, tenant_id, role_name, tenant_name } = req.tokenData;
     let userPage;
     if (tenant_name === 'Master') {
@@ -163,7 +160,6 @@ export class PbiReportController {
           }
         throw new BadRequestException('Falha ao atualizar relatório');
       }
-      console.log('FOI');
       return res;
     });
   }

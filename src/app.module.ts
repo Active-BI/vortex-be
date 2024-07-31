@@ -42,6 +42,7 @@ import { TreinamentosModule } from './admin/treinamentos/treinamentos.module';
 import { DocumentsModule } from './master/documents/documents.module';
 import { UserRepository } from './admin/user/userRepository';
 import { TfaService } from './auth/auth_service/tfa.service';
+import { TenantSetupModule } from './auth/tenant-setup/tenant-setup.module';
 
 let providers: any = [
   AppConfigService,
@@ -101,6 +102,7 @@ if (process.env['NODE_ENV'] === 'prod') {
     }),
     TreinamentosModule,
     DocumentsModule,
+    TenantSetupModule,
   ],
 })
 export class AppModule implements NestModule {

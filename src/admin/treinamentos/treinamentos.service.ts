@@ -22,8 +22,6 @@ export class TreinamentosService {
         const response = await axios.get(apiUrl);
         const data = this.tratarDados(await response.data.items)
         allVideos.push(...data)
-
-        console.log(response.data.nextPageToken)
         if (response.data.nextPageToken) {
           if (pageTokens.includes((response.data.nextPageToken))) {
             return allVideos
