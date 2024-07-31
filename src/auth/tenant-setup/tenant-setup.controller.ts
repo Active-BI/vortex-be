@@ -21,7 +21,6 @@ export class TenantSetupController {
     return await this.tenantSetupService.getTenantConfig(tenantId);
   }
 
-  @BypassAuth()
   @Get('routes')
   async getUserRoutes(@Req() req) {
     const tenantId = req.tokenData.tenant_id;
