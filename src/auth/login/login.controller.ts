@@ -33,7 +33,6 @@ export class LoginController {
     private tfaService: TfaService,
   ) {}
 
-  // @BypassAuth()
   @Post('tfa')
   @ApiResponse({ type: TfaResponse })
   @ApiBody({ type: TfaDto })
@@ -80,6 +79,7 @@ export class LoginController {
     return { userRoutes };
   }
 
+
   @BypassAuth()
   @Get('reset-pass/:email')
   async ResetPass(@Param('email') email) {
@@ -101,15 +101,5 @@ export class LoginController {
     }
   }
 
-  @BypassAuth()
-  @ApiResponse({ type: AppImageResponse })
-  @Get('app/image')
-  async AppImage() {
-    const app = await this.loginService.getPageImage();
-    return {
-      app_image: app.bg_image,
-      tenant_image: app.logo,
-      bg_color: app.bg_color,
-    };
-  }
+
 }
