@@ -70,8 +70,19 @@ export class DomcumentsRepository {
         restrict: false,
       },
       select: {
+        id: true,
         tenant_name: true,
-        Tenant_files: true,
+        Tenant_files: {
+          select: {
+            id: true,
+            file_format: true,
+            name: true,
+            description: true,
+            projects: true,
+            tenant_id: true,
+            created_at: true,
+            },
+        },
       },
     });
 
@@ -90,8 +101,18 @@ export class DomcumentsRepository {
         id: tenant_id,
       },
       select: {
+        id: true,
         tenant_name: true,
         Tenant_files: {
+            select: {
+              id: true,
+              file_format: true,
+              name: true,
+              description: true,
+              projects: true,
+              tenant_id: true,
+              created_at: true,
+              },
           where: {
             projects: {
               hasSome: projects,

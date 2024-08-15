@@ -20,7 +20,7 @@ import { ProjectFilterResponse } from './entities/project-filters-response';
 export class DocumentsController {
   constructor(private readonly documentsService: DocumentsService) {}
 
-  @Roles('Master')
+  @Roles('Master', 'Admin')
   @Post(':tenant_id')
   @UseInterceptors(FilesInterceptor('files'))
   async upload(
