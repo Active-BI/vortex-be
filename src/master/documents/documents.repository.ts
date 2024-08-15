@@ -8,7 +8,7 @@ export class DomcumentsRepository {
     arquivos: Express.Multer.File[],
     tenant_id: string,
     projects: string[],
-    description: string
+    description: string,
   ) {
     return await Promise.all(
       arquivos.map(async (arquivo) => {
@@ -19,7 +19,7 @@ export class DomcumentsRepository {
             name: `${arquivo.originalname.split('.')[0]}`,
             tenant_id,
             projects,
-            description
+            description,
           },
         });
 
@@ -50,8 +50,8 @@ export class DomcumentsRepository {
         id: true,
         file_format: true,
         name: true,
-          description: true,
-          projects: true,
+        description: true,
+        projects: true,
         tenant_id: true,
         created_at: true,
       },
@@ -69,6 +69,10 @@ export class DomcumentsRepository {
       where: {
         restrict: false,
       },
+      select: {
+        tenant_name: true,
+        Tenant_files: true,
+      },
     });
 
     const projects = await this.prisma.projeto_cliente.findMany();
@@ -79,6 +83,35 @@ export class DomcumentsRepository {
     }));
   }
 
+  async clientProjectFiltersAdmin(projects: string[], tenant_id: string) {
+    const tenants = await this.prisma.tenant.findMany({
+      where: {
+        restrict: false,
+        id: tenant_id,
+      },
+      select: {
+        tenant_name: true,
+        Tenant_files: {
+          where: {
+            projects: {
+              hasSome: projects,
+            },
+          },
+        },
+      },
+    });
+
+    const findProjects = await this.prisma.projeto_cliente.findMany();
+
+    return tenants.map((t) => ({
+      ...t,
+      projects: findProjects.filter((p) => projects.includes(p.id)),
+      Tenant_files: t.Tenant_files.map((f) => ({
+        ...f,
+        projects: f.projects.filter((p) => projects.includes(p)),
+      })),
+    }));
+  }
   async remove(id: string) {
     await this.prisma.tenant_files.delete({
       where: {

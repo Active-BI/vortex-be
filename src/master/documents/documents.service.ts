@@ -25,7 +25,7 @@ export class DocumentsService {
         files as any,
         tenant_id,
         projects,
-        description
+        description,
       );
       return file;
     } catch (error) {
@@ -42,8 +42,19 @@ export class DocumentsService {
     return arquivo;
   }
 
-  async findManyTenantNotRestricted() {
-    return await this.docsRepository.clientProjectFilters();
+  async findManyTenantNotRestricted({
+    projects,
+    tenant_id,
+    role_name,
+  }: {
+    projects: string[];
+    tenant_id: string;
+    role_name: string;
+  }) {
+    if (role_name === 'Master') {
+      return await this.docsRepository.clientProjectFilters();
+    }
+    return await this.docsRepository.clientProjectFiltersAdmin(projects, tenant_id);
   }
 
   async findManyTenantFiles(tenant_id) {

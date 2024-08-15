@@ -8,6 +8,7 @@ import {
   UploadedFiles,
   UseInterceptors,
   Res,
+  Req,
 } from '@nestjs/common';
 import { DocumentsService } from './documents.service';
 import { Roles } from 'src/helpers/roleDecorator/roles.decorator';
@@ -33,8 +34,10 @@ export class DocumentsController {
   @Roles('Master', 'Admin')
   @Get('client-project-filter')
   @ApiResponse({ type: ProjectFilterResponse })
-  async clientProjectFilters() {
-    return await this.documentsService.findManyTenantNotRestricted();
+  async clientProjectFilters(@Req() req) {
+    const user = req.tokenData;
+
+    return await this.documentsService.findManyTenantNotRestricted(user);
   }
   @Roles('Master', 'Admin')
   @Get('files/:clienteName')
