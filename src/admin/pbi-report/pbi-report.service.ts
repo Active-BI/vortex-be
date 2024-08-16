@@ -15,7 +15,7 @@ export class PbiReportService {
     const { userId, tenant_id, tenant_name, role_name } = tokenData;
     let userPage;
     try {
-      if (tenant_name === 'Master') {
+      if (role_name === 'Master') {
         userPage = await this.getPageTypeMaster(groupName, reportName);
       } else {
         userPage = await this.getPageType(
@@ -26,11 +26,11 @@ export class PbiReportService {
         );
       }
 
-      if (userPage.Tenant_Page.Page.page_type !== 'report') {
+      if (userPage.page_type !== 'report') {
         return {};
       }
 
-      const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/reports/${userPage.Tenant_Page.Page.report_id}`;
+      const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.group_id}/reports/${userPage.report_id}`;
 
       // header é o objeto onde está o accessToken
       const headers = await this.msalService.getRequestHeader(role_name);
@@ -64,44 +64,39 @@ export class PbiReportService {
   }
 
   async getPageType(group, type, tenant_id, userId) {
-    const userPage = await this.prisma.user_Page.findFirst({
+    const userPage = await this.prisma.page.findFirst({
       where: {
-        user_id: userId,
+        AND: {
+          Page_Group: {
+            formated_title: group,
+          },
+          formated_title: type,
+        },
         Tenant_Page: {
-          tenant_id,
-          Page: {
-            AND: {
-              Page_Group: {
-                formated_title: group,
-              },
-              formated_title: type,
+          some: {
+            Tenant: {
+              id: tenant_id,
             },
           },
         },
       },
-      include: { Tenant_Page: { include: { Page: true } } },
     });
 
     if (!userPage) throw new BadRequestException('Report não encontrado');
     return userPage;
   }
   async getPageTypeMaster(group, type) {
-    const userPage = await this.prisma.user_Page.findFirst({
+    const userPage = await this.prisma.page.findFirst({
       where: {
-        Tenant_Page: {
-          Page: {
-            AND: {
-              Page_Group: {
-                formated_title: group,
-              },
-              formated_title: type,
-            },
+        AND: {
+          Page_Group: {
+            formated_title: group,
           },
+          formated_title: type,
         },
       },
-      include: { Tenant_Page: { include: { Page: true } } },
+      // include: { Tenant_Page: { include: { Page: true } } },
     });
-
     if (!userPage) throw new BadRequestException('Report não encontrado');
     return userPage;
   }
