@@ -51,12 +51,19 @@ export class GroupsController {
       } else {
         const group_title = page.link.split('/')[1];
         const report_title = page.link.split('/')[2];
-        const datasetInf = await this.pbiReportService.getDatasetsInf(
-          report_title,
-          group_title,
-          req.tokenData,
-        );
-        pages.push({ ...page, datasetInf });
+
+        try {
+
+          const datasetInf = await this.pbiReportService.getDatasetsInf(
+            report_title,
+            group_title,
+            req.tokenData,
+            );
+            
+            pages.push({ ...page, datasetInf });
+          } catch (error) {
+            console.log('AAAAAAAAAAAAAAAAAA', error);
+          }
       }
     }
     group.Page = pages;
