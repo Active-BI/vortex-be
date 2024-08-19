@@ -79,7 +79,7 @@ export class PbiReportController {
     @Req() req,
   ): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
-    const userPage = await this.pbiReportService.getPageType(
+    const page = await this.pbiReportService.getPageType(
       group,
       type,
       tenant_id,
@@ -87,7 +87,7 @@ export class PbiReportController {
     );
     const headers = await this.msalService.getRequestHeader(role_name);
 
-    const getDataflows = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.group_id}/dataflows`;
+    const getDataflows = `https://api.powerbi.com/v1.0/myorg/groups/${page.group_id}/dataflows`;
     let dataFlowId: any = {};
     await fetch(getDataflows, {
       method: 'GET',
@@ -100,7 +100,7 @@ export class PbiReportController {
       dataFlowId = { id: data.value[0].objectId, ...data.value[0] };
     });
 
-    const refreshDataflow = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.group_id}/dataflows/${dataFlowId.id}/refreshes`;
+    const refreshDataflow = `https://api.powerbi.com/v1.0/myorg/groups/${page.group_id}/dataflows/${dataFlowId.id}/refreshes`;
 
     await fetch(refreshDataflow, {
       method: 'POST',
@@ -171,14 +171,15 @@ export class PbiReportController {
     @Param('group') group,
     @Req() req,
   ): Promise<any> {
-    const { userId, tenant_id, tenant_name, role_name } = req.tokenData;
-    const userPage = await this.pbiReportService.getPageType(
+    const { userId, tenant_id, role_name } = req.tokenData;
+    const page = await this.pbiReportService.getPageType(
       group,
       type,
       tenant_id,
       userId,
     );
-    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.group_id}/reports/${userPage.report_id}`;
+
+    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${page.group_id}/reports/${page.report_id}`;
 
     // header é o objeto onde está o accessToken
     const headers = await this.msalService.getRequestHeader(role_name);
@@ -206,9 +207,9 @@ export class PbiReportController {
 
     reportEmbedConfig.embedToken =
       await this.getEmbedTokenForSingleReportSingleWorkspace(
-        userPage.report_id,
+        page.report_id,
         datasetIds,
-        userPage.group_id,
+        page.group_id,
         user,
         headers,
       );
