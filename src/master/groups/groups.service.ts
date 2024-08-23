@@ -23,6 +23,40 @@ export class GroupsService {
     });
   }
 
+  // async findPageByPageGroupId(page_group_id) {
+  //   return await this.prisma.page.findMany({
+  //     where: { page_group_id: page_group_id },
+  //   });
+  // }
+  // async findPageRolesByPageId(page_id) {
+  //   return await this.prisma.page_Role.findMany({
+  //     where: { page_id: page_id },
+  //   });
+  // }
+  // async findGroups() {
+  //   return await this.prisma.page_Group.findMany({
+  //     where: { restrict: false },
+  //   });
+  // }
+  // async faztudo() {
+  //   const pageGroups = await this.findGroups();
+
+  //   const result = await Promise.all(
+  //     pageGroups.map(async (pageGroup) => {
+  //       // Use Promise.all para resolver todas as páginas
+  //       const pages = await Promise.all(
+  //         (await this.findPageByPageGroupId(pageGroup.id)).map(async (page) => {
+  //           const roles = await this.findPageRolesByPageId(page.id);
+  //           return { ...page, Page_Role: roles };
+  //         }),
+  //       );
+  //       return { ...pageGroup, Page: pages };
+  //     }),
+  //   );
+
+  //   return result;
+  // }
+
   async findAll() {
     return (
       await this.prisma.page_Group.findMany({
@@ -32,7 +66,7 @@ export class GroupsService {
         include: {
           Page: {
             include: {
-              Page_Group: true,
+              // Page_Group: true,
               Page_Role: {
                 select: {
                   Rls: {

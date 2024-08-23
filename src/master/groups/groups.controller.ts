@@ -32,6 +32,12 @@ export class GroupsController {
   async create(@Body() createGroupDto: Create_Page_Group) {
     return this.groupsService.create(createGroupDto);
   }
+  // testando formas de melhorar performance
+  // @Roles('Master')
+  // @Get('user-groups')
+  // find() {
+  //   return this.groupsService.faztudo();
+  // }
 
   @Roles('Master')
   @Get()
@@ -53,12 +59,12 @@ export class GroupsController {
         const report_title = page.link.split('/')[2];
 
         const datasetInf = await this.pbiReportService.getDatasetsInf(
-            report_title,
-            group_title,
-            req.tokenData,
-            );
-            
-            pages.push({ ...page, datasetInf });
+          report_title,
+          group_title,
+          req.tokenData,
+        );
+
+        pages.push({ ...page, datasetInf });
       }
     }
     group.Page = pages;
