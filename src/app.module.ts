@@ -76,7 +76,7 @@ let providers: any = [
   TfaService,PbiReportController
 ];
 
-if (process.env['NODE_ENV'] === 'prod') {
+if (process.env['NODE_ENV'] === 'production') {
   providers = [...providers, WebsocketTestGateway];
 }
 @Module({
