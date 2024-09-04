@@ -36,7 +36,7 @@ export class PbiReportController {
       tenant_id,
       userId,
     );
-    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/dashboards/${userPage.Tenant_Page.Page.report_id}`;
+    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.group_id}/dashboards/${userPage.report_id}`;
 
     // header é o objeto onde está o accessToken
     const headers = await this.msalService.getRequestHeader(role_name);
@@ -64,9 +64,9 @@ export class PbiReportController {
 
     reportEmbedConfig.embedToken =
       await this.getEmbedTokenForSingleDashboardSingleWorkspace(
-        userPage.Tenant_Page.Page.report_id,
+        userPage.report_id,
         datasetIds,
-        userPage.Tenant_Page.Page.group_id,
+        userPage.group_id,
         user,
         headers,
       );
@@ -79,7 +79,7 @@ export class PbiReportController {
     @Req() req,
   ): Promise<any> {
     const { userId, tenant_id, role_name } = req.tokenData;
-    const userPage = await this.pbiReportService.getPageType(
+    const page = await this.pbiReportService.getPageType(
       group,
       type,
       tenant_id,
@@ -87,7 +87,7 @@ export class PbiReportController {
     );
     const headers = await this.msalService.getRequestHeader(role_name);
 
-    const getDataflows = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/dataflows`;
+    const getDataflows = `https://api.powerbi.com/v1.0/myorg/groups/${page.group_id}/dataflows`;
     let dataFlowId: any = {};
     await fetch(getDataflows, {
       method: 'GET',
@@ -100,7 +100,7 @@ export class PbiReportController {
       dataFlowId = { id: data.value[0].objectId, ...data.value[0] };
     });
 
-    const refreshDataflow = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/dataflows/${dataFlowId.id}/refreshes`;
+    const refreshDataflow = `https://api.powerbi.com/v1.0/myorg/groups/${page.group_id}/dataflows/${dataFlowId.id}/refreshes`;
 
     await fetch(refreshDataflow, {
       method: 'POST',
@@ -123,7 +123,8 @@ export class PbiReportController {
   ): Promise<any> {
     const { userId, tenant_id, role_name, tenant_name } = req.tokenData;
     let userPage;
-    if (tenant_name === 'Master') {
+    console.log('tenant_name', tenant_name);
+    if (role_name === 'Master') {
       userPage = await this.pbiReportService.getPageTypeMaster(group, type);
     } else {
       userPage = await this.pbiReportService.getPageType(
@@ -136,7 +137,7 @@ export class PbiReportController {
 
     const headers = await this.msalService.getRequestHeader(role_name);
 
-    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/reports/${userPage.Tenant_Page.Page.report_id}`;
+    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.group_id}/reports/${userPage.report_id}`;
     const result: any = await fetch(reportInGroupApi, {
       method: 'GET',
       headers,
@@ -145,7 +146,7 @@ export class PbiReportController {
       return res.json();
     });
 
-    const refreshDataset = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/datasets/${result.datasetId}/refreshes`;
+    const refreshDataset = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.group_id}/datasets/${result.datasetId}/refreshes`;
     await fetch(refreshDataset, {
       method: 'POST',
       headers,
@@ -163,28 +164,6 @@ export class PbiReportController {
       return res;
     });
   }
-  @Get('data/:group/:type')
-  async checkIfReportHasData(
-    @Param('type') type,
-    @Param('group') group,
-    @Req() req,
-  ): Promise<any> {
-    const { userId, tenant_id } = req.tokenData;
-    const userPage = await this.pbiReportService.getPageType(
-      group,
-      type,
-      tenant_id,
-      userId,
-    );
-    const data = await this.prisma[
-      (userPage.Tenant_Page.Page.table_name + '_table') as 'funcionarios_table'
-    ].findMany({
-      where: {
-        tenant_id,
-      },
-    });
-    return data.length > 0;
-  }
 
   @Get(':group/:type')
   async ReportByTYpe(
@@ -192,14 +171,15 @@ export class PbiReportController {
     @Param('group') group,
     @Req() req,
   ): Promise<any> {
-    const { userId, tenant_id, tenant_name, role_name } = req.tokenData;
-    const userPage = await this.pbiReportService.getPageType(
+    const { userId, tenant_id, role_name } = req.tokenData;
+    const page = await this.pbiReportService.getPageType(
       group,
       type,
       tenant_id,
       userId,
     );
-    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/reports/${userPage.Tenant_Page.Page.report_id}`;
+
+    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${page.group_id}/reports/${page.report_id}`;
 
     // header é o objeto onde está o accessToken
     const headers = await this.msalService.getRequestHeader(role_name);
@@ -227,9 +207,9 @@ export class PbiReportController {
 
     reportEmbedConfig.embedToken =
       await this.getEmbedTokenForSingleReportSingleWorkspace(
-        userPage.Tenant_Page.Page.report_id,
+        page.report_id,
         datasetIds,
-        userPage.Tenant_Page.Page.group_id,
+        page.group_id,
         user,
         headers,
       );
@@ -359,7 +339,7 @@ export class PbiReportController {
       tenant_id,
       userId,
     );
-    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.Tenant_Page.Page.group_id}/reports/${userPage.Tenant_Page.Page.report_id}/ExportTo`;
+    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.group_id}/reports/${userPage.report_id}/ExportTo`;
     // header é o objeto onde está o accessToken
     const headers = await this.msalService.getRequestHeader(role_name);
     const result: any = await fetch(reportInGroupApi, {
@@ -387,9 +367,9 @@ export class PbiReportController {
 
     reportEmbedConfig.embedToken =
       await this.getEmbedTokenForSingleReportSingleWorkspace(
-        userPage.Tenant_Page.Page.report_id,
+        userPage.report_id,
         datasetIds,
-        userPage.Tenant_Page.Page.group_id,
+        userPage.group_id,
         user,
         headers,
       );

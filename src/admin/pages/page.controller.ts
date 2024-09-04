@@ -16,28 +16,56 @@ import { PbiReportService } from '../pbi-report/pbi-report.service';
 @ApiTags('Page')
 @Controller('page')
 export class PageController {
-  constructor(private readonly pageService: PageService, private socketService: SocketService, private pbiReportService: PbiReportService) {}
+  constructor(
+    private readonly pageService: PageService,
+    private socketService: SocketService,
+    private pbiReportService: PbiReportService,
+  ) {}
   @Get()
   async getAllPages(@Req() req) {
     const { tenant_id } = req.tokenData;
+
     const pages = await this.pageService.getAllPages(tenant_id);
 
-    const pagesWithDatasetInf = []
-    for (const page of pages) {
-      if (page.Page.page_type === 'report') {
-        const report_name = page.Page.link.split('/')[2];
-        const group_name = page.Page.link.split('/')[1];
-
-        const datasetInf = await this.pbiReportService.getDatasetsInf(report_name, group_name, req.tokenData);
-
-        pagesWithDatasetInf.push({ ...page, datasetInf });
-      } else {
-        pagesWithDatasetInf.push(page);
-      }
-    }
-
-    return pagesWithDatasetInf
+    return pages;
   }
+
+  @Get('/datasetInf')
+  async getDataSetinf(@Req() req) {
+    const { tenant_id } = req.tokenData;
+    let start = Date.now();
+
+    const pages = await this.pageService.getAllPages(tenant_id);
+    console.log('page load: ', (Date.now() - start) / 1000 + 's');
+
+    const pagesWithDatasetInf = await Promise.all(
+      pages.map(async (page) => {
+        if (page.Page.page_type === 'report') {
+          try {
+            const report_name = page.Page.link.split('/')[2];
+            const group_name = page.Page.link.split('/')[1];
+
+            const datasetInf = await this.pbiReportService.getDatasetsInf(
+              report_name,
+              group_name,
+              req.tokenData,
+            );
+
+            return { ...page, datasetInf };
+          } catch (error) {
+            console.error('Erro ao obter informações do dataset:', error);
+            return page;
+          }
+        } else {
+          return page;
+        }
+      }),
+    );
+    console.log('ms load: ', (Date.now() - start) / 1000 + 's');
+
+    return pagesWithDatasetInf;
+  }
+
   @Get('/:userid')
   async getAllPagesByUser(@Req() req, @Param('userid') userid) {
     const { tenant_id } = req.tokenData;
@@ -47,7 +75,12 @@ export class PageController {
   async setPageToUser(@Req() req, @Body() body, @Param('userid') userid) {
     const { PageUserList, projetos } = body;
     const { tenant_id } = req.tokenData;
-    await this.pageService.setPageUser(PageUserList, userid, tenant_id,projetos);
+    await this.pageService.setPageUser(
+      PageUserList,
+      userid,
+      tenant_id,
+      projetos,
+    );
   }
 
   @Get('/user/user-by-page')
@@ -59,7 +92,11 @@ export class PageController {
     const result = data.reduce((acc, page) => {
       const titulo = page.Page.title;
       page.User_Page.forEach((user) => {
-        acc.push({titulo, name: user.User.name, contact_email: user.User.contact_email});
+        acc.push({
+          titulo,
+          name: user.User.name,
+          contact_email: user.User.contact_email,
+        });
       });
       return acc;
     }, []);
@@ -75,14 +112,27 @@ export class PageController {
     const result = data.reduce((acc, page) => {
       const titulo = page.Page.title;
       page.User_Page.forEach((user) => {
-        acc.push([titulo, user.User.name,user.User.contact_email]);
+        acc.push([titulo, user.User.name, user.User.contact_email]);
       });
       return acc;
     }, []);
-    const acessos = conections.map(u => ([u.name, u.log.length,u.contact_email, u.log[u.log.length - 1]?.created_at]))
+    const acessos = conections.map((u) => [
+      u.name,
+      u.log.length,
+      u.contact_email,
+      u.log[u.log.length - 1]?.created_at,
+    ]);
     const buffer = await this.pageService.exportToExcel([
-      { sheet: 'permissões', header: ['Relatório', 'Nome', "Email",  ], data: result },
-      { sheet: 'acessos', header: ['Nome', 'Total de Acessos',  "Email", 'Data último acesso'], data: acessos },
+      {
+        sheet: 'permissões',
+        header: ['Relatório', 'Nome', 'Email'],
+        data: result,
+      },
+      {
+        sheet: 'acessos',
+        header: ['Nome', 'Total de Acessos', 'Email', 'Data último acesso'],
+        data: acessos,
+      },
     ]);
     res.setHeader(
       'Content-Type',
