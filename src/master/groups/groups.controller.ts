@@ -48,12 +48,21 @@ export class GroupsController {
   @Roles('Master')
   @Get(':id')
   async findOne(@Param('id') id: string, @Req() req) {
+    let start = Date.now();
     let group = await this.groupsService.findOne(id);
+    console.log('prisma req: ', (Date.now() - start) / 1000 + 's');
 
-    const pages = [];
-    for (const page of group.Page) {
+    return group;
+  }
+
+  @Roles('Master')
+  @Post('dataset/info')
+  async getPbiInfo(@Req() req, @Body() body) {
+    const start = Date.now();
+
+    const pagePromises = body.map(async (page) => {
       if (page.page_type !== 'report') {
-        pages.push(page);
+        return page;
       } else {
         const group_title = page.link.split('/')[1];
         const report_title = page.link.split('/')[2];
@@ -64,11 +73,17 @@ export class GroupsController {
           req.tokenData,
         );
 
-        pages.push({ ...page, datasetInf });
+        return { ...page, datasetInf };
       }
-    }
-    group.Page = pages;
-    return group;
+    });
+
+    const pages = await Promise.all(pagePromises);
+
+    console.log('microsoft req: ', (Date.now() - start) / 1000 + 's');
+
+    body = pages;
+
+    return body;
   }
 
   @Roles('Master')
