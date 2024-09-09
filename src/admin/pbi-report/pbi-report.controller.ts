@@ -147,22 +147,25 @@ export class PbiReportController {
     });
 
     const refreshDataset = `https://api.powerbi.com/v1.0/myorg/groups/${userPage.group_id}/datasets/${result.datasetId}/refreshes`;
-    await fetch(refreshDataset, {
-      method: 'POST',
-      headers,
-    }).then((res: any) => {
-      if (!res.ok) {
-        if (res.status === 429) {
-
-          throw new HttpException(
-            'Limite de atualizações atingido',
-            HttpStatus.TOO_MANY_REQUESTS,
+    try {
+      await fetch(refreshDataset, {
+        method: 'POST',
+        headers,
+      }).then((res: any) => {
+        if (!res.ok) {
+          if (res.status === 429) {
+            throw new HttpException(
+              'Limite de atualizações atingido',
+              HttpStatus.TOO_MANY_REQUESTS,
             );
           }
-        throw new BadRequestException('Falha ao atualizar relatório');
-      }
-      return res;
-    });
+          throw new BadRequestException('Falha ao atualizar relatório');
+        }
+        return res;
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   @Get(':group/:type')
@@ -227,19 +230,19 @@ export class PbiReportController {
     const formData = {
       accessLevel: 'View',
     };
-    const listReportRls = ['0cafa534-6e24-45e3-8ffe-ae39d98c7695'];
-    const shoudPassRls = listReportRls.find((report) => report === reportId);
+    // const listReportRls = ['0cafa534-6e24-45e3-8ffe-ae39d98c7695'];
+    // const shoudPassRls = listReportRls.find((report) => report === reportId);
 
-    if (shoudPassRls) {
-      formData['identities'] = [
-        {
-          username: user.contact_email,
-          roles: ['DEFAULT'],
-          reports: [reportId],
-          datasets: [datasetIds[0]],
-        },
-      ];
-    }
+    // if (shoudPassRls) {
+    formData['identities'] = [
+      {
+        username: user.contact_email,
+        roles: [user.role_name],
+        reports: [reportId],
+        datasets: [datasetIds[0]],
+      },
+    ];
+    // }
     // Add dataset ids in the request
 
     formData['datasets'] = [];
