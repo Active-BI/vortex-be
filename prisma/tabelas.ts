@@ -1,6 +1,3 @@
-import { PrismaClient } from '@prisma/client';
-import { randomUUID } from 'crypto';
-
 // const routes = [
 //   {
 //     data: { roles: ['User', 'Admin'] },

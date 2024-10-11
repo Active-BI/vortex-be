@@ -1,6 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
+import { PrismaService } from 'src/services/prisma.service';
 import { EmployeeSeed } from './seedHelp';
-const prisma = new PrismaClient();
+const prisma = new PrismaService();
 async function main() {
   await EmployeeSeed(prisma);
 }

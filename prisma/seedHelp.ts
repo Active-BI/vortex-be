@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from 'src/services/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 // import { insertRoutes } from './tabelas';
 
@@ -26,7 +26,7 @@ const TENANTS = {
   MASTER: '3a4dc251-deea-4d2b-b6fb-8a067944b94e',
 };
 
-export const EmployeeSeed = async (prisma: PrismaClient) => {
+export const EmployeeSeed = async (prisma: PrismaService) => {
   await prisma.page_Role.deleteMany();
   await prisma.user_Page.deleteMany();
   await prisma.tenant_Page.deleteMany();
