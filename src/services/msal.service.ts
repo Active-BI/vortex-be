@@ -7,7 +7,7 @@ export class MsalService {
   async getAccessToken(userRls: string) {
     const msalConfig = {
       auth: {
-        clientId: config.clientId,
+        clientId: process.env['CLIENT_ID'],
         authority: `${config.authorityUrl}`,
         clientSecret: '',
       },
