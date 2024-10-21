@@ -18,8 +18,8 @@ export class MsalService {
 
       const usernamePasswordRequest = {
         scopes: [config.scopeBase],
-        username: process.env['SMTP_EMAIL'],
-        password: process.env['SMTP_PASS'], 
+        username: process.env['EMBEDDED_EMAIL'],
+        password: process.env['EMBEDDED_PASS'], 
         roles: [userRls],
       };
       return clientApplication.acquireTokenByUsernamePassword(
