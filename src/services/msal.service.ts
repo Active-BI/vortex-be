@@ -12,7 +12,7 @@ export class MsalService {
         clientSecret: '',
       },
     };
-
+    console.log(msalConfig)
     if (config.authenticationMode.toLowerCase() === 'masteruser') {
       const clientApplication = new msal.PublicClientApplication(msalConfig);
 
@@ -20,8 +20,10 @@ export class MsalService {
         scopes: [config.scopeBase],
         username: process.env['EMBEDDED_EMAIL'],
         password: process.env['EMBEDDED_PASS'], 
-        roles: [userRls],
+        // roles: [userRls],
       };
+    console.log(usernamePasswordRequest)
+
       return clientApplication.acquireTokenByUsernamePassword(
         usernamePasswordRequest,
       );
