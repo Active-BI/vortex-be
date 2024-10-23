@@ -39,7 +39,6 @@ export class PagesMasterService {
         }),
       ]);
     } catch (error) {
-      console.log('Falha ao atualizar relatório');
     }
   }
 

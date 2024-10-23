@@ -50,7 +50,6 @@ export class GroupsController {
   async findOne(@Param('id') id: string, @Req() req) {
     let start = Date.now();
     let group = await this.groupsService.findOne(id);
-    console.log('prisma req: ', (Date.now() - start) / 1000 + 's');
 
     return group;
   }
@@ -79,7 +78,6 @@ export class GroupsController {
 
     const pages = await Promise.all(pagePromises);
 
-    console.log('microsoft req: ', (Date.now() - start) / 1000 + 's');
 
     body = pages;
 

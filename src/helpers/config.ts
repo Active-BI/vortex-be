@@ -3,9 +3,7 @@ export const config = {
   authorityUrl: 'https://login.microsoftonline.com/organizations/',
   powerBiApiUrl: 'https://api.powerbi.com/',
   workspaceId: '',
-  reportId: '',
   scopeBase: 'https://analysis.windows.net/powerbi/api/.default',
-  tenantId: '915fe7db-2988-4ee1-b20b-fd2e18641985',
   clientSecret: '',
   GRAPH_ENDPOINT: 'https://graph.microsoft.com',
 };

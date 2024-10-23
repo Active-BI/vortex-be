@@ -34,6 +34,7 @@ export class LoginController {
   ) {}
 
   @Post('tfa')
+  @BypassAuth()
   @ApiResponse({ type: TfaResponse })
   @ApiBody({ type: TfaDto })
   async TFA(@Body() body: TfaDto, @Req() req) {

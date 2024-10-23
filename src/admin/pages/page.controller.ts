@@ -36,7 +36,6 @@ export class PageController {
     let start = Date.now();
 
     const pages = await this.pageService.getAllPages(tenant_id);
-    console.log('page load: ', (Date.now() - start) / 1000 + 's');
 
     const pagesWithDatasetInf = await Promise.all(
       pages.map(async (page) => {
@@ -61,7 +60,6 @@ export class PageController {
         }
       }),
     );
-    console.log('ms load: ', (Date.now() - start) / 1000 + 's');
 
     return pagesWithDatasetInf;
   }

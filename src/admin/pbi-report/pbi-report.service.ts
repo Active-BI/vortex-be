@@ -58,7 +58,6 @@ export class PbiReportService {
       delete lastRefresh.refreshAttempts;
       return lastRefresh;
     } catch (error) {
-      console.log('Erro ao buscar informações do dataset', error);
       return {};
     }
   }

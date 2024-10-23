@@ -123,7 +123,6 @@ export class PbiReportController {
   ): Promise<any> {
     const { userId, tenant_id, role_name, tenant_name } = req.tokenData;
     let userPage;
-    console.log('tenant_name', tenant_name);
     if (role_name === 'Master') {
       userPage = await this.pbiReportService.getPageTypeMaster(group, type);
     } else {
@@ -164,7 +163,6 @@ export class PbiReportController {
         return res;
       });
     } catch (error) {
-      console.log(error);
     }
   }
 
@@ -234,14 +232,14 @@ export class PbiReportController {
     // const shoudPassRls = listReportRls.find((report) => report === reportId);
 
     // if (shoudPassRls) {
-    formData['identities'] = [
-      {
-        username: user.contact_email,
-        roles: [user.role_name],
-        reports: [reportId],
-        datasets: [datasetIds[0]],
-      },
-    ];
+    // formData['identities'] = [
+    //   {
+    //     username: user.contact_email,
+    //     roles: [user.role_name],
+    //     reports: [reportId],
+    //     datasets: [datasetIds[0]],
+    //   },
+    // ];
     // }
     // Add dataset ids in the request
 
