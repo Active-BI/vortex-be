@@ -3,7 +3,7 @@ import { PrismaService } from 'src/services/prisma.service';
 
 @Injectable()
 export class TenantSetupService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async getPageImage() {
     const app = await this.prisma.app.findFirst({
@@ -31,6 +31,15 @@ export class TenantSetupService {
   }
 
   async getPagesThatUserHasAccess(user_id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: user_id,
+      },
+      select: {
+        Rls: true,
+      },
+    });
+
     return (
       await this.prisma.page.findMany({
         where: {
@@ -47,16 +56,28 @@ export class TenantSetupService {
         select: {
           id: true,
           group_id: true,
+          Page_Role: {
+            select: {
+              Rls: {
+                select: {
+                  name: true,
+                },
+              },
+            }
+          }
         },
       })
-    ).map((e) => e.id);
+    ).filter(e => user.Rls.name === 'Admin' || user.Rls.name === 'Master'  ? true : e.Page_Role.some(p => p.Rls.name === user.Rls.name)).map((e) => e.id);
   }
 
-  async getGroupsThatTenantHasAccess(tenant_id: string) {
-    return await this.prisma.page_Group.findMany({
+  async getGroupsThatTenantHasAccess(tenant_id: string, list: string[]) {
+    return (await this.prisma.page_Group.findMany({
       where: {
         Page: {
           some: {
+            id: {
+              in: list,
+            },
             Tenant_Page: {
               some: {
                 tenant_id,
@@ -81,11 +102,11 @@ export class TenantSetupService {
           },
         },
       },
-    });
+    })).filter(e => e.Page.length > 0);
   }
   async getUserRoutes(user_id: string, tenant_id: string) {
     const pageList = await this.getPagesThatUserHasAccess(user_id);
-    const groupList = await this.getGroupsThatTenantHasAccess(tenant_id);
+    const groupList = await this.getGroupsThatTenantHasAccess(tenant_id, pageList);
 
     return groupList.map((e) => {
       return {
