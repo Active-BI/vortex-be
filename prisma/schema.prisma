@@ -16,28 +16,29 @@ model Rls {
 }
 
 model Tenant {
-  id                   String                 @id @default(uuid())
-  tenant_name          String
-  tenant_cnpj          String
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
-  active               Boolean
-  company_uf           String?
-  company_size         String?
-  tenant_color         String?
-  tenant_image         String?
+  id                  String              @id @default(uuid())
+  tenant_name         String
+  tenant_cnpj         String
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  active              Boolean
+  company_uf          String?
+  company_size        String?
+  tenant_color        String?
+  tenant_image        String?
   company_description String?
-  company_segment      String?
-  User                 User[]
-  restrict             Boolean?               @default(false)
-  Tenant_Page          Tenant_Page[]
-  Office               Office[]
-  User_Session_Hist    User_Session_Hist[]
-  Tenant_files Tenant_files[]
+  company_segment     String?
+  User                User[]
+  restrict            Boolean?            @default(false)
+  Tenant_Page         Tenant_Page[]
+  Office              Office[]
+  User_Session_Hist   User_Session_Hist[]
+  Tenant_files        Tenant_files[]
 }
+
 model app {
-  id String @unique @id @default(uuid())
-  logo String
+  id       String @id @unique @default(uuid())
+  logo     String
   bg_image String
   bg_color String
 }
@@ -55,31 +56,31 @@ model User_Auth {
 }
 
 model User_Session_Hist {
-  id             String      @id @default(uuid())
-  email        String
-  tenant_id String
-  created_at DateTime @default(now())
-  exited_at DateTime?
+  id         String    @id @default(uuid())
+  email      String
+  tenant_id  String
+  created_at DateTime  @default(now())
+  exited_at  DateTime?
   updated_at DateTime? @updatedAt
-  User User @relation(fields: [email], references: [contact_email],  onDelete: Cascade)
-  Tenant Tenant @relation(fields: [tenant_id], references: [id])
+  User       User      @relation(fields: [email], references: [contact_email], onDelete: Cascade)
+  Tenant     Tenant    @relation(fields: [tenant_id], references: [id])
 }
 
 model User {
-  id             String      @id @default(uuid())
-  name           String
-  born_date      DateTime?   @db.Date
-  contact_email  String     @unique
-  tenant_id      String?
-  Tenant         Tenant?     @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  rls_id         String
-  Rls            Rls         @relation(fields: [rls_id], references: [id], onDelete: Cascade)
-  User_Auth      User_Auth?
-  projects        String[]
-  User_Page      User_Page[]
+  id                String              @id @default(uuid())
+  name              String
+  born_date         DateTime?           @db.Date
+  contact_email     String              @unique
+  tenant_id         String?
+  Tenant            Tenant?             @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  rls_id            String
+  Rls               Rls                 @relation(fields: [rls_id], references: [id], onDelete: Cascade)
+  User_Auth         User_Auth?
+  projects          String[]
+  User_Page         User_Page[]
   User_Session_Hist User_Session_Hist[]
-  office_id       String?
-  Office            Office?         @relation(fields: [office_id], references: [id])
+  office_id         String?
+  Office            Office?             @relation(fields: [office_id], references: [id])
 }
 
 model Tenant_Page {
@@ -124,30 +125,30 @@ model Page_Group {
 }
 
 model Office {
-  id  String  @id @default(uuid())
-  name String
+  id        String @id @default(uuid())
+  name      String
   tenant_id String
-  Tenant    Tenant   @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
-  User                User[]
+  Tenant    Tenant @relation(fields: [tenant_id], references: [id], onDelete: Cascade)
+  User      User[]
 }
-
 
 model Page {
   id                     String        @id @default(uuid())
   type                   String
-  page_type            String?
-  formated_title         String?  
+  page_type              String?
+  formated_title         String?
   title                  String
   descricao_painel       String?
-  nome_responsavel        String?
-  email_responsavel       String?
+  nome_responsavel       String?
+  email_responsavel      String?
   link                   String?
-  web_page_link                   String?
+  web_page_link          String?
   group_id               String?
   report_id              String?
   possui_dados_sensiveis Boolean?      @default(false)
   restrict               Boolean?      @default(false)
   table_name             String?
+  has_RLS                Boolean?
   Page_Role              Page_Role[]
   page_group_id          String
   Page_Group             Page_Group    @relation(fields: [page_group_id], references: [id], onDelete: Cascade)
@@ -155,24 +156,26 @@ model Page {
 }
 
 model projeto_cliente {
-  id  String @id @default(uuid())
+  id      String  @id @default(uuid())
   cliente String?
   projeto String?
 }
+
 model Tenant_files {
-  id             String    @id() @default(uuid()) @db.Uuid
-  created_at     DateTime  @default(now()) @db.Timestamp(6)
-  updated_by     String?   @db.VarChar(255)
-  updated_at     DateTime  @default(now()) @db.Timestamp(6)
-  deleted_date   DateTime? @db.Timestamp(6)
-  name           String    @db.VarChar(255)
-  file           Bytes
-  file_format    String    @db.VarChar
-  description   String?
-  projects        String[]
-  tenant_id          String
-  Tenant Tenant @relation(fields: [tenant_id],references: [id])
+  id           String    @id() @default(uuid()) @db.Uuid
+  created_at   DateTime  @default(now()) @db.Timestamp(6)
+  updated_by   String?   @db.VarChar(255)
+  updated_at   DateTime  @default(now()) @db.Timestamp(6)
+  deleted_date DateTime? @db.Timestamp(6)
+  name         String    @db.VarChar(255)
+  file         Bytes
+  file_format  String    @db.VarChar
+  description  String?
+  projects     String[]
+  tenant_id    String
+  Tenant       Tenant    @relation(fields: [tenant_id], references: [id])
 }
+
 model funcionarios_table {
   id                  String    @id @default(uuid())
   nomeEmpresa         String

@@ -13,6 +13,7 @@ import { EmbedConfig, PowerBiReportDetails } from './powerbi-dashboard.model';
 import { BypassAuth } from 'src/helpers/strategy/jwtGuard.service';
 import { MsalService } from 'src/services/msal.service';
 import { PrismaService } from 'src/services/prisma.service';
+import { Page } from '@prisma/client';
 
 @Controller('pbi-report')
 export class PbiReportController {
@@ -162,8 +163,7 @@ export class PbiReportController {
         }
         return res;
       });
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 
   @Get(':group/:type')
@@ -208,7 +208,7 @@ export class PbiReportController {
 
     reportEmbedConfig.embedToken =
       await this.getEmbedTokenForSingleReportSingleWorkspace(
-        page.report_id,
+        page,
         datasetIds,
         page.group_id,
         user,
@@ -219,7 +219,7 @@ export class PbiReportController {
 
   @BypassAuth()
   async getEmbedTokenForSingleReportSingleWorkspace(
-    reportId,
+    report: Page,
     datasetIds,
     targetWorkspaceId,
     user,
@@ -228,20 +228,21 @@ export class PbiReportController {
     const formData = {
       accessLevel: 'View',
     };
+
     // const listReportRls = ['0cafa534-6e24-45e3-8ffe-ae39d98c7695'];
-    // const shoudPassRls = listReportRls.find((report) => report === reportId);
+    // const shoudPassRls = listReportRls.find((rep) => rep === report.report_id);
 
     // if (shoudPassRls) {
     // formData['identities'] = [
     //   {
     //     username: user.contact_email,
     //     roles: [user.role_name],
-    //     reports: [reportId],
+    //     reports: [report.report_id],
     //     datasets: [datasetIds[0]],
     //   },
     // ];
     // }
-    // Add dataset ids in the request
+    // Add dataset ids in the request222
 
     formData['datasets'] = [];
     for (const datasetId of datasetIds) {
@@ -260,7 +261,7 @@ export class PbiReportController {
     }
 
     // Generate Embed token for single report, workspace, and multiple datasets. Refer https://aka.ms/MultiResourceEmbedToken
-    const embedTokenApi = `https://api.powerbi.com/v1.0/myorg/groups/${targetWorkspaceId}/reports/${reportId}/GenerateToken`;
+    const embedTokenApi = `https://api.powerbi.com/v1.0/myorg/groups/${targetWorkspaceId}/reports/${report.report_id}/GenerateToken`;
     return await fetch(embedTokenApi, {
       method: 'POST',
       headers: header,
@@ -368,7 +369,7 @@ export class PbiReportController {
 
     reportEmbedConfig.embedToken =
       await this.getEmbedTokenForSingleReportSingleWorkspace(
-        userPage.report_id,
+        userPage,
         datasetIds,
         userPage.group_id,
         user,
