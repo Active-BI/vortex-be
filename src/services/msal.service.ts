@@ -21,8 +21,6 @@ export class MsalService {
         password: process.env['EMBEDDED_PASS'],
         // roles: [userRls],
       };
-      usernamePasswordRequest;
-
       return clientApplication.acquireTokenByUsernamePassword(
         usernamePasswordRequest,
       );
