@@ -228,20 +228,21 @@ export class PbiReportController {
     const formData = {
       accessLevel: 'View',
     };
+    console.log('report', report);
 
     // const listReportRls = ['0cafa534-6e24-45e3-8ffe-ae39d98c7695'];
     // const shoudPassRls = listReportRls.find((rep) => rep === report.report_id);
 
-    // if (shoudPassRls) {
-    // formData['identities'] = [
-    //   {
-    //     username: user.contact_email,
-    //     roles: [user.role_name],
-    //     reports: [report.report_id],
-    //     datasets: [datasetIds[0]],
-    //   },
-    // ];
-    // }
+    if (report.has_RLS) {
+      formData['identities'] = [
+        {
+          username: user.contact_email,
+          roles: [user.role_name],
+          reports: [report.report_id],
+          datasets: [datasetIds[0]],
+        },
+      ];
+    }
     // Add dataset ids in the request222
 
     formData['datasets'] = [];
@@ -268,10 +269,12 @@ export class PbiReportController {
       body: JSON.stringify({
         ...formData,
       }),
-    }).then((res) => {
-      if (!res.ok) throw res;
-      return res.json();
-    });
+    })
+      .then((res) => {
+        if (!res.ok) throw res;
+        return res.json();
+      })
+      .catch((err) => console.log(err));
   }
   @BypassAuth()
   async getEmbedTokenForSingleDashboardSingleWorkspace(
