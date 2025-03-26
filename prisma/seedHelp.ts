@@ -118,8 +118,8 @@ export const EmployeeSeed = async (prisma: PrismaService) => {
           },
           {
             id: '025d8682-383e-45ce-bdb3-6ca4a7257534',
-            contact_email: 'bianca.froes@activebi.com.br',
-            name: 'Bianca Froes',
+            contact_email: 'daniel.abdel@activebi.com.br',
+            name: 'Daniel Abdel',
             born_date: new Date(),
             tenant_id: TENANTS.TENANT1,
             rls_id: '6a203390-8389-49ca-aa0e-6a14ba7815bc',
