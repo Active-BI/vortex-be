@@ -6,6 +6,7 @@ import {
   BadRequestException,
   HttpException,
   HttpStatus,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { PbiReportService } from './pbi-report.service';
 import { JwtService } from '@nestjs/jwt';
@@ -167,54 +168,93 @@ export class PbiReportController {
   }
 
   @Get(':group/:type')
-  async ReportByTYpe(
-    @Param('type') type,
-    @Param('group') group,
-    @Req() req,
-  ): Promise<any> {
-    const { userId, tenant_id, role_name } = req.tokenData;
-    const page = await this.pbiReportService.getPageType(
-      group,
-      type,
-      tenant_id,
-      userId,
-    );
+  async ReportByType(
+    @Param('type') type: string,
+    @Param('group') group: string,
+    @Req() req: Request & { tokenData: any },
+  ): Promise<EmbedConfig> {
+    try {
+      const { userId, tenant_id, role_name } = req.tokenData;
 
-    const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${page.group_id}/reports/${page.report_id}`;
+      if (!group || !type) {
+        throw new BadRequestException(
+          'Parâmetros "group" e "type" são obrigatórios.',
+        );
+      }
 
-    // header é o objeto onde está o accessToken
-    const headers = await this.msalService.getRequestHeader(role_name);
-
-    const result: any = await fetch(reportInGroupApi, {
-      method: 'GET',
-      headers,
-    }).then((res) => {
-      if (!res.ok) throw res;
-
-      return res.json();
-    });
-    const reportDetails = new PowerBiReportDetails(
-      result.id,
-      result.name,
-      result.embedUrl,
-    );
-    const reportEmbedConfig = new EmbedConfig();
-
-    reportEmbedConfig.reportsDetail = [reportDetails];
-    const datasetIds = [result.datasetId];
-    const user = this.jwtService.decode(
-      req.headers.authorization.split(' ')[1],
-    );
-
-    reportEmbedConfig.embedToken =
-      await this.getEmbedTokenForSingleReportSingleWorkspace(
-        page,
-        datasetIds,
-        page.group_id,
-        user,
-        headers,
+      const page = await this.pbiReportService.getPageType(
+        group,
+        type,
+        tenant_id,
+        userId,
       );
-    return reportEmbedConfig;
+
+      const reportInGroupApi = `https://api.powerbi.com/v1.0/myorg/groups/${page.group_id}/reports/${page.report_id}`;
+      const headers = await this.msalService.getRequestHeader(role_name);
+
+      const response = await fetch(reportInGroupApi, {
+        method: 'GET',
+        headers,
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        const status = response.status;
+        console.error(`Erro Power BI API [${status}]:`, errorBody);
+        throw new InternalServerErrorException(
+          `Erro ao buscar relatório: ${status}`,
+        );
+      }
+
+      const result = await response.json();
+
+      if (!result || !result.embedUrl || !result.datasetId) {
+        throw new InternalServerErrorException(
+          'Dados incompletos retornados pelo Power BI.',
+        );
+      }
+
+      const reportDetails = new PowerBiReportDetails(
+        result.id,
+        result.name,
+        result.embedUrl,
+      );
+      const reportEmbedConfig = new EmbedConfig();
+      reportEmbedConfig.reportsDetail = [reportDetails];
+
+      const datasetIds = [result.datasetId];
+      const authHeader = req.headers['authorization'];
+
+      if (!authHeader || typeof authHeader !== 'string') {
+        throw new BadRequestException(
+          'Token de autorização ausente ou inválido.',
+        );
+      }
+
+      const user = this.jwtService.decode(authHeader.split(' ')[1]);
+      reportEmbedConfig.embedToken =
+        await this.getEmbedTokenForSingleReportSingleWorkspace(
+          page,
+          datasetIds,
+          page.group_id,
+          user,
+          headers,
+        );
+
+      return reportEmbedConfig;
+    } catch (error) {
+      if (
+        error instanceof InternalServerErrorException ||
+        error instanceof BadRequestException
+      ) {
+        throw error;
+      }
+
+      console.error('Erro inesperado em ReportByType:', error);
+      throw new InternalServerErrorException(
+        'Erro ao gerar configuração do relatório Power BI.',
+      );
+    }
   }
 
   @BypassAuth()
