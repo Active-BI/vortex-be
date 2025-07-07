@@ -293,6 +293,7 @@ export class PbiReportController {
     }
 
     // Add targetWorkspace id in the request
+
     if (targetWorkspaceId) {
       formData['targetWorkspaces'] = [];
 

@@ -1,8 +1,10 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  InternalServerErrorException,
   Param,
   Patch,
   Post,
@@ -66,27 +68,39 @@ export class PagesMasterController {
       projetos,
     );
   }
+
   @Roles('Master')
   @Patch('/:userid')
   async PatchDashboardUser(@Req() req, @Body() body, @Param('userid') userid) {
-    const { tenant_id, DashboardUserList, projetos } = body;
+    const { tenant_id, DashboardUserList, projetos } = body.dashboadList;
 
-    if (tenant_id) {
-      this.pagesMasterService.refreshDataSet(tenant_id, req.tokenData, userid);
+    if (!tenant_id || !Array.isArray(DashboardUserList) || !tenant_id) {
+      throw new BadRequestException('Payload mal-formado');
     }
 
-    const getTenantDashBoards =
-      await this.pagesMasterService.findAllTenantPageInArray(
-        DashboardUserList,
+    if (tenant_id) {
+      this.pagesMasterService
+        .refreshDataSet(tenant_id, req.tokenData, userid)
+        .catch(console.error);
+    }
+    try {
+      const getTenantDashBoards =
+        await this.pagesMasterService.findAllTenantPageInArray(
+          DashboardUserList,
+          tenant_id,
+        );
+      await this.pageService.setPageUser(
+        getTenantDashBoards,
+        userid,
         tenant_id,
+        projetos,
       );
-    await this.pageService.setPageUser(
-      getTenantDashBoards,
-      userid,
-      tenant_id,
-      projetos,
-    );
+    } catch (err) {
+      console.error('Erro no PATCH /:userid:', err);
+      throw new InternalServerErrorException('Falha ao atualizar dashboards');
+    }
   }
+
   @Roles('Master')
   @Post('')
   async postPage(@Body() body: pageAndRoles) {
