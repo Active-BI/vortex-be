@@ -83,7 +83,7 @@ export const message_book = {
     <tr>
       <td style="padding: 28px; text-align: center; color: #333;">
         <p style="font-size: 16px; margin-bottom: 24px;">
-          Conclua agora mesmo seu cadastro e aproveite todos os recursos do <strong>Machine Analytics</strong>.
+          Conclua agora mesmo seu cadastro e aproveite todos os recursos do <strong>ActiveBI Embedded</strong>.
         </p>
         
         <!-- Botão CTA -->
