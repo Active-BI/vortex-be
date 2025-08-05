@@ -57,52 +57,102 @@ export const message_book = {
       subject: 'Conclua seu CADASTRO no portal embedded Active BI',
       content: `<!DOCTYPE html>
     <html>
-<head>
-  <meta charset="UTF-8">
-  <title>ActiveBi - Confirme seu Cadastro</title>
-</head>
-<body style="margin:0; padding:0; font-family: Arial, sans-serif; background-color:#f4f6f8;">
+  <head>
+    <meta charset="UTF-8" />
+    <title>ActiveBi - Confirme seu Cadastro</title>
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+    "
+  >
+    <!-- Container principal -->
+    <table
+      align="center"
+      cellpadding="0"
+      cellspacing="0"
+      width="100%"
+      style="
+        max-width: 480px;
+        margin: auto;
+        background-color: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      "
+    >
+      <!-- Header sólido -->
+      <tr>
+        <td
+          style="
+            background-color: #0f172a;
+            padding: 28px;
+            text-align: center;
+            color: #ffffff;
+          "
+        >
+          <img
+            src="uploads/active_logo.png"
+            alt="Rocket"
+            style="display: block; margin: auto"
+          />
+          <h1 style="margin: 16px 0 0; font-size: 22px; font-weight: bold">
+            Bem-vindo ao Portal do Cliente
+          </h1>
+          <p style="margin: 8px 0 0; font-size: 15px; opacity: 0.85">
+            Seu acesso foi solicitado com sucesso!
+          </p>
+        </td>
+      </tr>
 
-  <!-- Container principal -->
-  <table align="center" cellpadding="0" cellspacing="0" width="100%" style="max-width: 480px; margin: auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-    
-    <!-- Header sólido -->
-    <tr>
-      <td style="background-color: #0f172a; padding: 28px; text-align: center; color: #ffffff;">
-        <img src="https://cdn-icons-png.flaticon.com/512/3112/3112946.png" alt="Rocket" width="48" height="48" style="display:block; margin:auto;"/>
-        <h1 style="margin: 16px 0 0; font-size: 22px; font-weight: bold;">
-          Bem-vindo ao Portal do Cliente
-        </h1>
-        <p style="margin: 8px 0 0; font-size: 15px; opacity: 0.85;">
-          Seu acesso foi solicitado com sucesso!
-        </p>
-      </td>
-    </tr>
+      <!-- Corpo -->
+      <tr>
+        <td style="padding: 28px; text-align: center; color: #333">
+          <p style="font-size: 16px; margin-bottom: 24px">
+            Conclua agora mesmo seu cadastro e aproveite todos os recursos do
+            <strong>ActiveBI Embedded</strong>.
+          </p>
 
-    <!-- Corpo -->
-    <tr>
-      <td style="padding: 28px; text-align: center; color: #333;">
-        <p style="font-size: 16px; margin-bottom: 24px;">
-          Conclua agora mesmo seu cadastro e aproveite todos os recursos do <strong>ActiveBI Embedded</strong>.
-        </p>
-        
-        <!-- Botão CTA -->
-        <a href="${process.env['FRONT_BASE_URL']}/#/auth/sign-up/${token}" 
-           style="display: inline-block; background-color: #3b82f6; color: #ffffff; padding: 14px 28px; font-size: 16px; border-radius: 6px; text-decoration: none; font-weight: bold;">
-          Criar Senha
-        </a>
-      </td>
-    </tr>
+          <!-- Botão CTA -->
+          <a
+            href="${process.env['FRONT_BASE_URL']}/#/auth/sign-up/${token}"
+            style="
+              display: inline-block;
+              background-color: #3b82f6;
+              color: #ffffff;
+              padding: 14px 28px;
+              font-size: 16px;
+              border-radius: 6px;
+              text-decoration: none;
+              font-weight: bold;
+            "
+          >
+            Criar Senha
+          </a>
+        </td>
+      </tr>
 
-    <!-- Rodapé -->
-    <tr>
-      <td style="background-color: #f4f6f8; padding: 16px; text-align: center; font-size: 12px; color: #777;">
-        Se você não solicitou este acesso, ignore esta mensagem.
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`,
+      <!-- Rodapé -->
+      <tr>
+        <td
+          style="
+            background-color: #f4f6f8;
+            padding: 16px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+          "
+        >
+          Se você não solicitou este acesso, ignore esta mensagem.
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+`,
     }),
     security_login: (totp: string) => ({
       subject: `Seu código é ${totp}`,
